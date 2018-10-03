@@ -1,0 +1,52 @@
+# This file is part of gkraken.
+#
+# Copyright (c) 2018 Roberto Leinardi
+#
+# gkraken is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# gkraken is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
+
+import logging
+
+from gi.repository import Gtk
+from injector import Module, provider, singleton, Injector
+from peewee import SqliteDatabase
+from rx.disposables import CompositeDisposable
+
+LOG = logging.getLogger(__name__)
+
+
+# pylint: disable=no-self-use
+class ProviderModule(Module):
+    @singleton
+    @provider
+    def provide_builder(self) -> Gtk.Builder:
+        LOG.debug("provide Gtk.Builder")
+        builder = Gtk.Builder()
+        builder.set_translation_domain("gkraken")
+        builder.add_from_file("data/gkraken.glade")
+        return builder
+
+    @singleton
+    @provider
+    def provide_thread_pool_scheduler(self) -> CompositeDisposable:
+        LOG.debug("provide CompositeDisposable")
+        return CompositeDisposable()
+
+    @singleton
+    @provider
+    def provide_database(self) -> SqliteDatabase:
+        LOG.debug("provide CompositeDisposable")
+        return SqliteDatabase('data/gkraken.db')
+
+
+INJECTOR = Injector(ProviderModule)
