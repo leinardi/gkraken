@@ -43,17 +43,23 @@ class KrakenRepository:
         LOG.debug("KrakenRepository cleanup")
         if self.__driver:
             self.__driver.finalize()
+            self.__driver = None
 
     def get_status(self) -> Optional[Status]:
         self.__load_driver()
         if self.__driver:
-            status = [v for k, v, u in self.__driver.get_status()]
-            return Status(
-                status[LIQUID_TEMPERATURE],
-                status[FAN_RPM],
-                status[PUMP_RPM],
-                status[FIRMWARE_VERSION]
-            )
+            try:
+                status = [v for k, v, u in self.__driver.get_status()]
+                return Status(
+                    status[LIQUID_TEMPERATURE],
+                    status[FAN_RPM],
+                    status[PUMP_RPM],
+                    status[FIRMWARE_VERSION]
+                )
+            except:
+                LOG.exception("Error getting the status")
+                self.cleanup()
+
         return None
 
     def __load_driver(self) -> None:
