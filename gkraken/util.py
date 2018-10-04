@@ -17,11 +17,5 @@
 
 
 import logging
-from typing import Optional, List
-
-import humanfriendly
-
-from gkraken.model import Cache
-from gkraken.repository import Vendor
 
 LOG = logging.getLogger(__name__)

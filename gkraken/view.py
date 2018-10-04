@@ -17,15 +17,12 @@
 
 
 import logging
-from gettext import gettext as _
-from typing import Optional, Dict, List
+from typing import Optional, Dict
 
 from injector import inject, singleton
 
-from gi.repository import Gtk, Gio, GdkPixbuf
+from gi.repository import Gtk
 from matplotlib.figure import Figure
-from matplotlib.axes import Subplot
-from numpy import arange, sin, pi
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
 from gkraken.model import Status
@@ -56,12 +53,12 @@ class View(ViewInterface):
         self.__cooling_liquid_temp: Gtk.Label = self.__builder.get_object("cooling_liquid_temp")
         self.__cooling_pump_rpm: Gtk.Label = self.__builder.get_object("cooling_pump_rpm")
         self.__cooling_fan_speed.set_markup("<span size=\"xx-large\">-</span> %")
-        # fan_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object("fan_scrolled_window")
-        # pump_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object("pump_scrolled_window")
-        # data = {0: 25, 25: 25, 35: 25, 40: 40, 45: 45, 50: 60, 60: 100, 100: 100}
-        #
-        # self.__plot_chart(fan_scrolled_window, data)
-        # self.__plot_chart(pump_scrolled_window, data)
+        cooling_fan_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object("cooling_fan_scrolled_window")
+        cooling_pump_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object("cooling_pump_scrolled_window")
+        data = {0: 25, 25: 25, 35: 25, 40: 40, 45: 45, 50: 60, 60: 100, 100: 100}
+
+        self.__plot_chart(cooling_fan_scrolled_window, data)
+        self.__plot_chart(cooling_pump_scrolled_window, data)
 
     def show(self) -> None:
         self.__presenter.on_start()
@@ -75,13 +72,15 @@ class View(ViewInterface):
         #         content_header_bar.set_title(title)
         pass
 
-    def refresh_status(self, status: Status) -> None:
+    def refresh_status(self, status: Optional[Status]) -> None:
         LOG.debug("view status")
-        self.__cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
-        self.__cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
-        self.__cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
+        if status:
+            self.__cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
+            self.__cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
+            self.__cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
 
-    def __plot_chart(self, scrolled_window, data):
+    @staticmethod
+    def __plot_chart(scrolled_window: Gtk.ScrolledWindow, data: Dict[int, int]) -> None:
         figure = Figure(figsize=(8, 6), dpi=72, facecolor="#00000000")
         axis = figure.add_subplot(111)
         names = list(data.keys())

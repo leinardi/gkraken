@@ -29,6 +29,7 @@ from peewee import SqliteDatabase
 from rx.disposables import CompositeDisposable
 
 gi.require_version('Gtk', '3.0')
+from gkraken.repository import KrakenRepository
 from gkraken.di import INJECTOR
 from gkraken.app import Application
 
@@ -41,6 +42,7 @@ logging.basicConfig(level=logging.DEBUG, format=FORMAT)
 logging.getLogger("Rx").setLevel(logging.INFO)
 logging.getLogger('injector').setLevel(logging.INFO)
 logging.getLogger('peewee').setLevel(logging.INFO)
+logging.getLogger('matplotlib').setLevel(logging.INFO)
 
 LOG = logging.getLogger(__name__)
 
@@ -58,6 +60,8 @@ def __cleanup():
     composite_disposable.dispose()
     database = INJECTOR.get(SqliteDatabase)
     database.close()
+    krakenRepository = INJECTOR.get(KrakenRepository)
+    krakenRepository.cleanup()
     # futures.thread._threads_queues.clear()
 
 

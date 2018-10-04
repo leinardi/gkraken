@@ -29,15 +29,12 @@ from rx.disposables import CompositeDisposable
 from gkraken.interactor import GetStatusInteractor
 from gkraken.model import Status
 
-REFRESH_INTERVAL_IN_MS = 2000
+REFRESH_INTERVAL_IN_MS = 3000
 LOG = logging.getLogger(__name__)
 
 
 class ViewInterface:
-    def init_system_info(self) -> None:
-        raise NotImplementedError()
-
-    def refresh_status(self, status: Status) -> None:
+    def refresh_status(self, status: Optional[Status]) -> None:
         raise NotImplementedError()
 
     def refresh_content_header_bar_title(self) -> None:
@@ -69,7 +66,7 @@ class Presenter:
                  .subscribe_on(scheduler)
                  .flat_map(lambda _: self.__get_status())
                  .observe_on(GtkScheduler())
-                 .subscribe(on_next=lambda status: self.view.refresh_status(status),
+                 .subscribe(on_next=self.view.refresh_status,
                             on_error=lambda e: LOG.exception("Refresh error: %s", str(e)))
                  )
 

@@ -16,8 +16,6 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 # pylint: disable=too-many-locals,too-many-instance-attributes
-from typing import Optional
-
 
 class Status:
     def __init__(self,
