@@ -4,6 +4,7 @@
 * injector
 * rx
 * peewee
+* matplotlib
 * liquidctl
 
 ## How to run it on Ubuntu 18.04:
@@ -14,6 +15,7 @@ git clone https://gitlab.com/leinardi/gkraken.git
 pip3 install peewee
 pip3 install rx
 pip3 install injector
+pip3 install matplotlib
 pip3 install liquidctl
 ca gkraken
 ./gkraken.py
