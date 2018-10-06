@@ -37,10 +37,6 @@ def load_db_default_data() -> None:
         duty=25)
     TemperatureDutyStepDbModel.create(
         profile=fan_silent.id,
-        temperature=35,
-        duty=25)
-    TemperatureDutyStepDbModel.create(
-        profile=fan_silent.id,
         temperature=40,
         duty=35)
     TemperatureDutyStepDbModel.create(
@@ -64,10 +60,6 @@ def load_db_default_data() -> None:
     TemperatureDutyStepDbModel.create(
         profile=fan_perf.id,
         temperature=20,
-        duty=50)
-    TemperatureDutyStepDbModel.create(
-        profile=fan_perf.id,
-        temperature=35,
         duty=50)
     TemperatureDutyStepDbModel.create(
         profile=fan_perf.id,
@@ -103,10 +95,6 @@ def load_db_default_data() -> None:
         duty=60)
     TemperatureDutyStepDbModel.create(
         profile=pump_silent.id,
-        temperature=35,
-        duty=60)
-    TemperatureDutyStepDbModel.create(
-        profile=pump_silent.id,
         temperature=40,
         duty=70)
     TemperatureDutyStepDbModel.create(
@@ -130,10 +118,6 @@ def load_db_default_data() -> None:
     TemperatureDutyStepDbModel.create(
         profile=pump_perf.id,
         temperature=20,
-        duty=70)
-    TemperatureDutyStepDbModel.create(
-        profile=pump_perf.id,
-        temperature=35,
         duty=70)
     TemperatureDutyStepDbModel.create(
         profile=pump_perf.id,

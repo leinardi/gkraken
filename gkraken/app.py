@@ -64,7 +64,7 @@ class Application(Gtk.Application):
             self.__builder.connect_signals(self.__presenter)
             self.__window: Gtk.ApplicationWindow = self.__builder.get_object("application_window")
             self.__window.set_application(self)
-            # self.__window.set_icon_from_file('data/gkraken.png')  # TODO provide multiple res
+            self.__window.set_icon_from_file('data/gkraken.png')  # TODO provide multiple res
             self.__window.show_all()
             self.__view.show()
         self.__window.present()

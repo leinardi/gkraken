@@ -31,6 +31,79 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="cooling_pump_profile_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkImage" id="edit_button_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-edit</property>
+  </object>
+  <object class="GtkImage" id="edit_button_image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-edit</property>
+  </object>
+  <object class="GtkPopoverMenu" id="popovermenu1">
+    <property name="can_focus">False</property>
+    <property name="position">bottom</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">6</property>
+        <property name="margin_right">6</property>
+        <property name="margin_top">6</property>
+        <property name="margin_bottom">6</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Preferences</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">About</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="submenu">main</property>
+      </packing>
+    </child>
+  </object>
   <object class="GtkApplicationWindow" id="application_window">
     <property name="can_focus">False</property>
     <property name="gravity">north</property>
@@ -49,6 +122,23 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                 <property name="can_focus">False</property>
                 <property name="stack">content_stack</property>
               </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton">
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="popover">popovermenu1</property>
+                <child>
+                  <object class="GtkImage" id="menu_button_image">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">open-menu-symbolic</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="pack_type">end</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -296,13 +386,15 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_left">8</property>
+                                <property name="margin_right">40</property>
                                 <property name="spacing">4</property>
-                                <property name="homogeneous">True</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
+                                    <property name="margin_right">4</property>
                                     <property name="label" translatable="yes">PROFILE</property>
                                     <attributes>
                                       <attribute name="weight" value="light"/>
@@ -318,13 +410,14 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                   <object class="GtkComboBox" id="cooling_fan_profile_combobox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
                                     <property name="model">cooling_fan_profile_liststore</property>
                                     <property name="id_column">0</property>
+                                    <signal name="changed" handler="on_fan_profile_selected" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cooling_fan_profile_renderer"/>
                                       <attributes>
-                                        <attribute name="text">1</attribute>
+                                        <attribute name="markup">1</attribute>
                                       </attributes>
                                     </child>
                                   </object>
@@ -332,6 +425,20 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="image">edit_button_image</property>
+                                    <property name="always_show_image">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -373,19 +480,6 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="cooling_fan_apply_button">
-                    <property name="label">gtk-apply</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -407,13 +501,15 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_left">8</property>
+                                <property name="margin_right">40</property>
                                 <property name="spacing">4</property>
-                                <property name="homogeneous">True</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
+                                    <property name="margin_right">4</property>
                                     <property name="label" translatable="yes">PROFILE</property>
                                     <attributes>
                                       <attribute name="weight" value="light"/>
@@ -426,16 +522,17 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox">
+                                  <object class="GtkComboBox" id="cooling_pump_profile_combobox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="model">cooling_fan_profile_liststore</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="model">cooling_pump_profile_liststore</property>
                                     <property name="id_column">0</property>
+                                    <signal name="changed" handler="on_pump_profile_selected" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cooling_fan_profile_renderer1"/>
                                       <attributes>
-                                        <attribute name="text">1</attribute>
+                                        <attribute name="markup">1</attribute>
                                       </attributes>
                                     </child>
                                   </object>
@@ -443,6 +540,20 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="image">edit_button_image1</property>
+                                    <property name="always_show_image">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -484,6 +595,19 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkButton" id="cooling_fan_apply_button">
+                    <property name="label">gtk-apply</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkButton" id="cooling_pump_apply_button">
                     <property name="label">gtk-apply</property>
                     <property name="visible">True</property>
@@ -493,14 +617,8 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">2</property>
                   </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -553,13 +671,5 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="cooling_pump_profile_liststore">
-    <columns>
-      <!-- column-name id -->
-      <column type="gint"/>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-    </columns>
   </object>
 </interface>

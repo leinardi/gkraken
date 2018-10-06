@@ -18,7 +18,7 @@
 
 import logging
 import multiprocessing
-from typing import Optional, Any
+from typing import Optional, Any, List, Tuple
 
 from injector import inject, singleton
 from rx import Observable
@@ -27,9 +27,11 @@ from rx.concurrency.schedulerbase import SchedulerBase
 from rx.disposables import CompositeDisposable
 
 from gkraken.interactor import GetStatusInteractor
-from gkraken.model import Status
+from gkraken.model import Status, TemperatureDutyProfileDbModel, FAN_CHANNEL, PUMP_CHANNEL
 
 REFRESH_INTERVAL_IN_MS = 3000
+ADD_NEW_FAN_PROFILE_INDEX = -10
+ADD_NEW_PUMP_PROFILE_INDEX = -10
 LOG = logging.getLogger(__name__)
 
 
@@ -37,7 +39,22 @@ class ViewInterface:
     def refresh_status(self, status: Optional[Status]) -> None:
         raise NotImplementedError()
 
+    def refresh_fan_profile_combobox(self, data: List[Tuple[int, str]]) -> None:
+        raise NotImplementedError()
+
+    def refresh_pump_profile_combobox(self, data: List[Tuple[int, str]]) -> None:
+        raise NotImplementedError()
+
+    def refresh_fan_chart(self, profile: TemperatureDutyProfileDbModel) -> None:
+        raise NotImplementedError()
+
+    def refresh_pump_chart(self, profile: TemperatureDutyProfileDbModel) -> None:
+        raise NotImplementedError()
+
     def refresh_content_header_bar_title(self) -> None:
+        raise NotImplementedError()
+
+    def show_add_temperature_duty_profile_dialog(self, channel: int) -> None:
         raise NotImplementedError()
 
 
@@ -52,9 +69,12 @@ class Presenter:
         self.view: ViewInterface = ViewInterface()
         self.__get_status_interactor = get_status_interactor
         self.__composite_disposable: CompositeDisposable = composite_disposable
+        self.__fan_profile_selected: Optional[TemperatureDutyProfileDbModel] = None
+        self.__pump_profile_selected: Optional[TemperatureDutyProfileDbModel] = None
 
     def on_start(self) -> None:
         scheduler = ThreadPoolScheduler(multiprocessing.cpu_count())
+        self.__refresh_fan_pump_profiles()
         self.__start_refresh(scheduler)
 
     def __start_refresh(self, scheduler: SchedulerBase) -> None:
@@ -70,8 +90,39 @@ class Presenter:
                             on_error=lambda e: LOG.exception("Refresh error: %s", str(e)))
                  )
 
+    def __refresh_fan_pump_profiles(self) -> None:
+        fan_query = TemperatureDutyProfileDbModel.select() \
+            .where(TemperatureDutyProfileDbModel.channel == FAN_CHANNEL)
+
+        data = [(p.id, p.name) for p in fan_query]
+        data.append((ADD_NEW_FAN_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
+        self.view.refresh_fan_profile_combobox(data)
+
+        pump_query = TemperatureDutyProfileDbModel.select() \
+            .where(TemperatureDutyProfileDbModel.channel == PUMP_CHANNEL)
+
+        data = [(p.id, p.name) for p in pump_query]
+        data.append((ADD_NEW_PUMP_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
+        self.view.refresh_pump_profile_combobox(data)
+
     def on_stack_visible_child_changed(self, *_: Any) -> None:
         self.view.refresh_content_header_bar_title()
+
+    def on_fan_profile_selected(self, widget: Any, *_: Any) -> None:
+        profile_id = widget.get_model()[widget.get_active()][0]
+        if profile_id == ADD_NEW_FAN_PROFILE_INDEX:
+            self.view.show_add_temperature_duty_profile_dialog(FAN_CHANNEL)
+        else:
+            self.__fan_profile_selected = TemperatureDutyProfileDbModel.get(id=profile_id)
+            self.view.refresh_fan_chart(self.__fan_profile_selected)
+
+    def on_pump_profile_selected(self, widget: Any, *_: Any) -> None:
+        profile_id = widget.get_model()[widget.get_active()][0]
+        if profile_id == ADD_NEW_PUMP_PROFILE_INDEX:
+            self.view.show_add_temperature_duty_profile_dialog(PUMP_CHANNEL)
+        else:
+            self.__pump_profile_selected = TemperatureDutyProfileDbModel.get(id=profile_id)
+            self.view.refresh_pump_chart(self.__pump_profile_selected)
 
     # @staticmethod
     # def __log_exception_return_system_info_observable(ex: Exception) -> Observable:
