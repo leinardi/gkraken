@@ -26,7 +26,7 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
-from gkraken.model import Status, TemperatureDutyProfileDbModel, ChannelType
+from gkraken.model import Status, SpeedProfile, ChannelType
 from gkraken.presenter import Presenter, ViewInterface
 
 LOG = logging.getLogger(__name__)
@@ -60,13 +60,15 @@ class View(ViewInterface):
         self.__cooling_pump_liststore: Gtk.ListStore = self.__builder.get_object("cooling_pump_profile_liststore")
         cooling_fan_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object("cooling_fan_scrolled_window")
         cooling_pump_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object("cooling_pump_scrolled_window")
+        self.__cooling_fan_apply_button: Gtk.Button = self.__builder.get_object("cooling_fan_apply_button")
+        self.__cooling_pump_apply_button: Gtk.Button = self.__builder.get_object("cooling_pump_apply_button")
         self.__init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
 
     def show(self) -> None:
         self.__presenter.on_start()
 
-    def show_add_temperature_duty_profile_dialog(self, channel: ChannelType) -> None:
-        LOG.debug("view show_add_temperature_duty_profile_dialog " + channel.name)
+    def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
+        LOG.debug("view show_add_speed_profile_dialog " + channel.name)
 
     def refresh_content_header_bar_title(self) -> None:
         #     contant_stack = self.__builder.get_object("content_stack")
@@ -84,13 +86,13 @@ class View(ViewInterface):
             self.__cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
             self.__cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
 
-    def refresh_fan_chart(self, profile: TemperatureDutyProfileDbModel) -> None:
-        self.__plot_fan_chart(self.__get_temperature_duty_profile_data(profile))
+    def refresh_fan_chart(self, profile: SpeedProfile) -> None:
+        self.__plot_fan_chart(self.__get_speed_profile_data(profile))
 
-    def refresh_pump_chart(self, profile: TemperatureDutyProfileDbModel) -> None:
-        self.__plot_pump_chart(self.__get_temperature_duty_profile_data(profile))
+    def refresh_pump_chart(self, profile: SpeedProfile) -> None:
+        self.__plot_pump_chart(self.__get_speed_profile_data(profile))
 
-    def __get_temperature_duty_profile_data(self, profile: TemperatureDutyProfileDbModel) -> Dict[int, int]:
+    def __get_speed_profile_data(self, profile: SpeedProfile) -> Dict[int, int]:
         data = {p.temperature: p.duty for p in profile.steps}
         if profile.single_step:
             data.update({60: profile.steps[0].duty})
@@ -109,6 +111,14 @@ class View(ViewInterface):
             self.__cooling_pump_liststore.append([t[0], t[1]])
         self.__cooling_pump_combobox.set_model(self.__cooling_pump_liststore)
         self.__cooling_pump_combobox.set_sensitive(len(self.__cooling_pump_liststore) > 1)
+
+    def set_apply_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
+        if channel == ChannelType.FAN:
+            self.__cooling_fan_apply_button.set_sensitive(enabled)
+        elif channel == ChannelType.PUMP:
+            self.__cooling_pump_apply_button.set_sensitive(enabled)
+        else:
+            raise ValueError("Unknown channel: " + channel.name)
 
     def __init_plot_charts(self,
                            fan_scrolled_window: Gtk.ScrolledWindow,

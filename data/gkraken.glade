@@ -599,9 +599,11 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkButton" id="cooling_fan_apply_button">
                     <property name="label">gtk-apply</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
+                    <signal name="clicked" handler="on_fab_apply_button_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -612,9 +614,11 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkButton" id="cooling_pump_apply_button">
                     <property name="label">gtk-apply</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
+                    <signal name="clicked" handler="on_pump_apply_button_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>

@@ -17,131 +17,143 @@
 
 
 import logging
-from gkraken.model import TemperatureDutyProfileDbModel, TemperatureDutyStepDbModel, ChannelType
+from gkraken.model import SpeedProfile, SpeedStep, ChannelType
 
 LOG = logging.getLogger(__name__)
 
 
+def synchronized_with_attr(lock_name):
+    def decorator(method):
+        def synced_method(self, *args, **kws):
+            lock = getattr(self, lock_name)
+            with lock:
+                return method(self, *args, **kws)
+
+        return synced_method
+
+    return decorator
+
+
 def load_db_default_data() -> None:
-    fan_silent = TemperatureDutyProfileDbModel.create(name="Silent", channel=ChannelType.FAN.name, read_only=True)
-    fan_perf = TemperatureDutyProfileDbModel.create(name="Performance", channel=ChannelType.FAN.name, read_only=True)
-    fan_fixed = TemperatureDutyProfileDbModel.create(name="Fixed", channel=ChannelType.FAN.name, single_step=True)
-    pump_silent = TemperatureDutyProfileDbModel.create(name="Silent", channel=ChannelType.PUMP.name, read_only=True)
-    pump_perf = TemperatureDutyProfileDbModel.create(name="Performance", channel=ChannelType.PUMP.name, read_only=True)
-    pump_fixed = TemperatureDutyProfileDbModel.create(name="Fixed", channel=ChannelType.PUMP.name, single_step=True)
+    fan_silent = SpeedProfile.create(name="Silent", channel=ChannelType.FAN.value, read_only=True)
+    fan_perf = SpeedProfile.create(name="Performance", channel=ChannelType.FAN.value, read_only=True)
+    fan_fixed = SpeedProfile.create(name="Fixed", channel=ChannelType.FAN.value, single_step=True)
+    pump_silent = SpeedProfile.create(name="Silent", channel=ChannelType.PUMP.value, read_only=True)
+    pump_perf = SpeedProfile.create(name="Performance", channel=ChannelType.PUMP.value, read_only=True)
+    pump_fixed = SpeedProfile.create(name="Fixed", channel=ChannelType.PUMP.value, single_step=True)
 
     # Fan Silent
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_silent.id,
         temperature=20,
         duty=25)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_silent.id,
         temperature=40,
         duty=35)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_silent.id,
         temperature=45,
         duty=45)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_silent.id,
         temperature=50,
         duty=55)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_silent.id,
         temperature=55,
         duty=75)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_silent.id,
         temperature=60,
         duty=100)
 
     # Fan Performance
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_perf.id,
         temperature=20,
         duty=50)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_perf.id,
         temperature=40,
         duty=60)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_perf.id,
         temperature=45,
         duty=70)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_perf.id,
         temperature=50,
         duty=80)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_perf.id,
         temperature=55,
         duty=90)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_perf.id,
         temperature=60,
         duty=100)
 
     # Fan Fixed
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=fan_fixed.id,
         temperature=20,
         duty=25)
 
     # Pump Silent
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_silent.id,
         temperature=20,
         duty=60)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_silent.id,
         temperature=40,
         duty=70)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_silent.id,
         temperature=45,
         duty=80)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_silent.id,
         temperature=50,
         duty=90)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_silent.id,
         temperature=55,
         duty=100)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_silent.id,
         temperature=60,
         duty=100)
 
     # Pump Performance
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_perf.id,
         temperature=20,
         duty=70)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_perf.id,
         temperature=40,
         duty=80)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_perf.id,
         temperature=45,
         duty=85)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_perf.id,
         temperature=50,
         duty=90)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_perf.id,
         temperature=55,
         duty=95)
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_perf.id,
         temperature=60,
         duty=100)
 
     # Pump Fixed
-    TemperatureDutyStepDbModel.create(
+    SpeedStep.create(
         profile=pump_fixed.id,
         temperature=20,
         duty=60)

@@ -26,8 +26,8 @@ from rx.concurrency import GtkScheduler, ThreadPoolScheduler
 from rx.concurrency.schedulerbase import SchedulerBase
 from rx.disposables import CompositeDisposable
 
-from gkraken.interactor import GetStatusInteractor
-from gkraken.model import Status, TemperatureDutyProfileDbModel, ChannelType
+from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor
+from gkraken.model import Status, SpeedProfile, ChannelType
 
 LOG = logging.getLogger(__name__)
 _REFRESH_INTERVAL_IN_MS = 3000
@@ -44,16 +44,19 @@ class ViewInterface:
     def refresh_pump_profile_combobox(self, data: List[Tuple[int, str]]) -> None:
         raise NotImplementedError()
 
-    def refresh_fan_chart(self, profile: TemperatureDutyProfileDbModel) -> None:
+    def refresh_fan_chart(self, profile: SpeedProfile) -> None:
         raise NotImplementedError()
 
-    def refresh_pump_chart(self, profile: TemperatureDutyProfileDbModel) -> None:
+    def refresh_pump_chart(self, profile: SpeedProfile) -> None:
+        raise NotImplementedError()
+
+    def set_apply_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
         raise NotImplementedError()
 
     def refresh_content_header_bar_title(self) -> None:
         raise NotImplementedError()
 
-    def show_add_temperature_duty_profile_dialog(self, channel: ChannelType) -> None:
+    def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
         raise NotImplementedError()
 
 
@@ -62,45 +65,46 @@ class Presenter:
     @inject
     def __init__(self,
                  get_status_interactor: GetStatusInteractor,
+                 set_speed_profile_interactor: SetSpeedProfileInteractor,
                  composite_disposable: CompositeDisposable,
                  ) -> None:
         LOG.debug("init Presenter ")
         self.view: ViewInterface = ViewInterface()
-        self.__get_status_interactor = get_status_interactor
+        self.__scheduler: SchedulerBase = ThreadPoolScheduler(multiprocessing.cpu_count())
+        self.__get_status_interactor: GetStatusInteractor = get_status_interactor
+        self.__set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
         self.__composite_disposable: CompositeDisposable = composite_disposable
-        self.__fan_profile_selected: Optional[TemperatureDutyProfileDbModel] = None
-        self.__pump_profile_selected: Optional[TemperatureDutyProfileDbModel] = None
+        self.__fan_profile_selected: Optional[SpeedProfile] = None
+        self.__pump_profile_selected: Optional[SpeedProfile] = None
 
     def on_start(self) -> None:
-        scheduler = ThreadPoolScheduler(multiprocessing.cpu_count())
-        self.__refresh_fan_pump_profiles()
-        self.__start_refresh(scheduler)
+        self.__refresh_speed_profiles()
+        self.__start_refresh()
 
-    def __start_refresh(self, scheduler: SchedulerBase) -> None:
+    def __start_refresh(self) -> None:
         LOG.debug("start refresh")
         self.__composite_disposable \
             .add(Observable
-                 .interval(_REFRESH_INTERVAL_IN_MS, scheduler=scheduler)
+                 .interval(_REFRESH_INTERVAL_IN_MS, scheduler=self.__scheduler)
                  .start_with(0)
-                 .subscribe_on(scheduler)
+                 .subscribe_on(self.__scheduler)
                  .flat_map(lambda _: self.__get_status())
                  .observe_on(GtkScheduler())
                  .subscribe(on_next=self.view.refresh_status,
                             on_error=lambda e: LOG.exception("Refresh error: %s", str(e)))
                  )
 
-    def __refresh_fan_pump_profiles(self) -> None:
-        fan_query = TemperatureDutyProfileDbModel.select() \
-            .where(TemperatureDutyProfileDbModel.channel == ChannelType.FAN.value)
+    @staticmethod
+    def __get_profile_list(channel: ChannelType) -> List[Tuple[int, str]]:
+        query = SpeedProfile.select().where(SpeedProfile.channel == channel.value)
+        return [(p.id, p.name) for p in query]
 
-        data = [(p.id, p.name) for p in fan_query]
+    def __refresh_speed_profiles(self) -> None:
+        data = self.__get_profile_list(ChannelType.FAN)
         data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
         self.view.refresh_fan_profile_combobox(data)
 
-        pump_query = TemperatureDutyProfileDbModel.select() \
-            .where(TemperatureDutyProfileDbModel.channel == ChannelType.PUMP.value)
-
-        data = [(p.id, p.name) for p in pump_query]
+        data = self.__get_profile_list(ChannelType.PUMP)
         data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
         self.view.refresh_pump_profile_combobox(data)
 
@@ -110,29 +114,49 @@ class Presenter:
     def on_fan_profile_selected(self, widget: Any, *_: Any) -> None:
         profile_id = widget.get_model()[widget.get_active()][0]
         if profile_id == _ADD_NEW_PROFILE_INDEX:
-            self.view.show_add_temperature_duty_profile_dialog(ChannelType.FAN)
+            self.view.set_apply_button_enabled(ChannelType.FAN, False)
+            self.view.show_add_speed_profile_dialog(ChannelType.FAN)
         else:
-            self.__fan_profile_selected = TemperatureDutyProfileDbModel.get(id=profile_id)
+            self.__fan_profile_selected = SpeedProfile.get(id=profile_id)
+            self.view.set_apply_button_enabled(ChannelType.FAN, True)
             self.view.refresh_fan_chart(self.__fan_profile_selected)
 
     def on_pump_profile_selected(self, widget: Any, *_: Any) -> None:
         profile_id = widget.get_model()[widget.get_active()][0]
         if profile_id == _ADD_NEW_PROFILE_INDEX:
-            self.view.show_add_temperature_duty_profile_dialog(ChannelType.PUMP)
+            self.view.set_apply_button_enabled(ChannelType.PUMP, False)
+            self.view.show_add_speed_profile_dialog(ChannelType.PUMP)
         else:
-            self.__pump_profile_selected = TemperatureDutyProfileDbModel.get(id=profile_id)
+            self.__pump_profile_selected = SpeedProfile.get(id=profile_id)
+            self.view.set_apply_button_enabled(ChannelType.PUMP, True)
             self.view.refresh_pump_chart(self.__pump_profile_selected)
 
+    @staticmethod
+    def __get_profile_data(profile: SpeedProfile) -> List[Tuple[int, int]]:
+        return [(p.temperature, p.duty) for p in profile.steps]
+
     def on_fab_apply_button_clicked(self, *_: Any) -> None:
-        pass
+        observable = self.__set_speed_profile_interactor \
+            .execute(ChannelType.FAN.value, self.__get_profile_data(self.__fan_profile_selected))
+        self.__set_speed(observable)
 
     def on_pump_apply_button_clicked(self, *_: Any) -> None:
-        pass
+        observable = self.__set_speed_profile_interactor \
+            .execute(ChannelType.PUMP.value, self.__get_profile_data(self.__pump_profile_selected))
+        self.__set_speed(observable)
 
     # @staticmethod
     # def __log_exception_return_system_info_observable(ex: Exception) -> Observable:
     #     LOG.exception("Err = %s", ex)
     #     return Observable.just(system_info)
+
+    def __set_speed(self, observable: Observable) -> None:
+        self.__composite_disposable \
+            .add(observable
+                 .subscribe_on(self.__scheduler)
+                 .observe_on(GtkScheduler())
+                 .subscribe(on_next=lambda _: LOG.debug("Speed set!"),
+                            on_error=lambda e: LOG.exception("Set speed error: %s", str(e))))
 
     def __get_status(self) -> Observable:
         return self.__get_status_interactor.execute()  # \

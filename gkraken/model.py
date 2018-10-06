@@ -39,30 +39,30 @@ class Status:
 
 
 class ChannelType(Enum):
-    FAN = 'FAN'
-    PUMP = 'PUMP'
+    FAN = 'fan'
+    PUMP = 'pump'
 
 
-class TemperatureDutyProfileDbModel(Model):
+class SpeedProfile(Model):
     id = AutoIncrementField()
     channel = CharField(constraints=[Check("channel='%s' OR channel='%s'"
-                                           % (ChannelType.FAN.name, ChannelType.PUMP.name))])
+                                           % (ChannelType.FAN.value, ChannelType.PUMP.value))])
     name = CharField()
     read_only = BooleanField(default=False)
     single_step = BooleanField(default=False)
     timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
 
     class Meta:
-        table_name = 'TemperatureDutyProfile'
+        legacy_table_names = False
         database = INJECTOR.get(SqliteDatabase)
 
 
-class TemperatureDutyStepDbModel(Model):
-    profile = ForeignKeyField(TemperatureDutyProfileDbModel, backref='steps')
+class SpeedStep(Model):
+    profile = ForeignKeyField(SpeedProfile, backref='steps')
     temperature = IntegerField()
     duty = IntegerField()
     timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
 
     class Meta:
-        table_name = 'TemperatureDutyStep'
+        legacy_table_names = False
         database = INJECTOR.get(SqliteDatabase)

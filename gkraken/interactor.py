@@ -16,6 +16,7 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from typing import List, Tuple
 
 from injector import singleton, inject
 from rx import Observable
@@ -39,13 +40,13 @@ class GetStatusInteractor:
 
 
 @singleton
-class SetTemperatureDutyProfileInteractor:
+class SetSpeedProfileInteractor:
     @inject
     def __init__(self,
                  kraken_repository: KrakenRepository,
                  ) -> None:
         self.__kraken_repository = kraken_repository
 
-    def execute(self) -> Observable:
-        LOG.debug("SetTemperatureDutyProfileInteractor.execute()")
-        return Observable.defer(lambda: Observable.just(self.__kraken_repository.set_temperature_duty_profile()))
+    def execute(self, channel: str, profile: List[Tuple[int, int]]) -> Observable:
+        LOG.debug("SetSpeedProfileInteractor.execute()")
+        return Observable.defer(lambda: Observable.just(self.__kraken_repository.set_speed_profile(channel, profile)))

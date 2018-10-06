@@ -16,14 +16,16 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import threading
 from enum import Enum
-from typing import Optional
+from typing import Optional, List, Tuple
 
 from injector import singleton, inject
 from liquidctl.driver.kraken_two import KrakenTwoDriver
 
 from gkraken.model import Status
 from gkraken.di import INJECTOR
+from gkraken.util import synchronized_with_attr
 
 LOG = logging.getLogger(__name__)
 
@@ -32,6 +34,7 @@ LOG = logging.getLogger(__name__)
 class KrakenRepository:
     @inject
     def __init__(self) -> None:
+        self.lock = threading.RLock()
         self.__driver: Optional[KrakenTwoDriver] = None
         self.__load_driver()
 
@@ -41,6 +44,7 @@ class KrakenRepository:
             self.__driver.finalize()
             self.__driver = None
 
+    @synchronized_with_attr("lock")
     def get_status(self) -> Optional[Status]:
         self.__load_driver()
         if self.__driver:
@@ -57,6 +61,19 @@ class KrakenRepository:
                 self.cleanup()
 
         return None
+
+    @synchronized_with_attr("lock")
+    def set_speed_profile(self, channel: str, profile: List[Tuple[int, int]]) -> None:
+        self.__load_driver()
+        if self.__driver and profile:
+            try:
+                if len(profile) == 1:
+                    self.__driver.set_fixed_speed(channel, profile[0][1])
+                else:
+                    self.__driver.set_speed_profile(channel, profile)
+            except:
+                LOG.exception("Error getting the status")
+                self.cleanup()
 
     def __load_driver(self) -> None:
         if not self.__driver:
