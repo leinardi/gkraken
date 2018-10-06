@@ -16,6 +16,7 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from enum import Enum
 from typing import Optional
 
 from injector import singleton, inject
@@ -25,11 +26,6 @@ from gkraken.model import Status
 from gkraken.di import INJECTOR
 
 LOG = logging.getLogger(__name__)
-
-LIQUID_TEMPERATURE = 0
-FAN_RPM = 1
-PUMP_RPM = 2
-FIRMWARE_VERSION = 3
 
 
 @singleton
@@ -51,10 +47,10 @@ class KrakenRepository:
             try:
                 status = [v for k, v, u in self.__driver.get_status()]
                 return Status(
-                    status[LIQUID_TEMPERATURE],
-                    status[FAN_RPM],
-                    status[PUMP_RPM],
-                    status[FIRMWARE_VERSION]
+                    status[_StatusType.LIQUID_TEMPERATURE.value],
+                    status[_StatusType.FAN_RPM.value],
+                    status[_StatusType.PUMP_RPM.value],
+                    status[_StatusType.FIRMWARE_VERSION.value]
                 )
             except:
                 LOG.exception("Error getting the status")
@@ -70,3 +66,10 @@ class KrakenRepository:
                 self.__driver.initialize()
             else:
                 LOG.warning("KrakenTwoDriver not found!")
+
+
+class _StatusType(Enum):
+    LIQUID_TEMPERATURE = 0
+    FAN_RPM = 1
+    PUMP_RPM = 2
+    FIRMWARE_VERSION = 3

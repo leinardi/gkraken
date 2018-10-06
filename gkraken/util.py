@@ -17,18 +17,18 @@
 
 
 import logging
-from gkraken.model import TemperatureDutyProfileDbModel, TemperatureDutyStepDbModel, FAN_CHANNEL, PUMP_CHANNEL
+from gkraken.model import TemperatureDutyProfileDbModel, TemperatureDutyStepDbModel, ChannelType
 
 LOG = logging.getLogger(__name__)
 
 
 def load_db_default_data() -> None:
-    fan_silent = TemperatureDutyProfileDbModel.create(name="Silent", channel=FAN_CHANNEL, read_only=True)
-    fan_perf = TemperatureDutyProfileDbModel.create(name="Performance", channel=FAN_CHANNEL, read_only=True)
-    fan_fixed = TemperatureDutyProfileDbModel.create(name="Fixed", channel=FAN_CHANNEL, single_step=True)
-    pump_silent = TemperatureDutyProfileDbModel.create(name="Silent", channel=PUMP_CHANNEL, read_only=True)
-    pump_perf = TemperatureDutyProfileDbModel.create(name="Performance", channel=PUMP_CHANNEL, read_only=True)
-    pump_fixed = TemperatureDutyProfileDbModel.create(name="Fixed", channel=PUMP_CHANNEL, single_step=True)
+    fan_silent = TemperatureDutyProfileDbModel.create(name="Silent", channel=ChannelType.FAN.name, read_only=True)
+    fan_perf = TemperatureDutyProfileDbModel.create(name="Performance", channel=ChannelType.FAN.name, read_only=True)
+    fan_fixed = TemperatureDutyProfileDbModel.create(name="Fixed", channel=ChannelType.FAN.name, single_step=True)
+    pump_silent = TemperatureDutyProfileDbModel.create(name="Silent", channel=ChannelType.PUMP.name, read_only=True)
+    pump_perf = TemperatureDutyProfileDbModel.create(name="Performance", channel=ChannelType.PUMP.name, read_only=True)
+    pump_fixed = TemperatureDutyProfileDbModel.create(name="Fixed", channel=ChannelType.PUMP.name, single_step=True)
 
     # Fan Silent
     TemperatureDutyStepDbModel.create(

@@ -34,5 +34,18 @@ class GetStatusInteractor:
         self.__kraken_repository = kraken_repository
 
     def execute(self) -> Observable:
-        LOG.debug("GetStatusInteractor.refresh()")
+        LOG.debug("GetStatusInteractor.execute()")
         return Observable.defer(lambda: Observable.just(self.__kraken_repository.get_status()))
+
+
+@singleton
+class SetTemperatureDutyProfileInteractor:
+    @inject
+    def __init__(self,
+                 kraken_repository: KrakenRepository,
+                 ) -> None:
+        self.__kraken_repository = kraken_repository
+
+    def execute(self) -> Observable:
+        LOG.debug("SetTemperatureDutyProfileInteractor.execute()")
+        return Observable.defer(lambda: Observable.just(self.__kraken_repository.set_temperature_duty_profile()))

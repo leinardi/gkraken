@@ -25,9 +25,8 @@ from gi.repository import Gtk
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
-from matplotlib.lines import Line2D
 
-from gkraken.model import Status, TemperatureDutyProfileDbModel, FAN_CHANNEL, PUMP_CHANNEL
+from gkraken.model import Status, TemperatureDutyProfileDbModel, ChannelType
 from gkraken.presenter import Presenter, ViewInterface
 
 LOG = logging.getLogger(__name__)
@@ -66,8 +65,8 @@ class View(ViewInterface):
     def show(self) -> None:
         self.__presenter.on_start()
 
-    def show_add_temperature_duty_profile_dialog(self, channel: int) -> None:
-        LOG.debug("view show_add_temperature_duty_profile_dialog " + str(channel))
+    def show_add_temperature_duty_profile_dialog(self, channel: ChannelType) -> None:
+        LOG.debug("view show_add_temperature_duty_profile_dialog " + channel.name)
 
     def refresh_content_header_bar_title(self) -> None:
         #     contant_stack = self.__builder.get_object("content_stack")

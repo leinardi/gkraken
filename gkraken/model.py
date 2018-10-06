@@ -16,14 +16,13 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 # pylint: disable=too-many-locals,too-many-instance-attributes
+from enum import Enum
+
 from peewee import Model, CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, Check, \
     ForeignKeyField, BooleanField
 from playhouse.sqlite_ext import AutoIncrementField
 
 from gkraken.di import INJECTOR
-
-FAN_CHANNEL = 'FAN'
-PUMP_CHANNEL = 'PUMP'
 
 
 class Status:
@@ -39,9 +38,15 @@ class Status:
         self.firmware_version: str = firmware_version
 
 
+class ChannelType(Enum):
+    FAN = 'FAN'
+    PUMP = 'PUMP'
+
+
 class TemperatureDutyProfileDbModel(Model):
     id = AutoIncrementField()
-    channel = CharField(constraints=[Check("channel='%s' OR channel='%s'" % (FAN_CHANNEL, PUMP_CHANNEL))])
+    channel = CharField(constraints=[Check("channel='%s' OR channel='%s'"
+                                           % (ChannelType.FAN.name, ChannelType.PUMP.name))])
     name = CharField()
     read_only = BooleanField(default=False)
     single_step = BooleanField(default=False)

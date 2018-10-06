@@ -27,12 +27,11 @@ from rx.concurrency.schedulerbase import SchedulerBase
 from rx.disposables import CompositeDisposable
 
 from gkraken.interactor import GetStatusInteractor
-from gkraken.model import Status, TemperatureDutyProfileDbModel, FAN_CHANNEL, PUMP_CHANNEL
+from gkraken.model import Status, TemperatureDutyProfileDbModel, ChannelType
 
-REFRESH_INTERVAL_IN_MS = 3000
-ADD_NEW_FAN_PROFILE_INDEX = -10
-ADD_NEW_PUMP_PROFILE_INDEX = -10
 LOG = logging.getLogger(__name__)
+_REFRESH_INTERVAL_IN_MS = 3000
+_ADD_NEW_PROFILE_INDEX = -10
 
 
 class ViewInterface:
@@ -54,7 +53,7 @@ class ViewInterface:
     def refresh_content_header_bar_title(self) -> None:
         raise NotImplementedError()
 
-    def show_add_temperature_duty_profile_dialog(self, channel: int) -> None:
+    def show_add_temperature_duty_profile_dialog(self, channel: ChannelType) -> None:
         raise NotImplementedError()
 
 
@@ -81,7 +80,7 @@ class Presenter:
         LOG.debug("start refresh")
         self.__composite_disposable \
             .add(Observable
-                 .interval(REFRESH_INTERVAL_IN_MS, scheduler=scheduler)
+                 .interval(_REFRESH_INTERVAL_IN_MS, scheduler=scheduler)
                  .start_with(0)
                  .subscribe_on(scheduler)
                  .flat_map(lambda _: self.__get_status())
@@ -92,17 +91,17 @@ class Presenter:
 
     def __refresh_fan_pump_profiles(self) -> None:
         fan_query = TemperatureDutyProfileDbModel.select() \
-            .where(TemperatureDutyProfileDbModel.channel == FAN_CHANNEL)
+            .where(TemperatureDutyProfileDbModel.channel == ChannelType.FAN.value)
 
         data = [(p.id, p.name) for p in fan_query]
-        data.append((ADD_NEW_FAN_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
+        data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
         self.view.refresh_fan_profile_combobox(data)
 
         pump_query = TemperatureDutyProfileDbModel.select() \
-            .where(TemperatureDutyProfileDbModel.channel == PUMP_CHANNEL)
+            .where(TemperatureDutyProfileDbModel.channel == ChannelType.PUMP.value)
 
         data = [(p.id, p.name) for p in pump_query]
-        data.append((ADD_NEW_PUMP_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
+        data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
         self.view.refresh_pump_profile_combobox(data)
 
     def on_stack_visible_child_changed(self, *_: Any) -> None:
@@ -110,19 +109,25 @@ class Presenter:
 
     def on_fan_profile_selected(self, widget: Any, *_: Any) -> None:
         profile_id = widget.get_model()[widget.get_active()][0]
-        if profile_id == ADD_NEW_FAN_PROFILE_INDEX:
-            self.view.show_add_temperature_duty_profile_dialog(FAN_CHANNEL)
+        if profile_id == _ADD_NEW_PROFILE_INDEX:
+            self.view.show_add_temperature_duty_profile_dialog(ChannelType.FAN)
         else:
             self.__fan_profile_selected = TemperatureDutyProfileDbModel.get(id=profile_id)
             self.view.refresh_fan_chart(self.__fan_profile_selected)
 
     def on_pump_profile_selected(self, widget: Any, *_: Any) -> None:
         profile_id = widget.get_model()[widget.get_active()][0]
-        if profile_id == ADD_NEW_PUMP_PROFILE_INDEX:
-            self.view.show_add_temperature_duty_profile_dialog(PUMP_CHANNEL)
+        if profile_id == _ADD_NEW_PROFILE_INDEX:
+            self.view.show_add_temperature_duty_profile_dialog(ChannelType.PUMP)
         else:
             self.__pump_profile_selected = TemperatureDutyProfileDbModel.get(id=profile_id)
             self.view.refresh_pump_chart(self.__pump_profile_selected)
+
+    def on_fab_apply_button_clicked(self, *_: Any) -> None:
+        pass
+
+    def on_pump_apply_button_clicked(self, *_: Any) -> None:
+        pass
 
     # @staticmethod
     # def __log_exception_return_system_info_observable(ex: Exception) -> Observable:
