@@ -16,6 +16,15 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 # pylint: disable=too-many-locals,too-many-instance-attributes
+from peewee import Model, CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, Check, \
+    ForeignKeyField, BooleanField
+from playhouse.sqlite_ext import AutoIncrementField
+
+from gkraken.di import INJECTOR
+
+FAN_CHANNEL = 'FAN'
+PUMP_CHANNEL = 'PUMP'
+
 
 class Status:
     def __init__(self,
@@ -28,3 +37,27 @@ class Status:
         self.fan_rpm: int = fan_rpm
         self.pump_rpm: int = pump_rpm
         self.firmware_version: str = firmware_version
+
+
+class TemperatureDutyProfileDbModel(Model):
+    id = AutoIncrementField()
+    channel = CharField(constraints=[Check("channel='%s' OR channel='%s'" % (FAN_CHANNEL, PUMP_CHANNEL))])
+    name = CharField()
+    read_only = BooleanField(default=False)
+    single_step = BooleanField(default=False)
+    timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+
+    class Meta:
+        table_name = 'TemperatureDutyProfile'
+        database = INJECTOR.get(SqliteDatabase)
+
+
+class TemperatureDutyStepDbModel(Model):
+    profile = ForeignKeyField(TemperatureDutyProfileDbModel, backref='steps')
+    temperature = IntegerField()
+    duty = IntegerField()
+    timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+
+    class Meta:
+        table_name = 'TemperatureDutyStep'
+        database = INJECTOR.get(SqliteDatabase)

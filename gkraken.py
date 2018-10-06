@@ -54,18 +54,18 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 
 
-def __cleanup():
+def __cleanup() -> None:
     LOG.debug("cleanup")
     composite_disposable: CompositeDisposable = INJECTOR.get(CompositeDisposable)
     composite_disposable.dispose()
     database = INJECTOR.get(SqliteDatabase)
     database.close()
-    krakenRepository = INJECTOR.get(KrakenRepository)
-    krakenRepository.cleanup()
+    kraken_repository = INJECTOR.get(KrakenRepository)
+    kraken_repository.cleanup()
     # futures.thread._threads_queues.clear()
 
 
-def handle_exception(exc_type, exc_value, exc_traceback):
+def handle_exception(exc_type, exc_value, exc_traceback) -> None:
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return

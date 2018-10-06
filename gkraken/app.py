@@ -23,7 +23,9 @@ from gi.repository import Gtk, Gio, GLib
 from injector import inject
 from peewee import SqliteDatabase
 
+from gkraken.model import TemperatureDutyProfileDbModel, TemperatureDutyStepDbModel
 from gkraken.presenter import Presenter
+from gkraken.util import load_db_default_data
 from gkraken.view import View
 
 LOG = logging.getLogger(__name__)
@@ -45,6 +47,11 @@ class Application(Gtk.Application):
                          **kwargs)
 
         database.connect()
+        database.create_tables([TemperatureDutyProfileDbModel, TemperatureDutyStepDbModel])
+
+        if TemperatureDutyProfileDbModel.select().count() == 0:
+            load_db_default_data()
+
         self.add_main_option("test", ord("t"), GLib.OptionFlags.NONE,
                              GLib.OptionArg.NONE, "Command line test", None)
         self.__view = view
