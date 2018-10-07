@@ -53,6 +53,9 @@ class ViewInterface:
     def set_apply_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
         raise NotImplementedError()
 
+    def set_statusbar_text(self, text: str) -> None:
+        raise NotImplementedError()
+
     def refresh_content_header_bar_title(self) -> None:
         raise NotImplementedError()
 
@@ -154,8 +157,9 @@ class Presenter:
             .add(observable
                  .subscribe_on(self.__scheduler)
                  .observe_on(GtkScheduler())
-                 .subscribe(on_next=lambda _: LOG.debug("Speed set!"),
-                            on_error=lambda e: LOG.exception("Set speed error: %s", str(e))))
+                 .subscribe(on_next=lambda _: self.view.set_statusbar_text('Cooling profile applied'),
+                            on_error=lambda e: (LOG.exception("Set cooling error: %s", str(e)),
+                                                self.view.set_statusbar_text('Error applying speed profile!'))))
 
     def __get_status(self) -> Observable:
         return self.__get_status_interactor.execute()  # \

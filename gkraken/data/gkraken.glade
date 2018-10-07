@@ -215,7 +215,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                               <object class="GtkLabel" id="cooling_fan_speed">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;XXX&lt;/span&gt; %</property>
+                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; %</property>
                                 <property name="use_markup">True</property>
                                 <property name="justify">center</property>
                                 <property name="single_line_mode">True</property>
@@ -244,7 +244,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                               <object class="GtkLabel" id="cooling_fan_rpm">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;XXXX&lt;/span&gt; RPM</property>
+                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; RPM</property>
                                 <property name="use_markup">True</property>
                                 <property name="justify">center</property>
                                 <property name="single_line_mode">True</property>
@@ -311,7 +311,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                               <object class="GtkLabel" id="cooling_liquid_temp">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;XX&lt;/span&gt; °C</property>
+                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; °C</property>
                                 <property name="use_markup">True</property>
                                 <property name="justify">center</property>
                                 <property name="single_line_mode">True</property>
@@ -340,7 +340,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                               <object class="GtkLabel" id="cooling_pump_rpm">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;XXXX&lt;/span&gt; RPM</property>
+                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; RPM</property>
                                 <property name="use_markup">True</property>
                                 <property name="justify">center</property>
                                 <property name="single_line_mode">True</property>
@@ -669,6 +669,17 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
           <object class="GtkStatusbar" id="statusbar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <child>
+              <object class="GtkLabel" id="firmware_version">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>

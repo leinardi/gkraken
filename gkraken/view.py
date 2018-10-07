@@ -26,6 +26,7 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
+from gkraken.conf import APP_PACKAGE_NAME
 from gkraken.model import Status, SpeedProfile, ChannelType
 from gkraken.presenter import Presenter, ViewInterface
 
@@ -41,7 +42,7 @@ class View(ViewInterface):
                  presenter: Presenter,
                  builder: Gtk.Builder,
                  ) -> None:
-        LOG.debug("init View")
+        LOG.debug('init View')
         self.__presenter: Presenter = presenter
         self.__presenter.view = self
         self.__builder: Gtk.Builder = builder
@@ -49,20 +50,22 @@ class View(ViewInterface):
 
     def __init_widgets(self) -> None:
         # self.refresh_content_header_bar_title()
-        self.__statusbar: Gtk.Statusbar = self.__builder.get_object("statusbar")
-        self.__cooling_fan_speed: Gtk.Label = self.__builder.get_object("cooling_fan_speed")
-        self.__cooling_fan_rpm: Gtk.Label = self.__builder.get_object("cooling_fan_rpm")
-        self.__cooling_liquid_temp: Gtk.Label = self.__builder.get_object("cooling_liquid_temp")
-        self.__cooling_pump_rpm: Gtk.Label = self.__builder.get_object("cooling_pump_rpm")
-        self.__cooling_fan_speed.set_markup("<span size=\"xx-large\">-</span> %")
-        self.__cooling_fan_combobox: Gtk.ComboBox = self.__builder.get_object("cooling_fan_profile_combobox")
-        self.__cooling_fan_liststore: Gtk.ListStore = self.__builder.get_object("cooling_fan_profile_liststore")
-        self.__cooling_pump_combobox: Gtk.ComboBox = self.__builder.get_object("cooling_pump_profile_combobox")
-        self.__cooling_pump_liststore: Gtk.ListStore = self.__builder.get_object("cooling_pump_profile_liststore")
-        cooling_fan_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object("cooling_fan_scrolled_window")
-        cooling_pump_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object("cooling_pump_scrolled_window")
-        self.__cooling_fan_apply_button: Gtk.Button = self.__builder.get_object("cooling_fan_apply_button")
-        self.__cooling_pump_apply_button: Gtk.Button = self.__builder.get_object("cooling_pump_apply_button")
+        self.__statusbar: Gtk.Statusbar = self.__builder.get_object('statusbar')
+        self.__context = self.__statusbar.get_context_id(APP_PACKAGE_NAME)
+        self.__cooling_fan_speed: Gtk.Label = self.__builder.get_object('cooling_fan_speed')
+        self.__cooling_fan_rpm: Gtk.Label = self.__builder.get_object('cooling_fan_rpm')
+        self.__cooling_liquid_temp: Gtk.Label = self.__builder.get_object('cooling_liquid_temp')
+        self.__cooling_pump_rpm: Gtk.Label = self.__builder.get_object('cooling_pump_rpm')
+        self.__firmware_version: Gtk.Label = self.__builder.get_object('firmware_version')
+        self.__cooling_fan_speed.set_markup('<span size="xx-large">-</span> %')
+        self.__cooling_fan_combobox: Gtk.ComboBox = self.__builder.get_object('cooling_fan_profile_combobox')
+        self.__cooling_fan_liststore: Gtk.ListStore = self.__builder.get_object('cooling_fan_profile_liststore')
+        self.__cooling_pump_combobox: Gtk.ComboBox = self.__builder.get_object('cooling_pump_profile_combobox')
+        self.__cooling_pump_liststore: Gtk.ListStore = self.__builder.get_object('cooling_pump_profile_liststore')
+        cooling_fan_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object('cooling_fan_scrolled_window')
+        cooling_pump_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object('cooling_pump_scrolled_window')
+        self.__cooling_fan_apply_button: Gtk.Button = self.__builder.get_object('cooling_fan_apply_button')
+        self.__cooling_pump_apply_button: Gtk.Button = self.__builder.get_object('cooling_pump_apply_button')
         self.__init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
 
     def show(self) -> None:
@@ -70,6 +73,10 @@ class View(ViewInterface):
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
         LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
+
+    def set_statusbar_text(self, text: str) -> None:
+        self.__statusbar.remove_all(self.__context)
+        self.__statusbar.push(self.__context, text)
 
     def refresh_content_header_bar_title(self) -> None:
         #     contant_stack = self.__builder.get_object("content_stack")
@@ -81,11 +88,13 @@ class View(ViewInterface):
         pass
 
     def refresh_status(self, status: Optional[Status]) -> None:
-        LOG.debug("view status")
+        LOG.debug('view status')
         if status:
             self.__cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
             self.__cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
             self.__cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
+            self.__firmware_version.set_markup(
+                "<span alpha='66%%'>firmware version %s</span>" % status.firmware_version)
 
     def refresh_fan_chart(self, profile: SpeedProfile) -> None:
         self.__plot_fan_chart(self.__get_speed_profile_data(profile))
@@ -120,13 +129,13 @@ class View(ViewInterface):
         elif channel == ChannelType.PUMP:
             self.__cooling_pump_apply_button.set_sensitive(enabled)
         else:
-            raise ValueError("Unknown channel: " + channel.name)
+            raise ValueError('Unknown channel: ' + channel.name)
 
     # pylint: disable=attribute-defined-outside-init
     def __init_plot_charts(self,
                            fan_scrolled_window: Gtk.ScrolledWindow,
                            pump_scrolled_window: Gtk.ScrolledWindow) -> None:
-        self.__fan_figure = Figure(figsize=(8, 6), dpi=72, facecolor="#00000000")
+        self.__fan_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
         self.__fan_canvas = FigureCanvas(self.__fan_figure)  # a Gtk.DrawingArea+
         self.__fan_axis = self.__fan_figure.add_subplot(111)
         self.__fan_line, = self.__init_plot_chart(
@@ -136,7 +145,7 @@ class View(ViewInterface):
             self.__fan_axis
         )
 
-        self.__pump_figure = Figure(figsize=(8, 6), dpi=72, facecolor="#00000000")
+        self.__pump_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
         self.__pump_canvas = FigureCanvas(self.__pump_figure)  # a Gtk.DrawingArea+
         self.__pump_axis = self.__pump_figure.add_subplot(111)
         self.__pump_line, = self.__init_plot_chart(
@@ -153,7 +162,7 @@ class View(ViewInterface):
                           axis: Axes) -> Any:
         axis.grid(True, linestyle=':')
         axis.margins(x=0, y=0.05)
-        axis.set_facecolor("#00000000")
+        axis.set_facecolor('#00000000')
         axis.set_xlabel('Liquid temperature [°C]')
         axis.set_ylabel('Fan speed [%]')
         figure.subplots_adjust(top=1)
