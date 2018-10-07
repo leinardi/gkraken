@@ -32,6 +32,7 @@ from gkraken.presenter import Presenter, ViewInterface
 LOG = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-instance-attributes
 @singleton
 class View(ViewInterface):
 
@@ -68,7 +69,7 @@ class View(ViewInterface):
         self.__presenter.on_start()
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
-        LOG.debug("view show_add_speed_profile_dialog " + channel.name)
+        LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
 
     def refresh_content_header_bar_title(self) -> None:
         #     contant_stack = self.__builder.get_object("content_stack")
@@ -92,7 +93,8 @@ class View(ViewInterface):
     def refresh_pump_chart(self, profile: SpeedProfile) -> None:
         self.__plot_pump_chart(self.__get_speed_profile_data(profile))
 
-    def __get_speed_profile_data(self, profile: SpeedProfile) -> Dict[int, int]:
+    @staticmethod
+    def __get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
         data = {p.temperature: p.duty for p in profile.steps}
         if profile.single_step:
             data.update({60: profile.steps[0].duty})
@@ -101,14 +103,14 @@ class View(ViewInterface):
         return data
 
     def refresh_fan_profile_combobox(self, data: List[Tuple[int, str]]) -> None:
-        for t in data:
-            self.__cooling_fan_liststore.append([t[0], t[1]])
+        for item in data:
+            self.__cooling_fan_liststore.append([item[0], item[1]])
         self.__cooling_fan_combobox.set_model(self.__cooling_fan_liststore)
         self.__cooling_fan_combobox.set_sensitive(len(self.__cooling_fan_liststore) > 1)
 
     def refresh_pump_profile_combobox(self, data: List[Tuple[int, str]]) -> None:
-        for t in data:
-            self.__cooling_pump_liststore.append([t[0], t[1]])
+        for item in data:
+            self.__cooling_pump_liststore.append([item[0], item[1]])
         self.__cooling_pump_combobox.set_model(self.__cooling_pump_liststore)
         self.__cooling_pump_combobox.set_sensitive(len(self.__cooling_pump_liststore) > 1)
 
@@ -120,6 +122,7 @@ class View(ViewInterface):
         else:
             raise ValueError("Unknown channel: " + channel.name)
 
+    # pylint: disable=attribute-defined-outside-init
     def __init_plot_charts(self,
                            fan_scrolled_window: Gtk.ScrolledWindow,
                            pump_scrolled_window: Gtk.ScrolledWindow) -> None:
@@ -143,8 +146,8 @@ class View(ViewInterface):
             self.__pump_axis
         )
 
-    def __init_plot_chart(self,
-                          fan_scrolled_window: Gtk.ScrolledWindow,
+    @staticmethod
+    def __init_plot_chart(fan_scrolled_window: Gtk.ScrolledWindow,
                           figure: Figure,
                           canvas: FigureCanvas,
                           axis: Axes) -> Any:

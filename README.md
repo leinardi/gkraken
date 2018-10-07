@@ -2,21 +2,22 @@
 ## Dependencies
 ### PIP
 * injector
-* rx
-* peewee
-* matplotlib
 * liquidctl
-
+* matplotlib
+* peewee
+* pyxdg
+* rx
 ## How to run it on Ubuntu 18.04:
 
 ```
 sudo apt install python3-pip
 git clone https://gitlab.com/leinardi/gkraken.git
-pip3 install peewee
-pip3 install rx
 pip3 install injector
-pip3 install matplotlib
 pip3 install liquidctl
+pip3 install matplotlib
+pip3 install peewee
+pip3 install pyxdg
+pip3 install rx
 ca gkraken
 ./gkraken.py
 ```

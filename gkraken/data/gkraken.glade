@@ -23,6 +23,11 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
   <requires lib="gtk+" version="3.20"/>
   <!-- interface-license-type gplv3 -->
   <!-- interface-name GSI -->
+  <object class="GtkImage" id="cooling_fan_edit_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-edit</property>
+  </object>
   <object class="GtkListStore" id="cooling_fan_profile_liststore">
     <columns>
       <!-- column-name id -->
@@ -31,6 +36,11 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkImage" id="cooling_pump_edit_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-edit</property>
+  </object>
   <object class="GtkListStore" id="cooling_pump_profile_liststore">
     <columns>
       <!-- column-name id -->
@@ -38,16 +48,6 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
       <!-- column-name name -->
       <column type="gchararray"/>
     </columns>
-  </object>
-  <object class="GtkImage" id="edit_button_image">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-edit</property>
-  </object>
-  <object class="GtkImage" id="edit_button_image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-edit</property>
   </object>
   <object class="GtkPopoverMenu" id="popovermenu1">
     <property name="can_focus">False</property>
@@ -101,11 +101,13 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
       </object>
       <packing>
         <property name="submenu">main</property>
+        <property name="position">1</property>
       </packing>
     </child>
   </object>
   <object class="GtkApplicationWindow" id="application_window">
     <property name="can_focus">False</property>
+    <property name="icon_name">utilities-system-monitor</property>
     <property name="gravity">north</property>
     <child type="titlebar">
       <object class="GtkBox">
@@ -429,11 +431,11 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="cooling_fan_edit_button">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="image">edit_button_image</property>
+                                    <property name="image">cooling_fan_edit_image</property>
                                     <property name="always_show_image">True</property>
                                   </object>
                                   <packing>
@@ -544,11 +546,11 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="cooling_pump_edit_button">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="image">edit_button_image1</property>
+                                    <property name="image">cooling_pump_edit_image</property>
                                     <property name="always_show_image">True</property>
                                   </object>
                                   <packing>

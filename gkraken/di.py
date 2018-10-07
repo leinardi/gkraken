@@ -25,6 +25,8 @@ from liquidctl.driver.kraken_two import KrakenTwoDriver
 from peewee import SqliteDatabase
 from rx.disposables import CompositeDisposable
 
+from gkraken.conf import APP_PACKAGE_NAME, get_data_path, APP_UI_NAME, get_config_path, APP_DB_NAME
+
 LOG = logging.getLogger(__name__)
 
 
@@ -35,8 +37,8 @@ class ProviderModule(Module):
     def provide_builder(self) -> Gtk.Builder:
         LOG.debug("provide Gtk.Builder")
         builder = Gtk.Builder()
-        builder.set_translation_domain("gkraken")
-        builder.add_from_file("data/gkraken.glade")
+        builder.set_translation_domain(APP_PACKAGE_NAME)
+        builder.add_from_file(get_data_path(APP_UI_NAME))
         return builder
 
     @singleton
@@ -49,7 +51,7 @@ class ProviderModule(Module):
     @provider
     def provide_database(self) -> SqliteDatabase:
         LOG.debug("provide CompositeDisposable")
-        return SqliteDatabase('data/gkraken.db')
+        return SqliteDatabase(get_config_path(APP_DB_NAME))
 
     @provider
     def provide_kraken_two_driver(self) -> Optional[KrakenTwoDriver]:

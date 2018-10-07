@@ -19,16 +19,16 @@
 
 
 from os.path import abspath, join, dirname
+from peewee import SqliteDatabase
+from rx.disposables import CompositeDisposable
 import locale
 import gettext
 import logging
 import sys
 import gi
-from gi.repository import GLib
-from peewee import SqliteDatabase
-from rx.disposables import CompositeDisposable
 
 gi.require_version('Gtk', '3.0')
+from gi.repository import GLib
 from gkraken.repository import KrakenRepository
 from gkraken.di import INJECTOR
 from gkraken.app import Application
@@ -77,12 +77,17 @@ def handle_exception(exc_type, exc_value, exc_traceback) -> None:
 
 sys.excepthook = handle_exception
 
-if __name__ == "__main__":
+
+def main() -> int:
     LOG.debug("main")
     import signal
 
-    APPLICATION: Application = INJECTOR.get(Application)
-    GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, APPLICATION.quit)
-    EXIT_STATUS = APPLICATION.run(sys.argv)
+    application: Application = INJECTOR.get(Application)
+    GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, application.quit)
+    exit_status = application.run(sys.argv)
     __cleanup()
-    sys.exit(EXIT_STATUS)
+    return sys.exit(exit_status)
+
+
+if __name__ == "__main__":
+    main()

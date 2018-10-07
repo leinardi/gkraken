@@ -96,8 +96,7 @@ class Presenter:
 
     @staticmethod
     def __get_profile_list(channel: ChannelType) -> List[Tuple[int, str]]:
-        query = SpeedProfile.select().where(SpeedProfile.channel == channel.value)
-        return [(p.id, p.name) for p in query]
+        return [(p.id, p.name) for p in SpeedProfile.select().where(SpeedProfile.channel == channel.value)]
 
     def __refresh_speed_profiles(self) -> None:
         data = self.__get_profile_list(ChannelType.FAN)

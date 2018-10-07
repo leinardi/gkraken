@@ -36,7 +36,6 @@ class KrakenRepository:
     def __init__(self) -> None:
         self.lock = threading.RLock()
         self.__driver: Optional[KrakenTwoDriver] = None
-        self.__load_driver()
 
     def cleanup(self) -> None:
         LOG.debug("KrakenRepository cleanup")
@@ -56,10 +55,10 @@ class KrakenRepository:
                     status[_StatusType.PUMP_RPM.value],
                     status[_StatusType.FIRMWARE_VERSION.value]
                 )
+            # pylint: disable=bare-except
             except:
                 LOG.exception("Error getting the status")
                 self.cleanup()
-
         return None
 
     @synchronized_with_attr("lock")
@@ -71,6 +70,7 @@ class KrakenRepository:
                     self.__driver.set_fixed_speed(channel, profile[0][1])
                 else:
                     self.__driver.set_speed_profile(channel, profile)
+            # pylint: disable=bare-except
             except:
                 LOG.exception("Error getting the status")
                 self.cleanup()

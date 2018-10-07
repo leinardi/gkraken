@@ -23,6 +23,7 @@ from gi.repository import Gtk, Gio, GLib
 from injector import inject
 from peewee import SqliteDatabase
 
+from gkraken.conf import APP_NAME, APP_ID
 from gkraken.model import SpeedProfile, SpeedStep
 from gkraken.presenter import Presenter
 from gkraken.util import load_db_default_data
@@ -41,8 +42,8 @@ class Application(Gtk.Application):
                  *args: Any,
                  **kwargs: Any) -> None:
         LOG.debug("init Application")
-        GLib.set_application_name(_("GKraken"))
-        super().__init__(*args, application_id="com.leinardi.gkraken",
+        GLib.set_application_name(_(APP_NAME))
+        super().__init__(*args, application_id=APP_ID,
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
                          **kwargs)
 
@@ -64,7 +65,6 @@ class Application(Gtk.Application):
             self.__builder.connect_signals(self.__presenter)
             self.__window: Gtk.ApplicationWindow = self.__builder.get_object("application_window")
             self.__window.set_application(self)
-            self.__window.set_icon_from_file('data/gkraken.png')  # TODO provide multiple res
             self.__window.show_all()
             self.__view.show()
         self.__window.present()
