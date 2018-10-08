@@ -16,11 +16,12 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from injector import singleton, inject
 from rx import Observable
 
+from gkraken.conf import SETTINGS_DEFAULTS
 from gkraken.model import Setting
 from gkraken.repository import KrakenRepository
 
@@ -48,9 +49,9 @@ class SetSpeedProfileInteractor:
                  ) -> None:
         self.__kraken_repository = kraken_repository
 
-    def execute(self, channel: str, profile: List[Tuple[int, int]]) -> Observable:
+    def execute(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> Observable:
         LOG.debug("SetSpeedProfileInteractor.execute()")
-        return Observable.defer(lambda: Observable.just(self.__kraken_repository.set_speed_profile(channel, profile)))
+        return Observable.defer(lambda: Observable.just(self.__kraken_repository.set_speed_profile(channel_value, profile_data)))
 
 
 @singleton
@@ -60,12 +61,13 @@ class SettingsInteractor:
         pass
 
     @staticmethod
-    def get_bool(key: str, default: bool) -> bool:
+    def get_bool(key: str, default: Optional[bool] = None) -> bool:
+        if default is None:
+            default = SETTINGS_DEFAULTS[key]
         setting: Setting = Setting.get_or_none(key=key)
         if setting is not None:
             return bool(setting.value)
-        else:
-            return default
+        return bool(default)
 
     @staticmethod
     def set_bool(key: str, value: bool) -> None:
@@ -77,12 +79,13 @@ class SettingsInteractor:
             Setting.create(key=key, value=value)
 
     @staticmethod
-    def get_str(key: str, default: str) -> str:
+    def get_str(key: str, default: Optional[str] = None) -> str:
+        if default is None:
+            default = SETTINGS_DEFAULTS[key]
         setting: Setting = Setting.get_or_none(key=key)
         if setting is not None:
             return str(setting.value.decode("utf-8"))
-        else:
-            return default
+        return str(default)
 
     @staticmethod
     def set_str(key: str, value: str) -> None:

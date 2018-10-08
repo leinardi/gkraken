@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 import os
+from typing import Dict, Any
 
 from xdg import BaseDirectory
 
@@ -28,6 +29,12 @@ APP_UI_NAME = APP_PACKAGE_NAME + ".glade"
 APP_SOURCE_URL = 'https://gitlab.com/leinardi/gkraken'
 APP_AUTHOR = 'Roberto Leinardi'
 APP_AUTHOR_EMAIL = 'roberto@leinardi.com'
+
+SETTINGS_DEFAULTS: Dict[str, Any] = {
+    'settings_load_last_profile': False,
+    'settings_show_app_indicator': True,
+    'settings_app_indicator_show_water_temp': True,
+}
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 

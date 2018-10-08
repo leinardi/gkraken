@@ -62,14 +62,14 @@ class KrakenRepository:
         return None
 
     @synchronized_with_attr("lock")
-    def set_speed_profile(self, channel: str, profile: List[Tuple[int, int]]) -> None:
+    def set_speed_profile(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> None:
         self.__load_driver()
-        if self.__driver and profile:
+        if self.__driver and profile_data:
             try:
-                if len(profile) == 1:
-                    self.__driver.set_fixed_speed(channel, profile[0][1])
+                if len(profile_data) == 1:
+                    self.__driver.set_fixed_speed(channel_value, profile_data[0][1])
                 else:
-                    self.__driver.set_speed_profile(channel, profile)
+                    self.__driver.set_speed_profile(channel_value, profile_data)
             # pylint: disable=bare-except
             except:
                 LOG.exception("Error getting the status")

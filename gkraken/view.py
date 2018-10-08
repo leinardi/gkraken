@@ -76,8 +76,7 @@ class View(ViewInterface):
         LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
 
     def show_settings_dialog(self) -> None:
-        # self.__settings_dialog.show()
-        pass
+        self.__settings_dialog.show()
 
     def hide_settings_dialog(self) -> None:
         self.__settings_dialog.hide()
@@ -101,14 +100,15 @@ class View(ViewInterface):
             self.__cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
             self.__cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
             self.__cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
-            self.__firmware_version.set_markup(
-                "<span alpha='66%%'>firmware version %s</span>" % status.firmware_version)
+            self.__firmware_version.set_label("firmware version %s" % status.firmware_version)
 
-    def refresh_fan_chart(self, profile: SpeedProfile) -> None:
-        self.__plot_fan_chart(self.__get_speed_profile_data(profile))
-
-    def refresh_pump_chart(self, profile: SpeedProfile) -> None:
-        self.__plot_pump_chart(self.__get_speed_profile_data(profile))
+    def refresh_chart(self, profile: SpeedProfile) -> None:
+        if profile.channel == ChannelType.FAN.value:
+            self.__plot_fan_chart(self.__get_speed_profile_data(profile))
+        elif profile.channel == ChannelType.PUMP.value:
+            self.__plot_pump_chart(self.__get_speed_profile_data(profile))
+        else:
+            raise ValueError("Unknown channel: %s" % profile.channel)
 
     @staticmethod
     def __get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
@@ -119,25 +119,32 @@ class View(ViewInterface):
             data.update({60: 100})
         return data
 
-    def refresh_fan_profile_combobox(self, data: List[Tuple[int, str]]) -> None:
-        for item in data:
-            self.__cooling_fan_liststore.append([item[0], item[1]])
-        self.__cooling_fan_combobox.set_model(self.__cooling_fan_liststore)
-        self.__cooling_fan_combobox.set_sensitive(len(self.__cooling_fan_liststore) > 1)
-
-    def refresh_pump_profile_combobox(self, data: List[Tuple[int, str]]) -> None:
-        for item in data:
-            self.__cooling_pump_liststore.append([item[0], item[1]])
-        self.__cooling_pump_combobox.set_model(self.__cooling_pump_liststore)
-        self.__cooling_pump_combobox.set_sensitive(len(self.__cooling_pump_liststore) > 1)
+    def refresh_profile_combobox(self, channel: ChannelType, data: List[Tuple[int, str]],
+                                 active: Optional[int]) -> None:
+        if channel is ChannelType.FAN:
+            for item in data:
+                self.__cooling_fan_liststore.append([item[0], item[1]])
+            self.__cooling_fan_combobox.set_model(self.__cooling_fan_liststore)
+            self.__cooling_fan_combobox.set_sensitive(len(self.__cooling_fan_liststore) > 1)
+            if active is not None:
+                self.__cooling_fan_combobox.set_active(active)
+        elif channel is ChannelType.PUMP:
+            for item in data:
+                self.__cooling_pump_liststore.append([item[0], item[1]])
+            self.__cooling_pump_combobox.set_model(self.__cooling_pump_liststore)
+            self.__cooling_pump_combobox.set_sensitive(len(self.__cooling_pump_liststore) > 1)
+            if active is not None:
+                self.__cooling_pump_combobox.set_active(active)
+        else:
+            raise ValueError("Unknown channel: %s" % channel.name)
 
     def set_apply_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
-        if channel == ChannelType.FAN:
+        if channel is ChannelType.FAN:
             self.__cooling_fan_apply_button.set_sensitive(enabled)
-        elif channel == ChannelType.PUMP:
+        elif channel is ChannelType.PUMP:
             self.__cooling_pump_apply_button.set_sensitive(enabled)
         else:
-            raise ValueError('Unknown channel: ' + channel.name)
+            raise ValueError("Unknown channel: %s" % channel.name)
 
     # pylint: disable=attribute-defined-outside-init
     def __init_plot_charts(self,
@@ -162,6 +169,12 @@ class View(ViewInterface):
             self.__pump_canvas,
             self.__pump_axis
         )
+
+    def refresh_settings(self, settings: Dict[str, Any]) -> None:
+        for key, value in settings.items():
+            if type(value) is bool:
+                switch: Gtk.Switch = self.__builder.get_object(key + '_switch')
+                switch.set_active(value)
 
     @staticmethod
     def __init_plot_chart(fan_scrolled_window: Gtk.ScrolledWindow,

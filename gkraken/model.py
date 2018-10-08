@@ -68,6 +68,17 @@ class SpeedStep(Model):
         database = INJECTOR.get(SqliteDatabase)
 
 
+class CurrentSpeedProfile(Model):
+    channel = CharField(primary_key=True, constraints=[Check("channel='%s' OR channel='%s'"
+                                                             % (ChannelType.FAN.value, ChannelType.PUMP.value))])
+    profile = ForeignKeyField(SpeedProfile, unique=True)
+    timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+
+    class Meta:
+        legacy_table_names = False
+        database = INJECTOR.get(SqliteDatabase)
+
+
 class Setting(Model):
     key = CharField(primary_key=True)
     value = BlobField()
