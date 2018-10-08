@@ -26,7 +26,7 @@ from rx.concurrency import GtkScheduler, ThreadPoolScheduler
 from rx.concurrency.schedulerbase import SchedulerBase
 from rx.disposables import CompositeDisposable
 
-from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor
+from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor
 from gkraken.model import Status, SpeedProfile, ChannelType
 
 LOG = logging.getLogger(__name__)
@@ -62,6 +62,12 @@ class ViewInterface:
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
         raise NotImplementedError()
 
+    def show_settings_dialog(self) -> None:
+        raise NotImplementedError()
+
+    def hide_settings_dialog(self) -> None:
+        raise NotImplementedError()
+
 
 @singleton
 class Presenter:
@@ -69,6 +75,7 @@ class Presenter:
     def __init__(self,
                  get_status_interactor: GetStatusInteractor,
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
+                 settings_interactor: SettingsInteractor,
                  composite_disposable: CompositeDisposable,
                  ) -> None:
         LOG.debug("init Presenter ")
@@ -76,6 +83,7 @@ class Presenter:
         self.__scheduler: SchedulerBase = ThreadPoolScheduler(multiprocessing.cpu_count())
         self.__get_status_interactor: GetStatusInteractor = get_status_interactor
         self.__set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
+        self.__settings_interactor = settings_interactor
         self.__composite_disposable: CompositeDisposable = composite_disposable
         self.__fan_profile_selected: Optional[SpeedProfile] = None
         self.__pump_profile_selected: Optional[SpeedProfile] = None
@@ -109,6 +117,12 @@ class Presenter:
         data = self.__get_profile_list(ChannelType.PUMP)
         data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
         self.view.refresh_pump_profile_combobox(data)
+
+    def on_menu_settings_clicked(self, *_: Any) -> None:
+        self.view.show_settings_dialog()
+
+    def on_close_settings_dialog_button_clicked(self, *_: Any) -> None:
+        self.view.hide_settings_dialog()
 
     def on_stack_visible_child_changed(self, *_: Any) -> None:
         self.view.refresh_content_header_bar_title()

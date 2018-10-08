@@ -24,7 +24,7 @@ from injector import inject
 from peewee import SqliteDatabase
 
 from gkraken.conf import APP_NAME, APP_ID
-from gkraken.model import SpeedProfile, SpeedStep
+from gkraken.model import SpeedProfile, SpeedStep, Setting
 from gkraken.presenter import Presenter
 from gkraken.util import load_db_default_data
 from gkraken.view import View
@@ -48,7 +48,7 @@ class Application(Gtk.Application):
                          **kwargs)
 
         database.connect()
-        database.create_tables([SpeedProfile, SpeedStep])
+        database.create_tables([SpeedProfile, SpeedStep, Setting])
 
         if SpeedProfile.select().count() == 0:
             load_db_default_data()

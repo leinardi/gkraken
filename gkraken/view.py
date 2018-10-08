@@ -50,6 +50,7 @@ class View(ViewInterface):
 
     def __init_widgets(self) -> None:
         # self.refresh_content_header_bar_title()
+        self.__settings_dialog: Gtk.Dialog = self.__builder.get_object("settings_dialog")
         self.__statusbar: Gtk.Statusbar = self.__builder.get_object('statusbar')
         self.__context = self.__statusbar.get_context_id(APP_PACKAGE_NAME)
         self.__cooling_fan_speed: Gtk.Label = self.__builder.get_object('cooling_fan_speed')
@@ -73,6 +74,13 @@ class View(ViewInterface):
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
         LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
+
+    def show_settings_dialog(self) -> None:
+        # self.__settings_dialog.show()
+        pass
+
+    def hide_settings_dialog(self) -> None:
+        self.__settings_dialog.hide()
 
     def set_statusbar_text(self, text: str) -> None:
         self.__statusbar.remove_all(self.__context)

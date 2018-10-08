@@ -21,6 +21,7 @@ from typing import List, Tuple
 from injector import singleton, inject
 from rx import Observable
 
+from gkraken.model import Setting
 from gkraken.repository import KrakenRepository
 
 LOG = logging.getLogger(__name__)
@@ -50,3 +51,44 @@ class SetSpeedProfileInteractor:
     def execute(self, channel: str, profile: List[Tuple[int, int]]) -> Observable:
         LOG.debug("SetSpeedProfileInteractor.execute()")
         return Observable.defer(lambda: Observable.just(self.__kraken_repository.set_speed_profile(channel, profile)))
+
+
+@singleton
+class SettingsInteractor:
+    @inject
+    def __init__(self) -> None:
+        pass
+
+    @staticmethod
+    def get_bool(key: str, default: bool) -> bool:
+        setting: Setting = Setting.get_or_none(key=key)
+        if setting is not None:
+            return bool(setting.value)
+        else:
+            return default
+
+    @staticmethod
+    def set_bool(key: str, value: bool) -> None:
+        setting: Setting = Setting.get_or_none(key=key)
+        if setting is not None:
+            setting.value = value
+            setting.save()
+        else:
+            Setting.create(key=key, value=value)
+
+    @staticmethod
+    def get_str(key: str, default: str) -> str:
+        setting: Setting = Setting.get_or_none(key=key)
+        if setting is not None:
+            return str(setting.value.decode("utf-8"))
+        else:
+            return default
+
+    @staticmethod
+    def set_str(key: str, value: str) -> None:
+        setting: Setting = Setting.get_or_none(key=key)
+        if setting is not None:
+            setting.value = value.encode("utf-8")
+            setting.save()
+        else:
+            Setting.create(key=key, value=value.encode("utf-8"))

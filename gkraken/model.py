@@ -19,7 +19,7 @@
 from enum import Enum
 
 from peewee import Model, CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, Check, \
-    ForeignKeyField, BooleanField
+    ForeignKeyField, BooleanField, TextField, BlobField
 from playhouse.sqlite_ext import AutoIncrementField
 
 from gkraken.di import INJECTOR
@@ -62,6 +62,15 @@ class SpeedStep(Model):
     temperature = IntegerField()
     duty = IntegerField()
     timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+
+    class Meta:
+        legacy_table_names = False
+        database = INJECTOR.get(SqliteDatabase)
+
+
+class Setting(Model):
+    key = CharField(primary_key=True)
+    value = BlobField()
 
     class Meta:
         legacy_table_names = False
