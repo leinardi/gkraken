@@ -17,6 +17,7 @@
 
 # pylint: disable=too-many-locals,too-many-instance-attributes
 from enum import Enum
+from typing import Optional
 
 from peewee import Model, CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, Check, \
     ForeignKeyField, BooleanField, BlobField
@@ -34,6 +35,7 @@ class Status:
                  ) -> None:
         self.liquid_temperature: float = liquid_temperature
         self.fan_rpm: int = fan_rpm
+        self.fan_speed: Optional[int] = None
         self.pump_rpm: int = pump_rpm
         self.firmware_version: str = firmware_version
 

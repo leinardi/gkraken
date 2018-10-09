@@ -19,7 +19,7 @@
 import logging
 import multiprocessing
 import re
-from typing import Optional, Any, List, Tuple, Dict
+from typing import Optional, Any, List, Tuple, Dict, Callable
 
 from gi.repository import Gtk
 from injector import inject, singleton
@@ -38,6 +38,9 @@ _ADD_NEW_PROFILE_INDEX = -10
 
 
 class ViewInterface:
+    def toggle_window_visibility(self) -> None:
+        raise NotImplementedError()
+
     def refresh_status(self, status: Optional[Status]) -> None:
         raise NotImplementedError()
 
@@ -87,6 +90,8 @@ class Presenter:
         self.__settings_interactor = settings_interactor
         self.__composite_disposable: CompositeDisposable = composite_disposable
         self.__profile_selected: Dict[str, SpeedProfile] = {}
+        self.__should_update_fan_speed: bool = False
+        self.application_quit: Callable = lambda *args: None  # will be set by the Application
 
     def on_start(self) -> None:
         self.__init_speed_profiles()
@@ -102,9 +107,20 @@ class Presenter:
                  .subscribe_on(self.__scheduler)
                  .flat_map(lambda _: self.__get_status())
                  .observe_on(GtkScheduler())
-                 .subscribe(on_next=self.view.refresh_status,
+                 .subscribe(on_next=self.__update_status,
                             on_error=lambda e: LOG.exception("Refresh error: %s", str(e)))
                  )
+
+    def __update_status(self, status: Optional[Status]) -> None:
+        if status is not None:
+            if self.__should_update_fan_speed:
+                last_applied: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=ChannelType.FAN.value)
+                if last_applied is not None:
+                    duties = [i.duty for i in last_applied.profile.steps if status.liquid_temperature >= i.temperature]
+                    if duties:
+                        status.fan_speed = duties[-1]
+
+            self.view.refresh_status(status)
 
     # def __load_last_profile(self) -> None:
     #     for current in CurrentSpeedProfile.select():
@@ -119,6 +135,7 @@ class Presenter:
 
             active = None
             if self.__settings_interactor.get_bool('settings_load_last_profile'):
+                self.__should_update_fan_speed = True
                 current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
                 if current is not None:
                     active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
@@ -159,6 +176,12 @@ class Presenter:
         profile_id = widget.get_model()[widget.get_active()][0]
         self.__select_speed_profile(profile_id, ChannelType.PUMP)
 
+    def on_quit_clicked(self, *_: Any) -> None:
+        self.application_quit()
+
+    def on_toggle_app_window_clicked(self, *_: Any) -> None:
+        self.view.toggle_window_visibility()
+
     def __select_speed_profile(self, profile_id: int, channel: ChannelType) -> None:
         if profile_id == _ADD_NEW_PROFILE_INDEX:
             self.view.set_apply_button_enabled(channel, False)
@@ -175,6 +198,7 @@ class Presenter:
 
     def on_fab_apply_button_clicked(self, *_: Any) -> None:
         self.__set_speed_profile(self.__profile_selected[ChannelType.FAN.value])
+        self.__should_update_fan_speed = True
 
     def on_pump_apply_button_clicked(self, *_: Any) -> None:
         self.__set_speed_profile(self.__profile_selected[ChannelType.PUMP.value])

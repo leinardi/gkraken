@@ -16,16 +16,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
-
-
-from os.path import abspath, join, dirname
-from peewee import SqliteDatabase
-from rx.disposables import CompositeDisposable
+import signal
 import locale
 import gettext
 import logging
 import sys
 import gi
+from os.path import abspath, join, dirname
+from peewee import SqliteDatabase
+from rx.disposables import CompositeDisposable
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GLib
@@ -80,8 +79,6 @@ sys.excepthook = handle_exception
 
 def main() -> int:
     LOG.debug("main")
-    import signal
-
     application: Application = INJECTOR.get(Application)
     GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, application.quit)
     exit_status = application.run(sys.argv)

@@ -57,6 +57,7 @@ class Application(Gtk.Application):
                              GLib.OptionArg.NONE, "Command line test", None)
         self.__view = view
         self.__presenter = presenter
+        self.__presenter.application_quit = self.quit
         self.__window: Optional[Gtk.ApplicationWindow] = None
         self.__builder: Gtk.Builder = builder
 

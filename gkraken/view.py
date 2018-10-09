@@ -15,22 +15,31 @@
 # You should have received a copy of the GNU General Public License
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import gi
 import logging
 from typing import Optional, Dict, Any, List, Tuple
-
 from injector import inject, singleton
-
 from gi.repository import Gtk
+
+# AppIndicator3 may not be installed
+from gkraken.interactor import SettingsInteractor
+
+try:
+    gi.require_version('AppIndicator3', '0.1')
+    from gi.repository import AppIndicator3
+except ImportError:
+    AppIndicator3 = None
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
-from gkraken.conf import APP_PACKAGE_NAME
+from gkraken.conf import APP_PACKAGE_NAME, APP_ID
 from gkraken.model import Status, SpeedProfile, ChannelType
 from gkraken.presenter import Presenter, ViewInterface
 
 LOG = logging.getLogger(__name__)
+if AppIndicator3 is None:
+    LOG.warning("AppIndicator3 is not installed. The app indicator will not be shown.")
 
 
 # pylint: disable=too-many-instance-attributes
@@ -41,16 +50,20 @@ class View(ViewInterface):
     def __init__(self,
                  presenter: Presenter,
                  builder: Gtk.Builder,
+                 settings_interactor: SettingsInteractor,
                  ) -> None:
         LOG.debug('init View')
         self.__presenter: Presenter = presenter
         self.__presenter.view = self
         self.__builder: Gtk.Builder = builder
+        self.__settings_interactor = settings_interactor
         self.__init_widgets()
 
     def __init_widgets(self) -> None:
         # self.refresh_content_header_bar_title()
+        self.__window = self.__builder.get_object("application_window")
         self.__settings_dialog: Gtk.Dialog = self.__builder.get_object("settings_dialog")
+        self.__app_indicator_menu = self.__builder.get_object("app_indicator_menu")
         self.__statusbar: Gtk.Statusbar = self.__builder.get_object('statusbar')
         self.__context = self.__statusbar.get_context_id(APP_PACKAGE_NAME)
         self.__cooling_fan_speed: Gtk.Label = self.__builder.get_object('cooling_fan_speed')
@@ -58,7 +71,6 @@ class View(ViewInterface):
         self.__cooling_liquid_temp: Gtk.Label = self.__builder.get_object('cooling_liquid_temp')
         self.__cooling_pump_rpm: Gtk.Label = self.__builder.get_object('cooling_pump_rpm')
         self.__firmware_version: Gtk.Label = self.__builder.get_object('firmware_version')
-        self.__cooling_fan_speed.set_markup('<span size="xx-large">-</span> %')
         self.__cooling_fan_combobox: Gtk.ComboBox = self.__builder.get_object('cooling_fan_profile_combobox')
         self.__cooling_fan_liststore: Gtk.ListStore = self.__builder.get_object('cooling_fan_profile_liststore')
         self.__cooling_pump_combobox: Gtk.ComboBox = self.__builder.get_object('cooling_pump_profile_combobox')
@@ -71,6 +83,23 @@ class View(ViewInterface):
 
     def show(self) -> None:
         self.__presenter.on_start()
+        self.__init_app_indicator()
+
+    def __init_app_indicator(self) -> None:
+        self.__app_indicator: Optional[AppIndicator3.Indicator] = None
+        if AppIndicator3:
+            icon_theme = Gtk.IconTheme.get_default()
+            icon_name = icon_theme.lookup_icon('weather-showers-symbolic', 16, 0).get_filename()
+            self.__app_indicator = AppIndicator3.Indicator \
+                .new(APP_ID, icon_name, AppIndicator3.IndicatorCategory.HARDWARE)
+            self.__app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
+            self.__app_indicator.set_menu(self.__app_indicator_menu)
+
+    def toggle_window_visibility(self) -> None:
+        if self.__window.props.visible:
+            self.__window.hide()
+        else:
+            self.__window.show()
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
         LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
@@ -98,9 +127,20 @@ class View(ViewInterface):
         LOG.debug('view status')
         if status:
             self.__cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
+            self.__cooling_fan_speed.set_markup("<span size=\"xx-large\">%s</span> %%" %
+                                                ('-' if status.fan_speed is None else status.fan_speed))
             self.__cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
             self.__cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
             self.__firmware_version.set_label("firmware version %s" % status.firmware_version)
+            if self.__app_indicator:
+                if self.__settings_interactor.get_bool('settings_show_app_indicator'):
+                    self.__app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+                else:
+                    self.__app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
+                if self.__settings_interactor.get_bool('settings_app_indicator_show_water_temp'):
+                    self.__app_indicator.set_label("  %s°C" % status.liquid_temperature, "  XX°C")
+                else:
+                    self.__app_indicator.set_label("", "")
 
     def refresh_chart(self, profile: SpeedProfile) -> None:
         if profile.channel == ChannelType.FAN.value:
