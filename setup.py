@@ -44,12 +44,12 @@ setuptools.setup(
 
     },
     install_requires=[
-        'injector',
-        'liquidctl',
-        'matplotlib',
-        'peewee',
+        'injector==0.14.1',
+        'liquidctl==1.0.0',
+        'matplotlib==3.0.0',
+        'peewee==3.7.0',
         'pyxdg',
-        'rx',
+        'rx==1.6.1',
     ],
     python_requires='~=3.6',
     entry_points={

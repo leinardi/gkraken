@@ -172,7 +172,7 @@ class View(ViewInterface):
 
     def refresh_settings(self, settings: Dict[str, Any]) -> None:
         for key, value in settings.items():
-            if type(value) is bool:
+            if isinstance(value, bool):
                 switch: Gtk.Switch = self.__builder.get_object(key + '_switch')
                 switch.set_active(value)
 

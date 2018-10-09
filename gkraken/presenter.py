@@ -119,9 +119,10 @@ class Presenter:
 
             active = None
             if self.__settings_interactor.get_bool('settings_load_last_profile'):
-                current_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
-                if current_profile is not None:
-                    active = next(i for i, item in enumerate(data) if item[0] == current_profile.profile.id)
+                current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
+                if current is not None:
+                    active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
+                    self.__set_speed_profile(current.profile)
 
             data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
 
@@ -130,7 +131,7 @@ class Presenter:
     def __init_settings(self) -> None:
         settings = {}
         for key, default_value in SETTINGS_DEFAULTS.items():
-            if type(default_value) is bool:
+            if isinstance(default_value, bool):
                 settings[key] = self.__settings_interactor.get_bool(key)
         self.view.refresh_settings(settings)
 

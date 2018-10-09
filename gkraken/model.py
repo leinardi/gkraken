@@ -19,7 +19,7 @@
 from enum import Enum
 
 from peewee import Model, CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, Check, \
-    ForeignKeyField, BooleanField, TextField, BlobField
+    ForeignKeyField, BooleanField, BlobField
 from playhouse.sqlite_ext import AutoIncrementField
 
 from gkraken.di import INJECTOR

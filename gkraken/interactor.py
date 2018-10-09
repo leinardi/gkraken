@@ -51,7 +51,8 @@ class SetSpeedProfileInteractor:
 
     def execute(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> Observable:
         LOG.debug("SetSpeedProfileInteractor.execute()")
-        return Observable.defer(lambda: Observable.just(self.__kraken_repository.set_speed_profile(channel_value, profile_data)))
+        return Observable.defer(lambda: Observable.just(
+            self.__kraken_repository.set_speed_profile(channel_value, profile_data)))
 
 
 @singleton

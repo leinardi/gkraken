@@ -1,4 +1,8 @@
 # GKraken
+
+## Work in progress
+The project is still in an early stage, use it at your own risk.
+
 ## Dependencies
 ### PIP
 * injector
