@@ -230,7 +230,7 @@ class View(ViewInterface):
         canvas.set_size_request(400, 300)
         fan_scrolled_window.add_with_viewport(canvas)
         # Returns a tuple of line objects, thus the comma
-        lines = axis.step([], [], 'o-', where='post', linewidth=3.0, markersize=8, antialiased=True)
+        lines = axis.plot([], [], 'o-', linewidth=3.0, markersize=10, antialiased=True)
         axis.set_ybound(lower=0, upper=105)
         axis.set_xbound(20, 60)
         figure.canvas.draw()

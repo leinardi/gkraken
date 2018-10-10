@@ -49,6 +49,10 @@ def load_db_default_data() -> None:
         duty=25)
     SpeedStep.create(
         profile=fan_silent.id,
+        temperature=35,
+        duty=25)
+    SpeedStep.create(
+        profile=fan_silent.id,
         temperature=40,
         duty=35)
     SpeedStep.create(
@@ -72,6 +76,10 @@ def load_db_default_data() -> None:
     SpeedStep.create(
         profile=fan_perf.id,
         temperature=20,
+        duty=50)
+    SpeedStep.create(
+        profile=fan_perf.id,
+        temperature=35,
         duty=50)
     SpeedStep.create(
         profile=fan_perf.id,
@@ -107,6 +115,10 @@ def load_db_default_data() -> None:
         duty=60)
     SpeedStep.create(
         profile=pump_silent.id,
+        temperature=35,
+        duty=60)
+    SpeedStep.create(
+        profile=pump_silent.id,
         temperature=40,
         duty=70)
     SpeedStep.create(
@@ -130,6 +142,10 @@ def load_db_default_data() -> None:
     SpeedStep.create(
         profile=pump_perf.id,
         temperature=20,
+        duty=70)
+    SpeedStep.create(
+        profile=pump_perf.id,
+        temperature=35,
         duty=70)
     SpeedStep.create(
         profile=pump_perf.id,
