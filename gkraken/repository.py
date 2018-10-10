@@ -82,7 +82,7 @@ class KrakenRepository:
             if self.__driver:
                 self.__driver.initialize()
             else:
-                LOG.warning("KrakenTwoDriver not found!")
+                raise ValueError("Kraken USB interface error (check USB cable connection)")
 
 
 class _StatusType(Enum):

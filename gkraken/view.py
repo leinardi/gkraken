@@ -27,7 +27,7 @@ from gkraken.interactor import SettingsInteractor
 try:
     gi.require_version('AppIndicator3', '0.1')
     from gi.repository import AppIndicator3
-except ImportError:
+except (ImportError, ValueError):
     AppIndicator3 = None
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure

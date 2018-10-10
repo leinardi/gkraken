@@ -56,7 +56,7 @@ class ProviderModule(Module):
     @provider
     def provide_kraken_two_driver(self) -> Optional[KrakenTwoDriver]:
         LOG.debug("provide KrakenTwoDriver")
-        return next(dev for dev in find_all_supported_devices() if isinstance(dev, KrakenTwoDriver))
+        return next((dev for dev in find_all_supported_devices() if isinstance(dev, KrakenTwoDriver)), None)
 
 
 INJECTOR = Injector(ProviderModule)

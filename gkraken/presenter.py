@@ -203,11 +203,6 @@ class Presenter:
     def on_pump_apply_button_clicked(self, *_: Any) -> None:
         self.__set_speed_profile(self.__profile_selected[ChannelType.PUMP.value])
 
-    # @staticmethod
-    # def __log_exception_return_system_info_observable(ex: Exception) -> Observable:
-    #     LOG.exception("Err = %s", ex)
-    #     return Observable.just(system_info)
-
     def __set_speed_profile(self, profile: SpeedProfile) -> None:
         observable = self.__set_speed_profile_interactor \
             .execute(profile.channel, self.__get_profile_data(profile))
@@ -229,6 +224,11 @@ class Presenter:
             current.save()
         self.view.set_statusbar_text('%s cooling profile applied' % profile.channel.capitalize())
 
+    def __log_exception_return_empty_observable(self, ex: Exception) -> Observable:
+        LOG.exception("Err = %s", ex)
+        self.view.set_statusbar_text(str(ex))
+        return Observable.just(None)
+
     def __get_status(self) -> Observable:
-        return self.__get_status_interactor.execute()  # \
-        # .catch_exception(lambda ex: self.__log_exception_return_system_info_observable(system_info, ex))
+        return self.__get_status_interactor.execute() \
+            .catch_exception(lambda ex: self.__log_exception_return_empty_observable(ex))

@@ -12,4 +12,4 @@
     3. Paste the content from `CHANGELOG.md` as the description
     4. Upload the `dist/gkraken-X.X.X.tar.gz`
 8. Create a PR from [master](../../tree/master) to [release](../../tree/release)
-9. `wine upload dist/*`
+9. `twine upload dist/*`
