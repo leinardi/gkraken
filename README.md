@@ -26,7 +26,7 @@ The project is still in an early stage, use it at your own risk.
 - [ ] Lighting
 - [ ] Provide Ubuntu PPA
 
-## How to install on (K)Ubuntu 18.04 or newer
+## How to install on (K/X)Ubuntu 18.04 or newer
 ```bash
 # install dependencies
 sudo apt install gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo python3-pip
