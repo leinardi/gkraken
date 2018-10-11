@@ -10,7 +10,7 @@ The project is still in an early stage, use it at your own risk.
 # install dependencies
 sudo apt install gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo python3-pip
 # install gkraken
-sudo pip install gkraken
+sudo pip3 install gkraken
 ```
 
 ## Running the app
