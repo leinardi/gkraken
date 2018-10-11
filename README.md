@@ -5,7 +5,38 @@
 ## Work in progress
 The project is still in an early stage, use it at your own risk.
 
-## Dependencies
+## How to install on (K)Ubuntu 18.10
+```bash
+# install dependencies
+sudo apt install gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo python3-pip
+# install gkraken
+sudo pip install gkraken
+```
+
+## Running the app
+The app needs to access the USB interface of the Kranen that, normally,
+is not available to unprivileged users. 
+
+To allow normal users to access the Kraken's USB interface you can 
+create a custom udev rule
+
+### Udev rule
+Create a new file `/lib/udev/rules.d/60-gkraken.rules` and add inside this text:
+```bash
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
+```
+
+After that, run the following commands
+```bash
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=add
+```
+
+If you don't want to create this custom rule you can run gkraken as root 
+(using sudo) but we advise against this solution.
+
+
+## Python dependencies
 ### PIP
 * injector
 * liquidctl
@@ -13,7 +44,8 @@ The project is still in an early stage, use it at your own risk.
 * peewee
 * pyxdg
 * rx
-## How to run it on Ubuntu 18.04:
+
+## How to compile it on Ubuntu 18.04
 
 ```
 sudo apt install python3-pip
