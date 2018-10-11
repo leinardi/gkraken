@@ -17,9 +17,20 @@
 
 
 import logging
-from gkraken.model import SpeedProfile, SpeedStep, ChannelType
+import os
+import shutil
+import subprocess
+from pathlib import Path
+from typing import Optional
+
+from gi.repository import GLib
+from xdg import BaseDirectory
+
+from gkraken.conf import APP_PACKAGE_NAME
 
 LOG = logging.getLogger(__name__)
+UDEV_RULES_DIR = '/lib/udev/rules.d/'
+UDEV_RULE_FILE_NAME = '60-gkraken.rules'
 
 
 def synchronized_with_attr(lock_name):
@@ -34,142 +45,97 @@ def synchronized_with_attr(lock_name):
     return decorator
 
 
-def load_db_default_data() -> None:
-    fan_silent = SpeedProfile.create(name="Silent", channel=ChannelType.FAN.value, read_only=True)
-    fan_perf = SpeedProfile.create(name="Performance", channel=ChannelType.FAN.value, read_only=True)
-    fan_fixed = SpeedProfile.create(name="Fixed", channel=ChannelType.FAN.value, single_step=True)
-    pump_silent = SpeedProfile.create(name="Silent", channel=ChannelType.PUMP.value, read_only=True)
-    pump_perf = SpeedProfile.create(name="Performance", channel=ChannelType.PUMP.value, read_only=True)
-    pump_fixed = SpeedProfile.create(name="Fixed", channel=ChannelType.PUMP.value, single_step=True)
+LOG_DEBUG_FORMAT = '%(filename)15s:%(lineno)-4d %(asctime)-15s: %(levelname)s/%(threadName)s(%(process)d) %(message)s'
+LOG_INFO_FORMAT = '%(levelname)s: %(message)s'
+LOG_WARNING_FORMAT = '%(message)s'
 
-    # Fan Silent
-    SpeedStep.create(
-        profile=fan_silent.id,
-        temperature=20,
-        duty=25)
-    SpeedStep.create(
-        profile=fan_silent.id,
-        temperature=35,
-        duty=25)
-    SpeedStep.create(
-        profile=fan_silent.id,
-        temperature=40,
-        duty=35)
-    SpeedStep.create(
-        profile=fan_silent.id,
-        temperature=45,
-        duty=45)
-    SpeedStep.create(
-        profile=fan_silent.id,
-        temperature=50,
-        duty=55)
-    SpeedStep.create(
-        profile=fan_silent.id,
-        temperature=55,
-        duty=75)
-    SpeedStep.create(
-        profile=fan_silent.id,
-        temperature=60,
-        duty=100)
 
-    # Fan Performance
-    SpeedStep.create(
-        profile=fan_perf.id,
-        temperature=20,
-        duty=50)
-    SpeedStep.create(
-        profile=fan_perf.id,
-        temperature=35,
-        duty=50)
-    SpeedStep.create(
-        profile=fan_perf.id,
-        temperature=40,
-        duty=60)
-    SpeedStep.create(
-        profile=fan_perf.id,
-        temperature=45,
-        duty=70)
-    SpeedStep.create(
-        profile=fan_perf.id,
-        temperature=50,
-        duty=80)
-    SpeedStep.create(
-        profile=fan_perf.id,
-        temperature=55,
-        duty=90)
-    SpeedStep.create(
-        profile=fan_perf.id,
-        temperature=60,
-        duty=100)
+def set_log_level(level: int) -> None:
+    log_format = LOG_WARNING_FORMAT
+    if level <= logging.DEBUG:
+        log_format = LOG_DEBUG_FORMAT
+    elif level <= logging.INFO:
+        log_format = LOG_INFO_FORMAT
+    logging.basicConfig(level=level, format=log_format)
+    logging.getLogger("Rx").setLevel(logging.INFO)
+    logging.getLogger('injector').setLevel(logging.INFO)
+    logging.getLogger('peewee').setLevel(logging.INFO)
+    logging.getLogger('matplotlib').setLevel(logging.INFO)
 
-    # Fan Fixed
-    SpeedStep.create(
-        profile=fan_fixed.id,
-        temperature=20,
-        duty=25)
 
-    # Pump Silent
-    SpeedStep.create(
-        profile=pump_silent.id,
-        temperature=20,
-        duty=60)
-    SpeedStep.create(
-        profile=pump_silent.id,
-        temperature=35,
-        duty=60)
-    SpeedStep.create(
-        profile=pump_silent.id,
-        temperature=40,
-        duty=70)
-    SpeedStep.create(
-        profile=pump_silent.id,
-        temperature=45,
-        duty=80)
-    SpeedStep.create(
-        profile=pump_silent.id,
-        temperature=50,
-        duty=90)
-    SpeedStep.create(
-        profile=pump_silent.id,
-        temperature=55,
-        duty=100)
-    SpeedStep.create(
-        profile=pump_silent.id,
-        temperature=60,
-        duty=100)
+def get_data_path(path: str) -> str:
+    return os.path.join(_ROOT, 'data', path)
 
-    # Pump Performance
-    SpeedStep.create(
-        profile=pump_perf.id,
-        temperature=20,
-        duty=70)
-    SpeedStep.create(
-        profile=pump_perf.id,
-        temperature=35,
-        duty=70)
-    SpeedStep.create(
-        profile=pump_perf.id,
-        temperature=40,
-        duty=80)
-    SpeedStep.create(
-        profile=pump_perf.id,
-        temperature=45,
-        duty=85)
-    SpeedStep.create(
-        profile=pump_perf.id,
-        temperature=50,
-        duty=90)
-    SpeedStep.create(
-        profile=pump_perf.id,
-        temperature=55,
-        duty=95)
-    SpeedStep.create(
-        profile=pump_perf.id,
-        temperature=60,
-        duty=100)
 
-    # Pump Fixed
-    SpeedStep.create(
-        profile=pump_fixed.id,
-        temperature=20,
-        duty=60)
+def get_config_path(file: str) -> str:
+    return os.path.join(BaseDirectory.save_config_path(APP_PACKAGE_NAME), file)
+
+
+def build_glib_option(long_name: str,
+                      short_name: Optional[str] = None,
+                      flags: int = 0,
+                      arg: int = GLib.OptionArg.NONE,
+                      arg_data: Optional[object] = None,
+                      description: Optional[str] = None,
+                      arg_description: Optional[str] = None) -> GLib.OptionEntry:
+    option = GLib.OptionEntry()
+    option.long_name = long_name
+    option.short_name = 0 if not short_name else ord(short_name[0])
+    option.flags = flags
+    option.description = description
+    option.arg = arg
+    option.arg_description = arg_description
+    option.arg_data = arg_data
+    return option
+
+
+def add_udev_rule() -> int:
+    if os.geteuid() == 0:
+        if not os.path.isdir(UDEV_RULES_DIR):
+            LOG.error("Udev rules have not been added (%s is not a directory)" % UDEV_RULES_DIR)
+            return 1
+        try:
+            shutil.copy(get_data_path(UDEV_RULE_FILE_NAME), UDEV_RULES_DIR)
+        except IOError:
+            LOG.exception("Unable to add udev rule")
+            return 1
+        try:
+            subprocess.call(["udevadm", "control", "--reload-rules"])
+            subprocess.call(["udevadm", "trigger", "--subsystem-match=usb", "--attr-match=idVendor=1e71",
+                             "--action=add"])
+        except OSError:
+            LOG.exception("unable to update udev rules (to apply the new rule a reboot may be needed)")
+            return 1
+        LOG.info("Rule added")
+        return 0
+    else:
+        LOG.error("You must have root privileges to modify udev rules. Run this command again using sudo.")
+        return 1
+
+
+def remove_udev_rule() -> int:
+    if os.geteuid() == 0:
+        path = Path(UDEV_RULES_DIR).joinpath(UDEV_RULE_FILE_NAME)
+        if not path.is_file():
+            LOG.error("Unable to add udev rule (file %s not found)" % str(path))
+            return 1
+        try:
+            path.unlink()
+        except IOError:
+            LOG.exception("Unable to add udev rule")
+            return 1
+        try:
+            subprocess.call(["udevadm", "control", "--reload-rules"])
+            subprocess.call(["udevadm", "trigger", "--subsystem-match=usb", "--attr-match=idVendor=1e71",
+                             "--action=add"])
+        except OSError:
+            LOG.exception("unable to update udev rules (to apply the new rule a reboot may be needed)")
+            return 1
+        LOG.info("Rule removed")
+        return 0
+    else:
+        LOG.error("You must have root privileges to modify udev rules. Run this command again using sudo.")
+        return 1
+
+
+_ROOT = os.path.abspath(os.path.dirname(__file__))

@@ -15,13 +15,14 @@ The project is still in an early stage, use it at your own risk.
 - [x] Publish on PIP
 - [x] Add option to restore last applyied profile on startup
 - [x] Allow to hide main app window
-- [ ] Add command line option to start the app hidden
-- [ ] Add command line option to add/remove udev rule
+- [x] Add command line option to start the app hidden
+- [x] Add command line option to add/remove udev rule
 - [ ] Add command line option to add/remove icon
 - [ ] Edit Fixed speed profile
 - [ ] Allow to select profiles from app indicator
 - [ ] Add/Delete/Edit multi speed profiles
 - [ ] About dialog
+- [ ] Find better icons for app and app indicator
 - [ ] Disable unsupported preferences
 - [ ] Lighting
 - [ ] Provide Ubuntu PPA
@@ -42,7 +43,15 @@ To allow normal users to access the Kraken's USB interface you can
 create a custom udev rule
 
 ### Udev rule
-Create a new file `/lib/udev/rules.d/60-gkraken.rules` and add inside this text:
+#### Automatic way
+Once GKraken is installed, the udev rule can be easily crated executing
+```bash
+sudo gkraken --udev-add-rule
+```
+
+#### Manual way
+If for some reason the automatic way fails, you can always do if manually creating a new 
+file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
 ```bash
 SUBSYSTEM=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
 ```

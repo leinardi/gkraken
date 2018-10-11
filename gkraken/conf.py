@@ -14,10 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
-import os
 from typing import Dict, Any
-
-from xdg import BaseDirectory
 
 APP_PACKAGE_NAME = "gkraken"
 APP_NAME = "GKraken"
@@ -35,13 +32,3 @@ SETTINGS_DEFAULTS: Dict[str, Any] = {
     'settings_show_app_indicator': True,
     'settings_app_indicator_show_water_temp': True,
 }
-
-_ROOT = os.path.abspath(os.path.dirname(__file__))
-
-
-def get_data_path(path: str) -> str:
-    return os.path.join(_ROOT, 'data', path)
-
-
-def get_config_path(file: str) -> str:
-    return os.path.join(BaseDirectory.save_config_path(APP_PACKAGE_NAME), file)

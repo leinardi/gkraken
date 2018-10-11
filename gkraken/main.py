@@ -26,31 +26,28 @@ from os.path import abspath, join, dirname
 from peewee import SqliteDatabase
 from rx.disposables import CompositeDisposable
 
+from gkraken.conf import APP_PACKAGE_NAME
+from gkraken.util import set_log_level
+
 gi.require_version('Gtk', '3.0')
 from gi.repository import GLib
 from gkraken.repository import KrakenRepository
 from gkraken.di import INJECTOR
 from gkraken.app import Application
 
-APP = "gkraken"
 WHERE_AM_I = abspath(dirname(__file__))
 LOCALE_DIR = join(WHERE_AM_I, 'mo')
 
-FORMAT = '%(filename)15s:%(lineno)-4d %(asctime)-15s: %(levelname)s/%(threadName)s(%(process)d) %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT)
-logging.getLogger("Rx").setLevel(logging.INFO)
-logging.getLogger('injector').setLevel(logging.INFO)
-logging.getLogger('peewee').setLevel(logging.INFO)
-logging.getLogger('matplotlib').setLevel(logging.INFO)
+set_log_level(logging.INFO)
 
 LOG = logging.getLogger(__name__)
 
 # POSIX locale settings
 locale.setlocale(locale.LC_ALL, locale.getlocale())
-locale.bindtextdomain(APP, LOCALE_DIR)
+locale.bindtextdomain(APP_PACKAGE_NAME, LOCALE_DIR)
 
-gettext.bindtextdomain(APP, LOCALE_DIR)
-gettext.textdomain(APP)
+gettext.bindtextdomain(APP_PACKAGE_NAME, LOCALE_DIR)
+gettext.textdomain(APP_PACKAGE_NAME)
 
 
 def __cleanup() -> None:

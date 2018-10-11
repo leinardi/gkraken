@@ -25,7 +25,8 @@ from liquidctl.driver.kraken_two import KrakenTwoDriver
 from peewee import SqliteDatabase
 from rx.disposables import CompositeDisposable
 
-from gkraken.conf import APP_PACKAGE_NAME, get_data_path, APP_UI_NAME, get_config_path, APP_DB_NAME
+from gkraken.conf import APP_PACKAGE_NAME, APP_UI_NAME, APP_DB_NAME
+from gkraken.util import get_data_path, get_config_path
 
 LOG = logging.getLogger(__name__)
 
