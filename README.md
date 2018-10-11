@@ -5,7 +5,28 @@
 ## Work in progress
 The project is still in an early stage, use it at your own risk.
 
-## How to install on (K)Ubuntu 18.10
+### TODO
+
+- [x] Show fan and pump rpm
+- [x] Show liquid temp in both app and app indicator
+- [x] Show chart of selected profile
+- [x] Show pump firmware version
+- [x] Allow to select and apply a profile
+- [x] Publish on PIP
+- [x] Add option to restore last applyied profile on startup
+- [x] Allow to hide main app window
+- [ ] Add command line option to start the app hidden
+- [ ] Add command line option to add/remove udev rule
+- [ ] Add command line option to add/remove icon
+- [ ] Edit Fixed speed profile
+- [ ] Allow to select profiles from app indicator
+- [ ] Add/Delete/Edit multi speed profiles
+- [ ] About dialog
+- [ ] Disable unsupported preferences
+- [ ] Lighting
+- [ ] Provide Ubuntu PPA
+
+## How to install on (K)Ubuntu 18.04 or newer
 ```bash
 # install dependencies
 sudo apt install gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo python3-pip
