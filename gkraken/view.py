@@ -33,7 +33,8 @@ try:
 except (ImportError, ValueError):
     AppIndicator3 = None
 
-from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, FAN_MAX_DUTY, PUMP_MIN_DUTY, PUMP_MAX_DUTY
+from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, FAN_MAX_DUTY, PUMP_MIN_DUTY, PUMP_MAX_DUTY, APP_NAME, \
+    APP_VERSION, APP_SOURCE_URL
 from gkraken.model import Status, SpeedProfile, ChannelType
 from gkraken.presenter import Presenter, ViewInterface
 
@@ -59,10 +60,10 @@ class View(ViewInterface):
         self.__init_widgets()
 
     def __init_widgets(self) -> None:
-        # self.refresh_content_header_bar_title()
         self.__app_indicator: Optional[AppIndicator3.Indicator] = None
         self.__window = self.__builder.get_object("application_window")
         self.__settings_dialog: Gtk.Dialog = self.__builder.get_object("settings_dialog")
+        self.__settings_dialog.connect("delete-event", self.__hide_on_delete)
         self.__app_indicator_menu = self.__builder.get_object("app_indicator_menu")
         self.__statusbar: Gtk.Statusbar = self.__builder.get_object('statusbar')
         self.__context = self.__statusbar.get_context_id(APP_PACKAGE_NAME)
@@ -85,7 +86,20 @@ class View(ViewInterface):
         self.__cooling_fixed_speed_adjustment: Gtk.Adjustment = \
             self.__builder.get_object('cooling_fixed_speed_adjustment')
         self.__cooling_fixed_speed_scale: Gtk.Scale = self.__builder.get_object('cooling_fixed_speed_scale')
+        self.__about_dialog: Gtk.AboutDialog = self.__builder.get_object("about_dialog")
+        self.__init_about_dialog()
         self.__init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
+
+    def __init_about_dialog(self) -> None:
+        self.__about_dialog.set_program_name(APP_NAME)
+        self.__about_dialog.set_version(APP_VERSION)
+        self.__about_dialog.set_website(APP_SOURCE_URL)
+        self.__about_dialog.connect("delete-event", self.__hide_on_delete)
+
+    @staticmethod
+    def __hide_on_delete(widget: Gtk.Widget, *_: Any) -> Any:
+        widget.hide()
+        return widget.hide_on_delete()
 
     def show(self) -> None:
         self.__presenter.on_start()
@@ -128,24 +142,15 @@ class View(ViewInterface):
         self.__cooling_fixed_speed_popover.hide()
         return self.__cooling_fixed_speed_scale.get_value(), self.__cooling_fixed_speed_scale.get_name()
 
+    def show_about_dialog(self) -> None:
+        self.__about_dialog.show()
+
     def show_settings_dialog(self) -> None:
         self.__settings_dialog.show()
-
-    def hide_settings_dialog(self) -> None:
-        self.__settings_dialog.hide()
 
     def set_statusbar_text(self, text: str) -> None:
         self.__statusbar.remove_all(self.__context)
         self.__statusbar.push(self.__context, text)
-
-    def refresh_content_header_bar_title(self) -> None:
-        #     contant_stack = self.__builder.get_object("content_stack")
-        #     child = contant_stack.get_visible_child()
-        #     if child is not None:
-        #         title = contant_stack.child_get_property(child, "title")
-        #         content_header_bar = self.__builder.get_object("content_header_bar")
-        #         content_header_bar.set_title(title)
-        pass
 
     def refresh_status(self, status: Optional[Status]) -> None:
         LOG.debug('view status')

@@ -22,18 +22,25 @@ The project is still in an early stage, use it at your own risk.
 - [x] Edit Fixed speed profile
 - [ ] Allow to select profiles from app indicator
 - [ ] Add/Delete/Edit multi speed profiles
-- [ ] About dialog
+- [x] About dialog
 - [ ] Find better icons for app and app indicator
 - [ ] Disable unsupported preferences
 - [ ] Lighting
 - [ ] Provide Ubuntu PPA
 
-## How to install on (K/X)Ubuntu 18.04 or newer
+## Dependencies for (K/X)Ubuntu 18.04 or newer
 ```bash
-# install dependencies
 sudo apt install gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo python3-pip
-# install gkraken
+```
+
+## Install using PIP
+```bash
 sudo pip3 install gkraken
+```
+
+## Update using PIP
+```bash
+sudo pip3 install -U gkraken
 ```
 
 ## Running the app

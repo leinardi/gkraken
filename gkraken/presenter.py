@@ -59,9 +59,6 @@ class ViewInterface:
     def set_statusbar_text(self, text: str) -> None:
         raise NotImplementedError()
 
-    def refresh_content_header_bar_title(self) -> None:
-        raise NotImplementedError()
-
     def refresh_settings(self, settings: Dict[str, Any]) -> None:
         raise NotImplementedError()
 
@@ -74,10 +71,10 @@ class ViewInterface:
     def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
         raise NotImplementedError()
 
-    def show_settings_dialog(self) -> None:
+    def show_about_dialog(self) -> None:
         raise NotImplementedError()
 
-    def hide_settings_dialog(self) -> None:
+    def show_settings_dialog(self) -> None:
         raise NotImplementedError()
 
 
@@ -166,9 +163,8 @@ class Presenter:
     def on_menu_settings_clicked(self, *_: Any) -> None:
         self.view.show_settings_dialog()
 
-    def on_settings_dialog_closed(self, *_: Any) -> bool:
-        self.view.hide_settings_dialog()
-        return True
+    def on_menu_about_clicked(self, *_: Any) -> None:
+        self.view.show_about_dialog()
 
     def on_setting_changed(self, widget: Any, *args: Any) -> None:
         key = value = None
@@ -182,7 +178,7 @@ class Presenter:
             self.__settings_interactor.set_bool(key, value)
 
     def on_stack_visible_child_changed(self, *_: Any) -> None:
-        self.view.refresh_content_header_bar_title()
+        pass
 
     def on_fan_profile_selected(self, widget: Any, *_: Any) -> None:
         profile_id = widget.get_model()[widget.get_active()][0]
