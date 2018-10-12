@@ -17,6 +17,8 @@
 
 import logging
 from typing import Optional, Dict, Any, List, Tuple
+
+from gkraken.util import get_data_path
 from injector import inject, singleton
 import gi
 from gi.repository import Gtk
@@ -107,10 +109,8 @@ class View(ViewInterface):
 
     def __init_app_indicator(self) -> None:
         if AppIndicator3:
-            icon_theme = Gtk.IconTheme.get_default()
-            icon_name = icon_theme.lookup_icon('weather-showers-symbolic', 16, 0).get_filename()
             self.__app_indicator = AppIndicator3.Indicator \
-                .new(APP_ID, icon_name, AppIndicator3.IndicatorCategory.HARDWARE)
+                .new(APP_ID, get_data_path('gkraken-symbolic.svg'), AppIndicator3.IndicatorCategory.HARDWARE)
             self.__app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
             self.__app_indicator.set_menu(self.__app_indicator_menu)
 

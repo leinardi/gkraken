@@ -26,7 +26,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkAboutDialog" id="about_dialog">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
-    <property name="logo_icon_name">image-missing</property>
+    <property name="logo">gkraken.svg</property>
     <property name="license_type">gpl-3-0</property>
     <child>
       <placeholder/>
@@ -473,7 +473,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
   </object>
   <object class="GtkApplicationWindow" id="application_window">
     <property name="can_focus">False</property>
-    <property name="icon_name">utilities-system-monitor</property>
+    <property name="icon">gkraken.svg</property>
     <property name="gravity">north</property>
     <child type="titlebar">
       <object class="GtkBox">

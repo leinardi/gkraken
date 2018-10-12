@@ -30,11 +30,14 @@ setuptools.setup(
     keywords='nzxt kraken',
     packages=setuptools.find_packages(),
     package_data={
-        # If any package contains *.txt files, include them:
-        '': ['*.txt'],
-        # And include any *.dat files found in the 'data' subdirectory
-        # of the 'mypkg' package, also:
-        APP_PACKAGE_NAME: ['data/gkraken.glade'],
+        APP_PACKAGE_NAME: [
+            'data/60-gkraken.rules',
+            'data/gkraken.glade',
+            'data/gkraken.svg',
+            'data/gkraken.svg-path826-6-4294967105.png',
+            'data/gkraken-symbolic.svg',
+        ],
+
     },
     project_urls={
         'Source': APP_SOURCE_URL,

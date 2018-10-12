@@ -23,7 +23,7 @@ The project is still in an early stage, use it at your own risk.
 - [ ] Allow to select profiles from app indicator
 - [ ] Add/Delete/Edit multi speed profiles
 - [x] About dialog
-- [ ] Find better icons for app and app indicator
+- [x] Find better icons for app and app indicator
 - [ ] Disable unsupported preferences
 - [ ] Lighting
 - [ ] Provide Ubuntu PPA
