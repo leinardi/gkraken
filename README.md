@@ -27,6 +27,7 @@ The project is still in an early stage, use it at your own risk.
 - [ ] Disable unsupported preferences
 - [ ] Lighting
 - [ ] Provide Ubuntu PPA
+- [ ] Add support for i18n (internationalization and localization)
 
 ## Dependencies for (K/X)Ubuntu 18.04 or newer
 ```bash
