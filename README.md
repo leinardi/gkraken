@@ -19,7 +19,7 @@ The project is still in an early stage, use it at your own risk.
 - [x] Add command line option to add/remove udev rule
 - [x] Add Refresh timeout to settings 
 - [ ] Add command line option to add/remove icon
-- [ ] Edit Fixed speed profile
+- [x] Edit Fixed speed profile
 - [ ] Allow to select profiles from app indicator
 - [ ] Add/Delete/Edit multi speed profiles
 - [ ] About dialog

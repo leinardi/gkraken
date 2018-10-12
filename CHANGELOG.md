@@ -1,4 +1,4 @@
-**[0.9.0] 2018-10-11**
+**[0.9.0] 2018-10-12**
  - Added ability to edit Fixed speed profile
  - Added command line options (run `gkraken -h` for more info)
  - Added command line option to start the app hidden
