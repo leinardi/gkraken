@@ -35,12 +35,13 @@ sudo apt install gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo 
 
 ## Install using PIP
 ```bash
-sudo pip3 install gkraken
+pip3 install gkraken
 ```
+Add the the executable path `~/.local/bin` to your PATH variable if missing.
 
 ## Update using PIP
 ```bash
-sudo pip3 install -U gkraken
+pip3 install -U gkraken
 ```
 
 ## Running the app
@@ -95,7 +96,7 @@ pip3 install peewee
 pip3 install pyxdg
 pip3 install rx
 ca gkraken
-./gkraken.py
+./run
 ```
 
 ## Lincense
