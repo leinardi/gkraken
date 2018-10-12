@@ -74,6 +74,16 @@ sudo udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=a
 If you don't want to create this custom rule you can run gkraken as root 
 (using sudo) but we advise against this solution.
 
+## Command line options
+
+  | Parameter                 | Description|
+  |---------------------------|------------|
+  |-v, --version              |Show the app version|
+  |--debug                    |Show debug messages|
+  |-m, --minimized            |Start minimized to the notification area
+  |--udev-add-rule            |Add udev rule to allow execution without root permission|
+  |--udev-remove-rule         |Remove udev rule that allow execution without root permission|
+
 
 ## Python dependencies
 ### PIP

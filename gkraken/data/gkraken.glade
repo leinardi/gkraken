@@ -117,11 +117,6 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkImage" id="cooling_fixed_speed_button_image">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-apply</property>
-  </object>
   <object class="GtkImage" id="cooling_pump_edit_image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -134,14 +129,6 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
       <!-- column-name name -->
       <column type="gchararray"/>
     </columns>
-  </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="margin_left">8</property>
-    <property name="margin_right">8</property>
-    <property name="stock">gtk-apply</property>
-    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="liststore1">
     <columns>
@@ -269,6 +256,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="sizing">autosize</property>
+                                <property name="fixed_width">0</property>
                                 <property name="title" translatable="yes">Temperature</property>
                                 <property name="expand">True</property>
                                 <property name="alignment">0.5</property>
@@ -283,6 +271,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="sizing">autosize</property>
+                                <property name="fixed_width">0</property>
                                 <property name="title" translatable="yes">Duty</property>
                                 <property name="expand">True</property>
                                 <property name="alignment">0.5</property>
@@ -312,6 +301,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="row_spacing">6</property>
                     <property name="column_spacing">6</property>
                     <child>
                       <object class="GtkLabel">
@@ -367,15 +357,18 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                     </child>
                     <child>
                       <object class="GtkButton">
+                        <property name="label">gtk-save</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="image">image1</property>
+                        <property name="use_stock">True</property>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
                       </object>
                       <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
-                        <property name="height">4</property>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">4</property>
                       </packing>
                     </child>
                   </object>
@@ -1102,14 +1095,17 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
         </child>
         <child>
           <object class="GtkButton">
+            <property name="label">gtk-save</property>
             <property name="width_request">-1</property>
             <property name="height_request">-1</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="image">cooling_fixed_speed_button_image</property>
-            <property name="always_show_image">True</property>
+            <property name="use_stock">True</property>
             <signal name="clicked" handler="on_fixed_speed_apply_button_clicked" swapped="no"/>
+            <style>
+              <class name="suggested-action"/>
+            </style>
           </object>
           <packing>
             <property name="expand">False</property>
