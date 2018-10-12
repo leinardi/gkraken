@@ -15,11 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-import gi
 import logging
 from typing import Optional, Dict, Any, List, Tuple
 from injector import inject, singleton
+import gi
 from gi.repository import Gtk
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
 # AppIndicator3 may not be installed
 from gkraken.interactor import SettingsInteractor
@@ -29,11 +32,8 @@ try:
     from gi.repository import AppIndicator3
 except (ImportError, ValueError):
     AppIndicator3 = None
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
-from gkraken.conf import APP_PACKAGE_NAME, APP_ID
+from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, FAN_MAX_DUTY, PUMP_MIN_DUTY, PUMP_MAX_DUTY
 from gkraken.model import Status, SpeedProfile, ChannelType
 from gkraken.presenter import Presenter, ViewInterface
 
@@ -42,7 +42,6 @@ if AppIndicator3 is None:
     LOG.warning("AppIndicator3 is not installed. The app indicator will not be shown.")
 
 
-# pylint: disable=too-many-instance-attributes
 @singleton
 class View(ViewInterface):
 
@@ -61,6 +60,7 @@ class View(ViewInterface):
 
     def __init_widgets(self) -> None:
         # self.refresh_content_header_bar_title()
+        self.__app_indicator: Optional[AppIndicator3.Indicator] = None
         self.__window = self.__builder.get_object("application_window")
         self.__settings_dialog: Gtk.Dialog = self.__builder.get_object("settings_dialog")
         self.__app_indicator_menu = self.__builder.get_object("app_indicator_menu")
@@ -79,6 +79,12 @@ class View(ViewInterface):
         cooling_pump_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object('cooling_pump_scrolled_window')
         self.__cooling_fan_apply_button: Gtk.Button = self.__builder.get_object('cooling_fan_apply_button')
         self.__cooling_pump_apply_button: Gtk.Button = self.__builder.get_object('cooling_pump_apply_button')
+        self.__cooling_fan_edit_button: Gtk.Button = self.__builder.get_object('cooling_fan_edit_button')
+        self.__cooling_pump_edit_button: Gtk.Button = self.__builder.get_object('cooling_pump_edit_button')
+        self.__cooling_fixed_speed_popover: Gtk.Popover = self.__builder.get_object('cooling_fixed_speed_popover')
+        self.__cooling_fixed_speed_adjustment: Gtk.Adjustment = \
+            self.__builder.get_object('cooling_fixed_speed_adjustment')
+        self.__cooling_fixed_speed_scale: Gtk.Scale = self.__builder.get_object('cooling_fixed_speed_scale')
         self.__init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
 
     def show(self) -> None:
@@ -86,7 +92,6 @@ class View(ViewInterface):
         self.__init_app_indicator()
 
     def __init_app_indicator(self) -> None:
-        self.__app_indicator: Optional[AppIndicator3.Indicator] = None
         if AppIndicator3:
             icon_theme = Gtk.IconTheme.get_default()
             icon_name = icon_theme.lookup_icon('weather-showers-symbolic', 16, 0).get_filename()
@@ -103,6 +108,25 @@ class View(ViewInterface):
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
         LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
+
+    def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
+        if profile.channel == ChannelType.FAN.value:
+            self.__cooling_fixed_speed_popover.set_relative_to(self.__cooling_fan_edit_button)
+            self.__cooling_fixed_speed_adjustment.set_lower(FAN_MIN_DUTY)
+            self.__cooling_fixed_speed_adjustment.set_upper(FAN_MAX_DUTY)
+        elif profile.channel == ChannelType.PUMP.value:
+            self.__cooling_fixed_speed_popover.set_relative_to(self.__cooling_pump_edit_button)
+            self.__cooling_fixed_speed_adjustment.set_lower(PUMP_MIN_DUTY)
+            self.__cooling_fixed_speed_adjustment.set_upper(PUMP_MAX_DUTY)
+        else:
+            raise ValueError("Unknown channel: %s" % profile.channel)
+        self.__cooling_fixed_speed_scale.set_name(profile.channel)
+        self.__cooling_fixed_speed_adjustment.set_value(profile.steps[0].duty)
+        self.__cooling_fixed_speed_popover.show_all()
+
+    def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
+        self.__cooling_fixed_speed_popover.hide()
+        return self.__cooling_fixed_speed_scale.get_value(), self.__cooling_fixed_speed_scale.get_name()
 
     def show_settings_dialog(self) -> None:
         self.__settings_dialog.show()
@@ -186,6 +210,14 @@ class View(ViewInterface):
         else:
             raise ValueError("Unknown channel: %s" % channel.name)
 
+    def set_edit_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
+        if channel is ChannelType.FAN:
+            self.__cooling_fan_edit_button.set_sensitive(enabled)
+        elif channel is ChannelType.PUMP:
+            self.__cooling_pump_edit_button.set_sensitive(enabled)
+        else:
+            raise ValueError("Unknown channel: %s" % channel.name)
+
     # pylint: disable=attribute-defined-outside-init
     def __init_plot_charts(self,
                            fan_scrolled_window: Gtk.ScrolledWindow,
@@ -215,6 +247,9 @@ class View(ViewInterface):
             if isinstance(value, bool):
                 switch: Gtk.Switch = self.__builder.get_object(key + '_switch')
                 switch.set_active(value)
+            elif isinstance(value, int):
+                spinbutton: Gtk.SpinButton = self.__builder.get_object(key + '_spinbutton')
+                spinbutton.set_value(value)
 
     @staticmethod
     def __init_plot_chart(fan_scrolled_window: Gtk.ScrolledWindow,

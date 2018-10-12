@@ -27,8 +27,14 @@ APP_SOURCE_URL = 'https://gitlab.com/leinardi/gkraken'
 APP_AUTHOR = 'Roberto Leinardi'
 APP_AUTHOR_EMAIL = 'roberto@leinardi.com'
 
+FAN_MIN_DUTY = 25
+FAN_MAX_DUTY = 100
+PUMP_MIN_DUTY = 60
+PUMP_MAX_DUTY = 100
+
 SETTINGS_DEFAULTS: Dict[str, Any] = {
-    'settings_load_last_profile': False,
+    'settings_load_last_profile': True,
+    'settings_refresh_interval': 3,
     'settings_show_app_indicator': True,
     'settings_app_indicator_show_water_temp': True,
 }

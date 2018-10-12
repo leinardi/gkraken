@@ -92,7 +92,7 @@ def build_glib_option(long_name: str,
 def add_udev_rule() -> int:
     if os.geteuid() == 0:
         if not os.path.isdir(UDEV_RULES_DIR):
-            LOG.error("Udev rules have not been added (%s is not a directory)" % UDEV_RULES_DIR)
+            LOG.error("Udev rules have not been added (%s is not a directory)", UDEV_RULES_DIR)
             return 1
         try:
             shutil.copy(get_data_path(UDEV_RULE_FILE_NAME), UDEV_RULES_DIR)
@@ -108,16 +108,16 @@ def add_udev_rule() -> int:
             return 1
         LOG.info("Rule added")
         return 0
-    else:
-        LOG.error("You must have root privileges to modify udev rules. Run this command again using sudo.")
-        return 1
+
+    LOG.error("You must have root privileges to modify udev rules. Run this command again using sudo.")
+    return 1
 
 
 def remove_udev_rule() -> int:
     if os.geteuid() == 0:
         path = Path(UDEV_RULES_DIR).joinpath(UDEV_RULE_FILE_NAME)
         if not path.is_file():
-            LOG.error("Unable to add udev rule (file %s not found)" % str(path))
+            LOG.error("Unable to add udev rule (file %s not found)", str(path))
             return 1
         try:
             path.unlink()
@@ -133,9 +133,9 @@ def remove_udev_rule() -> int:
             return 1
         LOG.info("Rule removed")
         return 0
-    else:
-        LOG.error("You must have root privileges to modify udev rules. Run this command again using sudo.")
-        return 1
+
+    LOG.error("You must have root privileges to modify udev rules. Run this command again using sudo.")
+    return 1
 
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))

@@ -48,13 +48,14 @@ class KrakenRepository:
         self.__load_driver()
         if self.__driver:
             try:
-                status = [v for k, v, u in self.__driver.get_status()]
-                return Status(
-                    status[_StatusType.LIQUID_TEMPERATURE.value],
-                    status[_StatusType.FAN_RPM.value],
-                    status[_StatusType.PUMP_RPM.value],
-                    status[_StatusType.FIRMWARE_VERSION.value]
+                status_list = [v for k, v, u in self.__driver.get_status()]
+                status = Status(
+                    status_list[_StatusType.LIQUID_TEMPERATURE.value],
+                    status_list[_StatusType.FAN_RPM.value],
+                    status_list[_StatusType.PUMP_RPM.value],
+                    status_list[_StatusType.FIRMWARE_VERSION.value]
                 )
+                return status if status.fan_rpm < 3500 else None
             # pylint: disable=bare-except
             except:
                 LOG.exception("Error getting the status")

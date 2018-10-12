@@ -87,7 +87,7 @@ class Application(Gtk.Application):
         exit_value = 0
 
         if _Options.VERSION.value in options:
-            LOG.debug("Option %s selected" % _Options.VERSION.value)
+            LOG.debug("Option %s selected", _Options.VERSION.value)
             print(APP_VERSION)
             start_app = False
 
@@ -95,19 +95,19 @@ class Application(Gtk.Application):
             logging.getLogger().setLevel(logging.DEBUG)
             for handler in logging.getLogger().handlers:
                 handler.formatter = logging.Formatter(LOG_DEBUG_FORMAT)
-            LOG.debug("Option %s selected" % _Options.DEBUG.value)
+            LOG.debug("Option %s selected", _Options.DEBUG.value)
 
         if _Options.MINIMIZED.value in options:
-            LOG.debug("Option %s selected" % _Options.MINIMIZED.value)
+            LOG.debug("Option %s selected", _Options.MINIMIZED.value)
             self.__start_hidden = True
 
         if _Options.UDEV_ADD_RULE.value in options:
-            LOG.debug("Option %s selected" % _Options.UDEV_ADD_RULE.value)
+            LOG.debug("Option %s selected", _Options.UDEV_ADD_RULE.value)
             exit_value += add_udev_rule()
             start_app = False
 
         if _Options.UDEV_REMOVE_RULE.value in options:
-            LOG.debug("Option %s selected" % _Options.UDEV_REMOVE_RULE.value)
+            LOG.debug("Option %s selected", _Options.UDEV_REMOVE_RULE.value)
             exit_value += remove_udev_rule()
             start_app = False
 

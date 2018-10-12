@@ -17,6 +17,7 @@ The project is still in an early stage, use it at your own risk.
 - [x] Allow to hide main app window
 - [x] Add command line option to start the app hidden
 - [x] Add command line option to add/remove udev rule
+- [x] Add Refresh timeout to settings 
 - [ ] Add command line option to add/remove icon
 - [ ] Edit Fixed speed profile
 - [ ] Allow to select profiles from app indicator

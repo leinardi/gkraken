@@ -30,10 +30,9 @@ from rx.disposables import CompositeDisposable
 
 from gkraken.conf import SETTINGS_DEFAULTS
 from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor
-from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile
+from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep
 
 LOG = logging.getLogger(__name__)
-_REFRESH_INTERVAL_IN_MS = 3000
 _ADD_NEW_PROFILE_INDEX = -10
 
 
@@ -54,6 +53,9 @@ class ViewInterface:
     def set_apply_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
         raise NotImplementedError()
 
+    def set_edit_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
+        raise NotImplementedError()
+
     def set_statusbar_text(self, text: str) -> None:
         raise NotImplementedError()
 
@@ -64,6 +66,12 @@ class ViewInterface:
         raise NotImplementedError()
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
+        raise NotImplementedError()
+
+    def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
+        raise NotImplementedError()
+
+    def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
         raise NotImplementedError()
 
     def show_settings_dialog(self) -> None:
@@ -100,9 +108,10 @@ class Presenter:
 
     def __start_refresh(self) -> None:
         LOG.debug("start refresh")
+        refresh_interval_ms = self.__settings_interactor.get_int('settings_refresh_interval') * 1000
         self.__composite_disposable \
             .add(Observable
-                 .interval(_REFRESH_INTERVAL_IN_MS, scheduler=self.__scheduler)
+                 .interval(refresh_interval_ms, scheduler=self.__scheduler)
                  .start_with(0)
                  .subscribe_on(self.__scheduler)
                  .flat_map(lambda _: self.__get_status())
@@ -146,10 +155,12 @@ class Presenter:
             self.view.refresh_profile_combobox(channel, data, active)
 
     def __init_settings(self) -> None:
-        settings = {}
+        settings: Dict[str, Any] = {}
         for key, default_value in SETTINGS_DEFAULTS.items():
             if isinstance(default_value, bool):
                 settings[key] = self.__settings_interactor.get_bool(key)
+            elif isinstance(default_value, int):
+                settings[key] = self.__settings_interactor.get_int(key)
         self.view.refresh_settings(settings)
 
     def on_menu_settings_clicked(self, *_: Any) -> None:
@@ -160,10 +171,15 @@ class Presenter:
         return True
 
     def on_setting_changed(self, widget: Any, *args: Any) -> None:
+        key = value = None
         if isinstance(widget, Gtk.Switch):
-            state = args[0]
+            value = args[0]
             key = re.sub('_switch$', '', widget.get_name())
-            self.__settings_interactor.set_bool(key, state)
+        elif isinstance(widget, Gtk.SpinButton):
+            key = re.sub('_spinbutton$', '', widget.get_name())
+            value = widget.get_value_as_int()
+        if key is not None and value is not None:
+            self.__settings_interactor.set_bool(key, value)
 
     def on_stack_visible_child_changed(self, *_: Any) -> None:
         self.view.refresh_content_header_bar_title()
@@ -185,18 +201,41 @@ class Presenter:
     def __select_speed_profile(self, profile_id: int, channel: ChannelType) -> None:
         if profile_id == _ADD_NEW_PROFILE_INDEX:
             self.view.set_apply_button_enabled(channel, False)
+            self.view.set_edit_button_enabled(channel, False)
             self.view.show_add_speed_profile_dialog(channel)
         else:
             profile: SpeedProfile = SpeedProfile.get(id=profile_id)
             self.__profile_selected[profile.channel] = profile
             self.view.set_apply_button_enabled(channel, True)
+            self.view.set_edit_button_enabled(channel, True)
             self.view.refresh_chart(profile)
 
     @staticmethod
     def __get_profile_data(profile: SpeedProfile) -> List[Tuple[int, int]]:
         return [(p.temperature, p.duty) for p in profile.steps]
 
-    def on_fab_apply_button_clicked(self, *_: Any) -> None:
+    def on_fan_edit_button_clicked(self, *_: Any) -> None:
+        self.__on_edit_button_clicked(ChannelType.FAN)
+
+    def on_pump_edit_button_clicked(self, *_: Any) -> None:
+        self.__on_edit_button_clicked(ChannelType.PUMP)
+
+    def __on_edit_button_clicked(self, channel: ChannelType) -> None:
+        profile = self.__profile_selected[channel.value]
+        if profile.single_step:
+            self.view.show_fixed_speed_profile_popover(profile)
+
+    def on_fixed_speed_apply_button_clicked(self, *_: Any) -> None:
+        value, channel = self.view.dismiss_and_get_value_fixed_speed_popover()
+        profile = self.__profile_selected[channel]
+        speed_step: SpeedStep = profile.steps[0]
+        speed_step.duty = value
+        speed_step.save()
+        if channel == ChannelType.FAN.value:
+            self.__should_update_fan_speed = False
+        self.view.refresh_chart(profile)
+
+    def on_fan_apply_button_clicked(self, *_: Any) -> None:
         self.__set_speed_profile(self.__profile_selected[ChannelType.FAN.value])
         self.__should_update_fan_speed = True
 
@@ -231,4 +270,4 @@ class Presenter:
 
     def __get_status(self) -> Observable:
         return self.__get_status_interactor.execute() \
-            .catch_exception(lambda ex: self.__log_exception_return_empty_observable(ex))
+            .catch_exception(self.__log_exception_return_empty_observable)

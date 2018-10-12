@@ -1,7 +1,9 @@
 **[0.9.0] 2018-10-11**
+ - Added ability to edit Fixed speed profile
  - Added command line options (run `gkraken -h` for more info)
  - Added command line option to start the app hidden
  - Added command line option to add/remove udev rule
+ - Load last applied profile enabled by default
 
 **[0.8.0] 2018-10-09**
  - Improved fan and pump charts

@@ -56,18 +56,6 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
     <property name="can_focus">False</property>
     <property name="stock">gtk-edit</property>
   </object>
-  <object class="GtkImage" id="cooling_fan_fixed_speed_apply_image">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-apply</property>
-  </object>
-  <object class="GtkAdjustment" id="cooling_fan_fixed_speed_popover_adjustment">
-    <property name="lower">20</property>
-    <property name="upper">50</property>
-    <property name="value">20</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkListStore" id="cooling_fan_profile_liststore">
     <columns>
       <!-- column-name id -->
@@ -75,6 +63,18 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
       <!-- column-name name -->
       <column type="gchararray"/>
     </columns>
+  </object>
+  <object class="GtkAdjustment" id="cooling_fixed_speed_adjustment">
+    <property name="lower">20</property>
+    <property name="upper">50</property>
+    <property name="value">20</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkImage" id="cooling_fixed_speed_button_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-apply</property>
   </object>
   <object class="GtkImage" id="cooling_pump_edit_image">
     <property name="visible">True</property>
@@ -453,6 +453,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                 <child>
                                   <object class="GtkComboBox" id="cooling_fan_profile_combobox">
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
                                     <property name="hexpand">True</property>
                                     <property name="model">cooling_fan_profile_liststore</property>
@@ -474,10 +475,12 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                 <child>
                                   <object class="GtkButton" id="cooling_fan_edit_button">
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="image">cooling_fan_edit_image</property>
                                     <property name="always_show_image">True</property>
+                                    <signal name="clicked" handler="on_fan_edit_button_clicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -568,6 +571,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                 <child>
                                   <object class="GtkComboBox" id="cooling_pump_profile_combobox">
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
                                     <property name="hexpand">True</property>
                                     <property name="model">cooling_pump_profile_liststore</property>
@@ -589,10 +593,12 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                 <child>
                                   <object class="GtkButton" id="cooling_pump_edit_button">
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="image">cooling_pump_edit_image</property>
                                     <property name="always_show_image">True</property>
+                                    <signal name="clicked" handler="on_pump_edit_button_clicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -646,7 +652,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
-                    <signal name="clicked" handler="on_fab_apply_button_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_fan_apply_button_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -734,7 +740,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
       </object>
     </child>
   </object>
-  <object class="GtkPopover" id="cooling_fan_fixed_speed_popover">
+  <object class="GtkPopover" id="cooling_fixed_speed_popover">
     <property name="can_focus">False</property>
     <property name="relative_to">cooling_fan_edit_button</property>
     <property name="position">bottom</property>
@@ -745,12 +751,12 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
         <property name="orientation">vertical</property>
         <property name="spacing">6</property>
         <child>
-          <object class="GtkScale">
+          <object class="GtkScale" id="cooling_fixed_speed_scale">
             <property name="height_request">200</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="orientation">vertical</property>
-            <property name="adjustment">cooling_fan_fixed_speed_popover_adjustment</property>
+            <property name="adjustment">cooling_fixed_speed_adjustment</property>
             <property name="inverted">True</property>
             <property name="round_digits">1</property>
             <property name="digits">0</property>
@@ -769,8 +775,9 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="image">cooling_fan_fixed_speed_apply_image</property>
+            <property name="image">cooling_fixed_speed_button_image</property>
             <property name="always_show_image">True</property>
+            <signal name="clicked" handler="on_fixed_speed_apply_button_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -780,6 +787,13 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAdjustment" id="settings_refresh_interval_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">3600</property>
+    <property name="value">3</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkDialog" id="settings_dialog">
     <property name="can_focus">False</property>
@@ -884,6 +898,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                     <property name="selection_mode">none</property>
                                     <child>
                                       <object class="GtkListBoxRow">
+                                        <property name="height_request">52</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="activatable">False</property>
@@ -952,6 +967,75 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                     </child>
                                     <child>
                                       <object class="GtkListBoxRow">
+                                        <property name="height_request">52</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <child>
+                                          <object class="GtkGrid">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_left">20</property>
+                                            <property name="margin_right">20</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                            <property name="row_spacing">2</property>
+                                            <property name="column_spacing">24</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="hexpand">True</property>
+                                                <property name="label" translatable="yes" comments="Translators: This switch reverses the scrolling direction for mices. The term used comes from OS X so use the same translation if possible.">Refresh interval (in seconds)</property>
+                                                <property name="use_underline">True</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">(Application restart required)</property>
+                                                <property name="xalign">0</property>
+                                                <attributes>
+                                                  <attribute name="scale" value="0.90000000000000002"/>
+                                                </attributes>
+                                                <style>
+                                                  <class name="dim-label"/>
+                                                </style>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkSpinButton" id="settings_refresh_interval_spinbutton">
+                                                <property name="name">settings_refresh_interval_spinbutton</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="input_purpose">digits</property>
+                                                <property name="adjustment">settings_refresh_interval_adjustment</property>
+                                                <property name="update_policy">if-valid</property>
+                                                <signal name="value-changed" handler="on_setting_changed" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">0</property>
+                                                <property name="height">2</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkListBoxRow">
+                                        <property name="height_request">52</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="activatable">False</property>
@@ -1076,6 +1160,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                     <property name="selection_mode">none</property>
                                     <child>
                                       <object class="GtkListBoxRow">
+                                        <property name="height_request">52</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="activatable">False</property>

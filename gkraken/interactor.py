@@ -80,6 +80,24 @@ class SettingsInteractor:
             Setting.create(key=key, value=value)
 
     @staticmethod
+    def get_int(key: str, default: Optional[int] = None) -> int:
+        if default is None:
+            default = SETTINGS_DEFAULTS[key]
+        setting: Setting = Setting.get_or_none(key=key)
+        if setting is not None:
+            return int(setting.value)
+        return default
+
+    @staticmethod
+    def set_int(key: str, value: int) -> None:
+        setting: Setting = Setting.get_or_none(key=key)
+        if setting is not None:
+            setting.value = value
+            setting.save()
+        else:
+            Setting.create(key=key, value=value)
+
+    @staticmethod
     def get_str(key: str, default: Optional[str] = None) -> str:
         if default is None:
             default = SETTINGS_DEFAULTS[key]
