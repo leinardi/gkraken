@@ -1,4 +1,7 @@
-**[0.9.0] 2018-10-12**
+**[0.11.0] 2018-10-12**
+ - Added check for new versions
+
+**[0.10.0] 2018-10-12**
  - Added about dialog
  - Added better app and app indicator icons
  

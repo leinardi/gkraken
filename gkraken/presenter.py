@@ -28,8 +28,9 @@ from rx.concurrency import GtkScheduler, ThreadPoolScheduler
 from rx.concurrency.schedulerbase import SchedulerBase
 from rx.disposables import CompositeDisposable
 
-from gkraken.conf import SETTINGS_DEFAULTS
-from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor
+from gkraken.conf import SETTINGS_DEFAULTS, APP_NAME, APP_SOURCE_URL
+from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor, \
+    CheckNewVersionInteractor
 from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep
 
 LOG = logging.getLogger(__name__)
@@ -62,6 +63,9 @@ class ViewInterface:
     def refresh_settings(self, settings: Dict[str, Any]) -> None:
         raise NotImplementedError()
 
+    def show_main_infobar_message(self, message: str, markup: bool = False) -> None:
+        raise NotImplementedError()
+
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
         raise NotImplementedError()
 
@@ -85,6 +89,7 @@ class Presenter:
                  get_status_interactor: GetStatusInteractor,
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
                  settings_interactor: SettingsInteractor,
+                 check_new_version_interactor: CheckNewVersionInteractor,
                  composite_disposable: CompositeDisposable,
                  ) -> None:
         LOG.debug("init Presenter ")
@@ -93,6 +98,7 @@ class Presenter:
         self._get_status_interactor: GetStatusInteractor = get_status_interactor
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
         self._settings_interactor = settings_interactor
+        self._check_new_version_interactor = check_new_version_interactor
         self._composite_disposable: CompositeDisposable = composite_disposable
         self._profile_selected: Dict[str, SpeedProfile] = {}
         self._should_update_fan_speed: bool = False
@@ -102,6 +108,7 @@ class Presenter:
         self._init_speed_profiles()
         self._init_settings()
         self._start_refresh()
+        self._check_new_version()
 
     def _start_refresh(self) -> None:
         LOG.debug("start refresh")
@@ -267,3 +274,18 @@ class Presenter:
     def _get_status(self) -> Observable:
         return self._get_status_interactor.execute() \
             .catch_exception(self._log_exception_return_empty_observable)
+
+    def _check_new_version(self) -> None:
+        self._composite_disposable \
+            .add(self._check_new_version_interactor.execute()
+                 .subscribe_on(self._scheduler)
+                 .observe_on(GtkScheduler())
+                 .subscribe(on_next=self._handle_new_version_response,
+                            on_error=lambda e: LOG.exception("Check new version error: %s", str(e)))
+                 )
+
+    def _handle_new_version_response(self, version: Optional[str]) -> None:
+        if version is not None:
+            message = "%s version <b>%s</b> is available! Click <a href=\"%s/blob/%s/CHANGELOG.md\"><b>here</b></a> " \
+                      "to see what's new." % (APP_NAME, version, APP_SOURCE_URL, version)
+            self.view.show_main_infobar_message(message, True)

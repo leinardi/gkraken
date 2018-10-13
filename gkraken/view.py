@@ -67,6 +67,10 @@ class View(ViewInterface):
         self._settings_dialog: Gtk.Dialog = self._builder.get_object("settings_dialog")
         self._settings_dialog.connect("delete-event", self._hide_on_delete)
         self._app_indicator_menu = self._builder.get_object("app_indicator_menu")
+        self._main_infobar: Gtk.InfoBar = self._builder.get_object("main_infobar")
+        self._main_infobar.connect("response", lambda b, _: b.set_revealed(False))
+        self._main_infobar_label: Gtk.Label = self._builder.get_object("main_infobar_label")
+        self._main_infobar.set_revealed(False)
         self._statusbar: Gtk.Statusbar = self._builder.get_object('statusbar')
         self._context = self._statusbar.get_context_id(APP_PACKAGE_NAME)
         self._cooling_fan_speed: Gtk.Label = self._builder.get_object('cooling_fan_speed')
@@ -114,6 +118,13 @@ class View(ViewInterface):
             self._app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
             self._app_indicator.set_menu(self._app_indicator_menu)
 
+    def show_main_infobar_message(self, message: str, markup: bool = False) -> None:
+        if markup:
+            self._main_infobar_label.set_markup(message)
+        else:
+            self._main_infobar_label.set_label(message)
+        self._main_infobar.set_revealed(True)
+
     def toggle_window_visibility(self) -> None:
         if self._window.props.visible:
             self._window.hide()
@@ -160,7 +171,8 @@ class View(ViewInterface):
                                                ('-' if status.fan_speed is None else status.fan_speed))
             self._cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
             self._cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
-            self._firmware_version.set_label("firmware version %s" % status.firmware_version)
+            self._firmware_version.set_label("firmware %s - %s %s"
+                                             % (status.firmware_version, APP_NAME, APP_VERSION))
             if self._app_indicator:
                 if self._settings_interactor.get_bool('settings_show_app_indicator'):
                     self._app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)

@@ -14,14 +14,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
-
+import json
 import logging
+from distutils.version import LooseVersion
 from typing import List, Tuple, Optional
 
+import requests
 from injector import singleton, inject
 from rx import Observable
 
-from gkraken.conf import SETTINGS_DEFAULTS
+from gkraken.conf import SETTINGS_DEFAULTS, APP_PACKAGE_NAME, APP_VERSION
 from gkraken.model import Setting
 from gkraken.repository import KrakenRepository
 
@@ -114,3 +116,27 @@ class SettingsInteractor:
             setting.save()
         else:
             Setting.create(key=key, value=value.encode("utf-8"))
+
+
+@singleton
+class CheckNewVersionInteractor:
+    URL_PATTERN = 'https://pypi.python.org/pypi/{package}/json'
+
+    @inject
+    def __init__(self) -> None:
+        pass
+
+    def execute(self) -> Observable:
+        LOG.debug("SetSpeedProfileInteractor.execute()")
+        return Observable.defer(lambda: Observable.just(self.__check_new_version()))
+
+    def __check_new_version(self) -> Optional[LooseVersion]:
+        req = requests.get(self.URL_PATTERN.format(package=APP_PACKAGE_NAME))
+        version = LooseVersion("0")
+        if req.status_code == requests.codes.ok:
+            j = json.loads(req.text)
+            releases = j.get('releases', [])
+            for release in releases:
+                ver = LooseVersion(release)
+                version = max(version, ver)
+        return version if version > LooseVersion(APP_VERSION) else None
