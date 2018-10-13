@@ -34,11 +34,11 @@ class GetStatusInteractor:
     def __init__(self,
                  kraken_repository: KrakenRepository,
                  ) -> None:
-        self.__kraken_repository = kraken_repository
+        self._kraken_repository = kraken_repository
 
     def execute(self) -> Observable:
         LOG.debug("GetStatusInteractor.execute()")
-        return Observable.defer(lambda: Observable.just(self.__kraken_repository.get_status()))
+        return Observable.defer(lambda: Observable.just(self._kraken_repository.get_status()))
 
 
 @singleton
@@ -47,12 +47,12 @@ class SetSpeedProfileInteractor:
     def __init__(self,
                  kraken_repository: KrakenRepository,
                  ) -> None:
-        self.__kraken_repository = kraken_repository
+        self._kraken_repository = kraken_repository
 
     def execute(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> Observable:
         LOG.debug("SetSpeedProfileInteractor.execute()")
         return Observable.defer(lambda: Observable.just(
-            self.__kraken_repository.set_speed_profile(channel_value, profile_data)))
+            self._kraken_repository.set_speed_profile(channel_value, profile_data)))
 
 
 @singleton

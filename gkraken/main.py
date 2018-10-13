@@ -50,7 +50,7 @@ gettext.bindtextdomain(APP_PACKAGE_NAME, LOCALE_DIR)
 gettext.textdomain(APP_PACKAGE_NAME)
 
 
-def __cleanup() -> None:
+def _cleanup() -> None:
     LOG.debug("cleanup")
     composite_disposable: CompositeDisposable = INJECTOR.get(CompositeDisposable)
     composite_disposable.dispose()
@@ -67,7 +67,7 @@ def handle_exception(exc_type, exc_value, exc_traceback) -> None:
         return
 
     LOG.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
-    __cleanup()
+    _cleanup()
     sys.exit(1)
 
 
@@ -79,7 +79,7 @@ def main() -> int:
     application: Application = INJECTOR.get(Application)
     GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, application.quit)
     exit_status = application.run(sys.argv)
-    __cleanup()
+    _cleanup()
     return sys.exit(exit_status)
 
 

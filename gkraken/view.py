@@ -55,132 +55,132 @@ class View(ViewInterface):
                  settings_interactor: SettingsInteractor,
                  ) -> None:
         LOG.debug('init View')
-        self.__presenter: Presenter = presenter
-        self.__presenter.view = self
-        self.__builder: Gtk.Builder = builder
-        self.__settings_interactor = settings_interactor
-        self.__init_widgets()
+        self._presenter: Presenter = presenter
+        self._presenter.view = self
+        self._builder: Gtk.Builder = builder
+        self._settings_interactor = settings_interactor
+        self._init_widgets()
 
-    def __init_widgets(self) -> None:
-        self.__app_indicator: Optional[AppIndicator3.Indicator] = None
-        self.__window = self.__builder.get_object("application_window")
-        self.__settings_dialog: Gtk.Dialog = self.__builder.get_object("settings_dialog")
-        self.__settings_dialog.connect("delete-event", self.__hide_on_delete)
-        self.__app_indicator_menu = self.__builder.get_object("app_indicator_menu")
-        self.__statusbar: Gtk.Statusbar = self.__builder.get_object('statusbar')
-        self.__context = self.__statusbar.get_context_id(APP_PACKAGE_NAME)
-        self.__cooling_fan_speed: Gtk.Label = self.__builder.get_object('cooling_fan_speed')
-        self.__cooling_fan_rpm: Gtk.Label = self.__builder.get_object('cooling_fan_rpm')
-        self.__cooling_liquid_temp: Gtk.Label = self.__builder.get_object('cooling_liquid_temp')
-        self.__cooling_pump_rpm: Gtk.Label = self.__builder.get_object('cooling_pump_rpm')
-        self.__firmware_version: Gtk.Label = self.__builder.get_object('firmware_version')
-        self.__cooling_fan_combobox: Gtk.ComboBox = self.__builder.get_object('cooling_fan_profile_combobox')
-        self.__cooling_fan_liststore: Gtk.ListStore = self.__builder.get_object('cooling_fan_profile_liststore')
-        self.__cooling_pump_combobox: Gtk.ComboBox = self.__builder.get_object('cooling_pump_profile_combobox')
-        self.__cooling_pump_liststore: Gtk.ListStore = self.__builder.get_object('cooling_pump_profile_liststore')
-        cooling_fan_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object('cooling_fan_scrolled_window')
-        cooling_pump_scrolled_window: Gtk.ScrolledWindow = self.__builder.get_object('cooling_pump_scrolled_window')
-        self.__cooling_fan_apply_button: Gtk.Button = self.__builder.get_object('cooling_fan_apply_button')
-        self.__cooling_pump_apply_button: Gtk.Button = self.__builder.get_object('cooling_pump_apply_button')
-        self.__cooling_fan_edit_button: Gtk.Button = self.__builder.get_object('cooling_fan_edit_button')
-        self.__cooling_pump_edit_button: Gtk.Button = self.__builder.get_object('cooling_pump_edit_button')
-        self.__cooling_fixed_speed_popover: Gtk.Popover = self.__builder.get_object('cooling_fixed_speed_popover')
-        self.__cooling_fixed_speed_adjustment: Gtk.Adjustment = \
-            self.__builder.get_object('cooling_fixed_speed_adjustment')
-        self.__cooling_fixed_speed_scale: Gtk.Scale = self.__builder.get_object('cooling_fixed_speed_scale')
-        self.__about_dialog: Gtk.AboutDialog = self.__builder.get_object("about_dialog")
-        self.__init_about_dialog()
-        self.__init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
+    def _init_widgets(self) -> None:
+        self._app_indicator: Optional[AppIndicator3.Indicator] = None
+        self._window = self._builder.get_object("application_window")
+        self._settings_dialog: Gtk.Dialog = self._builder.get_object("settings_dialog")
+        self._settings_dialog.connect("delete-event", self._hide_on_delete)
+        self._app_indicator_menu = self._builder.get_object("app_indicator_menu")
+        self._statusbar: Gtk.Statusbar = self._builder.get_object('statusbar')
+        self._context = self._statusbar.get_context_id(APP_PACKAGE_NAME)
+        self._cooling_fan_speed: Gtk.Label = self._builder.get_object('cooling_fan_speed')
+        self._cooling_fan_rpm: Gtk.Label = self._builder.get_object('cooling_fan_rpm')
+        self._cooling_liquid_temp: Gtk.Label = self._builder.get_object('cooling_liquid_temp')
+        self._cooling_pump_rpm: Gtk.Label = self._builder.get_object('cooling_pump_rpm')
+        self._firmware_version: Gtk.Label = self._builder.get_object('firmware_version')
+        self._cooling_fan_combobox: Gtk.ComboBox = self._builder.get_object('cooling_fan_profile_combobox')
+        self._cooling_fan_liststore: Gtk.ListStore = self._builder.get_object('cooling_fan_profile_liststore')
+        self._cooling_pump_combobox: Gtk.ComboBox = self._builder.get_object('cooling_pump_profile_combobox')
+        self._cooling_pump_liststore: Gtk.ListStore = self._builder.get_object('cooling_pump_profile_liststore')
+        cooling_fan_scrolled_window: Gtk.ScrolledWindow = self._builder.get_object('cooling_fan_scrolled_window')
+        cooling_pump_scrolled_window: Gtk.ScrolledWindow = self._builder.get_object('cooling_pump_scrolled_window')
+        self._cooling_fan_apply_button: Gtk.Button = self._builder.get_object('cooling_fan_apply_button')
+        self._cooling_pump_apply_button: Gtk.Button = self._builder.get_object('cooling_pump_apply_button')
+        self._cooling_fan_edit_button: Gtk.Button = self._builder.get_object('cooling_fan_edit_button')
+        self._cooling_pump_edit_button: Gtk.Button = self._builder.get_object('cooling_pump_edit_button')
+        self._cooling_fixed_speed_popover: Gtk.Popover = self._builder.get_object('cooling_fixed_speed_popover')
+        self._cooling_fixed_speed_adjustment: Gtk.Adjustment = \
+            self._builder.get_object('cooling_fixed_speed_adjustment')
+        self._cooling_fixed_speed_scale: Gtk.Scale = self._builder.get_object('cooling_fixed_speed_scale')
+        self._about_dialog: Gtk.AboutDialog = self._builder.get_object("about_dialog")
+        self._init_about_dialog()
+        self._init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
 
-    def __init_about_dialog(self) -> None:
-        self.__about_dialog.set_program_name(APP_NAME)
-        self.__about_dialog.set_version(APP_VERSION)
-        self.__about_dialog.set_website(APP_SOURCE_URL)
-        self.__about_dialog.connect("delete-event", self.__hide_on_delete)
+    def _init_about_dialog(self) -> None:
+        self._about_dialog.set_program_name(APP_NAME)
+        self._about_dialog.set_version(APP_VERSION)
+        self._about_dialog.set_website(APP_SOURCE_URL)
+        self._about_dialog.connect("delete-event", self._hide_on_delete)
 
     @staticmethod
-    def __hide_on_delete(widget: Gtk.Widget, *_: Any) -> Any:
+    def _hide_on_delete(widget: Gtk.Widget, *_: Any) -> Any:
         widget.hide()
         return widget.hide_on_delete()
 
     def show(self) -> None:
-        self.__presenter.on_start()
-        self.__init_app_indicator()
+        self._presenter.on_start()
+        self._init_app_indicator()
 
-    def __init_app_indicator(self) -> None:
+    def _init_app_indicator(self) -> None:
         if AppIndicator3:
-            self.__app_indicator = AppIndicator3.Indicator \
+            self._app_indicator = AppIndicator3.Indicator \
                 .new(APP_ID, get_data_path('gkraken-symbolic.svg'), AppIndicator3.IndicatorCategory.HARDWARE)
-            self.__app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
-            self.__app_indicator.set_menu(self.__app_indicator_menu)
+            self._app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
+            self._app_indicator.set_menu(self._app_indicator_menu)
 
     def toggle_window_visibility(self) -> None:
-        if self.__window.props.visible:
-            self.__window.hide()
+        if self._window.props.visible:
+            self._window.hide()
         else:
-            self.__window.show()
+            self._window.show()
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
         LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
 
     def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
         if profile.channel == ChannelType.FAN.value:
-            self.__cooling_fixed_speed_popover.set_relative_to(self.__cooling_fan_edit_button)
-            self.__cooling_fixed_speed_adjustment.set_lower(FAN_MIN_DUTY)
-            self.__cooling_fixed_speed_adjustment.set_upper(FAN_MAX_DUTY)
+            self._cooling_fixed_speed_popover.set_relative_to(self._cooling_fan_edit_button)
+            self._cooling_fixed_speed_adjustment.set_lower(FAN_MIN_DUTY)
+            self._cooling_fixed_speed_adjustment.set_upper(FAN_MAX_DUTY)
         elif profile.channel == ChannelType.PUMP.value:
-            self.__cooling_fixed_speed_popover.set_relative_to(self.__cooling_pump_edit_button)
-            self.__cooling_fixed_speed_adjustment.set_lower(PUMP_MIN_DUTY)
-            self.__cooling_fixed_speed_adjustment.set_upper(PUMP_MAX_DUTY)
+            self._cooling_fixed_speed_popover.set_relative_to(self._cooling_pump_edit_button)
+            self._cooling_fixed_speed_adjustment.set_lower(PUMP_MIN_DUTY)
+            self._cooling_fixed_speed_adjustment.set_upper(PUMP_MAX_DUTY)
         else:
             raise ValueError("Unknown channel: %s" % profile.channel)
-        self.__cooling_fixed_speed_scale.set_name(profile.channel)
-        self.__cooling_fixed_speed_adjustment.set_value(profile.steps[0].duty)
-        self.__cooling_fixed_speed_popover.show_all()
+        self._cooling_fixed_speed_scale.set_name(profile.channel)
+        self._cooling_fixed_speed_adjustment.set_value(profile.steps[0].duty)
+        self._cooling_fixed_speed_popover.show_all()
 
     def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
-        self.__cooling_fixed_speed_popover.hide()
-        return self.__cooling_fixed_speed_scale.get_value(), self.__cooling_fixed_speed_scale.get_name()
+        self._cooling_fixed_speed_popover.hide()
+        return self._cooling_fixed_speed_scale.get_value(), self._cooling_fixed_speed_scale.get_name()
 
     def show_about_dialog(self) -> None:
-        self.__about_dialog.show()
+        self._about_dialog.show()
 
     def show_settings_dialog(self) -> None:
-        self.__settings_dialog.show()
+        self._settings_dialog.show()
 
     def set_statusbar_text(self, text: str) -> None:
-        self.__statusbar.remove_all(self.__context)
-        self.__statusbar.push(self.__context, text)
+        self._statusbar.remove_all(self._context)
+        self._statusbar.push(self._context, text)
 
     def refresh_status(self, status: Optional[Status]) -> None:
         LOG.debug('view status')
         if status:
-            self.__cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
-            self.__cooling_fan_speed.set_markup("<span size=\"xx-large\">%s</span> %%" %
-                                                ('-' if status.fan_speed is None else status.fan_speed))
-            self.__cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
-            self.__cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
-            self.__firmware_version.set_label("firmware version %s" % status.firmware_version)
-            if self.__app_indicator:
-                if self.__settings_interactor.get_bool('settings_show_app_indicator'):
-                    self.__app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+            self._cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
+            self._cooling_fan_speed.set_markup("<span size=\"xx-large\">%s</span> %%" %
+                                               ('-' if status.fan_speed is None else status.fan_speed))
+            self._cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
+            self._cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
+            self._firmware_version.set_label("firmware version %s" % status.firmware_version)
+            if self._app_indicator:
+                if self._settings_interactor.get_bool('settings_show_app_indicator'):
+                    self._app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
                 else:
-                    self.__app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
-                if self.__settings_interactor.get_bool('settings_app_indicator_show_water_temp'):
-                    self.__app_indicator.set_label("  %s°C" % status.liquid_temperature, "  XX°C")
+                    self._app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
+                if self._settings_interactor.get_bool('settings_app_indicator_show_water_temp'):
+                    self._app_indicator.set_label("  %s°C" % status.liquid_temperature, "  XX°C")
                 else:
-                    self.__app_indicator.set_label("", "")
+                    self._app_indicator.set_label("", "")
 
     def refresh_chart(self, profile: SpeedProfile) -> None:
         if profile.channel == ChannelType.FAN.value:
-            self.__plot_fan_chart(self.__get_speed_profile_data(profile))
+            self._plot_fan_chart(self._get_speed_profile_data(profile))
         elif profile.channel == ChannelType.PUMP.value:
-            self.__plot_pump_chart(self.__get_speed_profile_data(profile))
+            self._plot_pump_chart(self._get_speed_profile_data(profile))
         else:
             raise ValueError("Unknown channel: %s" % profile.channel)
 
     @staticmethod
-    def __get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
+    def _get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
         data = {p.temperature: p.duty for p in profile.steps}
         if profile.single_step:
             data.update({60: profile.steps[0].duty})
@@ -192,75 +192,75 @@ class View(ViewInterface):
                                  active: Optional[int]) -> None:
         if channel is ChannelType.FAN:
             for item in data:
-                self.__cooling_fan_liststore.append([item[0], item[1]])
-            self.__cooling_fan_combobox.set_model(self.__cooling_fan_liststore)
-            self.__cooling_fan_combobox.set_sensitive(len(self.__cooling_fan_liststore) > 1)
+                self._cooling_fan_liststore.append([item[0], item[1]])
+            self._cooling_fan_combobox.set_model(self._cooling_fan_liststore)
+            self._cooling_fan_combobox.set_sensitive(len(self._cooling_fan_liststore) > 1)
             if active is not None:
-                self.__cooling_fan_combobox.set_active(active)
+                self._cooling_fan_combobox.set_active(active)
         elif channel is ChannelType.PUMP:
             for item in data:
-                self.__cooling_pump_liststore.append([item[0], item[1]])
-            self.__cooling_pump_combobox.set_model(self.__cooling_pump_liststore)
-            self.__cooling_pump_combobox.set_sensitive(len(self.__cooling_pump_liststore) > 1)
+                self._cooling_pump_liststore.append([item[0], item[1]])
+            self._cooling_pump_combobox.set_model(self._cooling_pump_liststore)
+            self._cooling_pump_combobox.set_sensitive(len(self._cooling_pump_liststore) > 1)
             if active is not None:
-                self.__cooling_pump_combobox.set_active(active)
+                self._cooling_pump_combobox.set_active(active)
         else:
             raise ValueError("Unknown channel: %s" % channel.name)
 
     def set_apply_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
         if channel is ChannelType.FAN:
-            self.__cooling_fan_apply_button.set_sensitive(enabled)
+            self._cooling_fan_apply_button.set_sensitive(enabled)
         elif channel is ChannelType.PUMP:
-            self.__cooling_pump_apply_button.set_sensitive(enabled)
+            self._cooling_pump_apply_button.set_sensitive(enabled)
         else:
             raise ValueError("Unknown channel: %s" % channel.name)
 
     def set_edit_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
         if channel is ChannelType.FAN:
-            self.__cooling_fan_edit_button.set_sensitive(enabled)
+            self._cooling_fan_edit_button.set_sensitive(enabled)
         elif channel is ChannelType.PUMP:
-            self.__cooling_pump_edit_button.set_sensitive(enabled)
+            self._cooling_pump_edit_button.set_sensitive(enabled)
         else:
             raise ValueError("Unknown channel: %s" % channel.name)
 
     # pylint: disable=attribute-defined-outside-init
-    def __init_plot_charts(self,
-                           fan_scrolled_window: Gtk.ScrolledWindow,
-                           pump_scrolled_window: Gtk.ScrolledWindow) -> None:
-        self.__fan_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
-        self.__fan_canvas = FigureCanvas(self.__fan_figure)  # a Gtk.DrawingArea+
-        self.__fan_axis = self.__fan_figure.add_subplot(111)
-        self.__fan_line, = self.__init_plot_chart(
+    def _init_plot_charts(self,
+                          fan_scrolled_window: Gtk.ScrolledWindow,
+                          pump_scrolled_window: Gtk.ScrolledWindow) -> None:
+        self._fan_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
+        self._fan_canvas = FigureCanvas(self._fan_figure)  # a Gtk.DrawingArea+
+        self._fan_axis = self._fan_figure.add_subplot(111)
+        self._fan_line, = self._init_plot_chart(
             fan_scrolled_window,
-            self.__fan_figure,
-            self.__fan_canvas,
-            self.__fan_axis
+            self._fan_figure,
+            self._fan_canvas,
+            self._fan_axis
         )
 
-        self.__pump_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
-        self.__pump_canvas = FigureCanvas(self.__pump_figure)  # a Gtk.DrawingArea+
-        self.__pump_axis = self.__pump_figure.add_subplot(111)
-        self.__pump_line, = self.__init_plot_chart(
+        self._pump_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
+        self._pump_canvas = FigureCanvas(self._pump_figure)  # a Gtk.DrawingArea+
+        self._pump_axis = self._pump_figure.add_subplot(111)
+        self._pump_line, = self._init_plot_chart(
             pump_scrolled_window,
-            self.__pump_figure,
-            self.__pump_canvas,
-            self.__pump_axis
+            self._pump_figure,
+            self._pump_canvas,
+            self._pump_axis
         )
 
     def refresh_settings(self, settings: Dict[str, Any]) -> None:
         for key, value in settings.items():
             if isinstance(value, bool):
-                switch: Gtk.Switch = self.__builder.get_object(key + '_switch')
+                switch: Gtk.Switch = self._builder.get_object(key + '_switch')
                 switch.set_active(value)
             elif isinstance(value, int):
-                spinbutton: Gtk.SpinButton = self.__builder.get_object(key + '_spinbutton')
+                spinbutton: Gtk.SpinButton = self._builder.get_object(key + '_spinbutton')
                 spinbutton.set_value(value)
 
     @staticmethod
-    def __init_plot_chart(fan_scrolled_window: Gtk.ScrolledWindow,
-                          figure: Figure,
-                          canvas: FigureCanvas,
-                          axis: Axes) -> Any:
+    def _init_plot_chart(fan_scrolled_window: Gtk.ScrolledWindow,
+                         figure: Figure,
+                         canvas: FigureCanvas,
+                         axis: Axes) -> Any:
         axis.grid(True, linestyle=':')
         axis.margins(x=0, y=0.05)
         axis.set_facecolor('#00000000')
@@ -276,18 +276,18 @@ class View(ViewInterface):
         figure.canvas.draw()
         return lines
 
-    def __plot_fan_chart(self, data: Dict[int, int]) -> None:
+    def _plot_fan_chart(self, data: Dict[int, int]) -> None:
         temperature = list(data.keys())
         duty = list(data.values())
-        self.__fan_line.set_xdata(temperature)
-        self.__fan_line.set_ydata(duty)
-        self.__fan_canvas.draw()
-        self.__fan_canvas.flush_events()
+        self._fan_line.set_xdata(temperature)
+        self._fan_line.set_ydata(duty)
+        self._fan_canvas.draw()
+        self._fan_canvas.flush_events()
 
-    def __plot_pump_chart(self, data: Dict[int, int]) -> None:
+    def _plot_pump_chart(self, data: Dict[int, int]) -> None:
         temperature = list(data.keys())
         duty = list(data.values())
-        self.__pump_line.set_xdata(temperature)
-        self.__pump_line.set_ydata(duty)
-        self.__pump_canvas.draw()
-        self.__pump_canvas.flush_events()
+        self._pump_line.set_xdata(temperature)
+        self._pump_line.set_ydata(duty)
+        self._pump_canvas.draw()
+        self._pump_canvas.flush_events()

@@ -55,25 +55,25 @@ class Application(Gtk.Application):
         if SpeedProfile.select().count() == 0:
             load_db_default_data()
 
-        self.add_main_option_entries(self.__get_main_option_entries())
-        self.__view = view
-        self.__presenter = presenter
-        self.__presenter.application_quit = self.quit
-        self.__window: Optional[Gtk.ApplicationWindow] = None
-        self.__builder: Gtk.Builder = builder
-        self.__start_hidden: bool = False
+        self.add_main_option_entries(self._get_main_option_entries())
+        self._view = view
+        self._presenter = presenter
+        self._presenter.application_quit = self.quit
+        self._window: Optional[Gtk.ApplicationWindow] = None
+        self._builder: Gtk.Builder = builder
+        self._start_hidden: bool = False
 
     def do_activate(self) -> None:
-        if not self.__window:
-            self.__builder.connect_signals(self.__presenter)
-            self.__window: Gtk.ApplicationWindow = self.__builder.get_object("application_window")
-            self.__window.set_application(self)
-            self.__window.show_all()
-            self.__view.show()
-        self.__window.present()
-        if self.__start_hidden:
-            self.__window.hide()
-            self.__start_hidden = False
+        if not self._window:
+            self._builder.connect_signals(self._presenter)
+            self._window: Gtk.ApplicationWindow = self._builder.get_object("application_window")
+            self._window.set_application(self)
+            self._window.show_all()
+            self._view.show()
+        self._window.present()
+        if self._start_hidden:
+            self._window.hide()
+            self._start_hidden = False
 
     def do_startup(self) -> None:
         Gtk.Application.do_startup(self)
@@ -99,7 +99,7 @@ class Application(Gtk.Application):
 
         if _Options.MINIMIZED.value in options:
             LOG.debug("Option %s selected", _Options.MINIMIZED.value)
-            self.__start_hidden = True
+            self._start_hidden = True
 
         if _Options.UDEV_ADD_RULE.value in options:
             LOG.debug("Option %s selected", _Options.UDEV_ADD_RULE.value)
@@ -116,7 +116,7 @@ class Application(Gtk.Application):
         return exit_value
 
     @staticmethod
-    def __get_main_option_entries() -> List[GLib.OptionEntry]:
+    def _get_main_option_entries() -> List[GLib.OptionEntry]:
         options = [
             build_glib_option(_Options.VERSION.value,
                               short_name='v',

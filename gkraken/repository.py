@@ -35,20 +35,20 @@ class KrakenRepository:
     @inject
     def __init__(self) -> None:
         self.lock = threading.RLock()
-        self.__driver: Optional[KrakenTwoDriver] = None
+        self._driver: Optional[KrakenTwoDriver] = None
 
     def cleanup(self) -> None:
         LOG.debug("KrakenRepository cleanup")
-        if self.__driver:
-            self.__driver.finalize()
-            self.__driver = None
+        if self._driver:
+            self._driver.finalize()
+            self._driver = None
 
     @synchronized_with_attr("lock")
     def get_status(self) -> Optional[Status]:
-        self.__load_driver()
-        if self.__driver:
+        self._load_driver()
+        if self._driver:
             try:
-                status_list = [v for k, v, u in self.__driver.get_status()]
+                status_list = [v for k, v, u in self._driver.get_status()]
                 status = Status(
                     status_list[_StatusType.LIQUID_TEMPERATURE.value],
                     status_list[_StatusType.FAN_RPM.value],
@@ -64,24 +64,24 @@ class KrakenRepository:
 
     @synchronized_with_attr("lock")
     def set_speed_profile(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> None:
-        self.__load_driver()
-        if self.__driver and profile_data:
+        self._load_driver()
+        if self._driver and profile_data:
             try:
                 if len(profile_data) == 1:
-                    self.__driver.set_fixed_speed(channel_value, profile_data[0][1])
+                    self._driver.set_fixed_speed(channel_value, profile_data[0][1])
                 else:
-                    self.__driver.set_speed_profile(channel_value, profile_data)
+                    self._driver.set_speed_profile(channel_value, profile_data)
             # pylint: disable=bare-except
             except:
                 LOG.exception("Error getting the status")
                 self.cleanup()
 
-    def __load_driver(self) -> None:
-        if not self.__driver:
-            self.__driver = INJECTOR.get(Optional[KrakenTwoDriver])
+    def _load_driver(self) -> None:
+        if not self._driver:
+            self._driver = INJECTOR.get(Optional[KrakenTwoDriver])
 
-            if self.__driver:
-                self.__driver.initialize()
+            if self._driver:
+                self._driver.initialize()
             else:
                 raise ValueError("Kraken USB interface error (check USB cable connection)")
 

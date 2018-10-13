@@ -89,37 +89,37 @@ class Presenter:
                  ) -> None:
         LOG.debug("init Presenter ")
         self.view: ViewInterface = ViewInterface()
-        self.__scheduler: SchedulerBase = ThreadPoolScheduler(multiprocessing.cpu_count())
-        self.__get_status_interactor: GetStatusInteractor = get_status_interactor
-        self.__set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
-        self.__settings_interactor = settings_interactor
-        self.__composite_disposable: CompositeDisposable = composite_disposable
-        self.__profile_selected: Dict[str, SpeedProfile] = {}
-        self.__should_update_fan_speed: bool = False
+        self._scheduler: SchedulerBase = ThreadPoolScheduler(multiprocessing.cpu_count())
+        self._get_status_interactor: GetStatusInteractor = get_status_interactor
+        self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
+        self._settings_interactor = settings_interactor
+        self._composite_disposable: CompositeDisposable = composite_disposable
+        self._profile_selected: Dict[str, SpeedProfile] = {}
+        self._should_update_fan_speed: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
 
     def on_start(self) -> None:
-        self.__init_speed_profiles()
-        self.__init_settings()
-        self.__start_refresh()
+        self._init_speed_profiles()
+        self._init_settings()
+        self._start_refresh()
 
-    def __start_refresh(self) -> None:
+    def _start_refresh(self) -> None:
         LOG.debug("start refresh")
-        refresh_interval_ms = self.__settings_interactor.get_int('settings_refresh_interval') * 1000
-        self.__composite_disposable \
+        refresh_interval_ms = self._settings_interactor.get_int('settings_refresh_interval') * 1000
+        self._composite_disposable \
             .add(Observable
-                 .interval(refresh_interval_ms, scheduler=self.__scheduler)
+                 .interval(refresh_interval_ms, scheduler=self._scheduler)
                  .start_with(0)
-                 .subscribe_on(self.__scheduler)
-                 .flat_map(lambda _: self.__get_status())
+                 .subscribe_on(self._scheduler)
+                 .flat_map(lambda _: self._get_status())
                  .observe_on(GtkScheduler())
-                 .subscribe(on_next=self.__update_status,
+                 .subscribe(on_next=self._update_status,
                             on_error=lambda e: LOG.exception("Refresh error: %s", str(e)))
                  )
 
-    def __update_status(self, status: Optional[Status]) -> None:
+    def _update_status(self, status: Optional[Status]) -> None:
         if status is not None:
-            if self.__should_update_fan_speed:
+            if self._should_update_fan_speed:
                 last_applied: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=ChannelType.FAN.value)
                 if last_applied is not None:
                     duties = [i.duty for i in last_applied.profile.steps if status.liquid_temperature >= i.temperature]
@@ -128,36 +128,36 @@ class Presenter:
 
             self.view.refresh_status(status)
 
-    # def __load_last_profile(self) -> None:
+    # def _load_last_profile(self) -> None:
     #     for current in CurrentSpeedProfile.select():
 
     @staticmethod
-    def __get_profile_list(channel: ChannelType) -> List[Tuple[int, str]]:
+    def _get_profile_list(channel: ChannelType) -> List[Tuple[int, str]]:
         return [(p.id, p.name) for p in SpeedProfile.select().where(SpeedProfile.channel == channel.value)]
 
-    def __init_speed_profiles(self) -> None:
+    def _init_speed_profiles(self) -> None:
         for channel in ChannelType:
-            data = self.__get_profile_list(channel)
+            data = self._get_profile_list(channel)
 
             active = None
-            if self.__settings_interactor.get_bool('settings_load_last_profile'):
-                self.__should_update_fan_speed = True
+            if self._settings_interactor.get_bool('settings_load_last_profile'):
+                self._should_update_fan_speed = True
                 current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
                 if current is not None:
                     active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
-                    self.__set_speed_profile(current.profile)
+                    self._set_speed_profile(current.profile)
 
             data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
 
             self.view.refresh_profile_combobox(channel, data, active)
 
-    def __init_settings(self) -> None:
+    def _init_settings(self) -> None:
         settings: Dict[str, Any] = {}
         for key, default_value in SETTINGS_DEFAULTS.items():
             if isinstance(default_value, bool):
-                settings[key] = self.__settings_interactor.get_bool(key)
+                settings[key] = self._settings_interactor.get_bool(key)
             elif isinstance(default_value, int):
-                settings[key] = self.__settings_interactor.get_int(key)
+                settings[key] = self._settings_interactor.get_int(key)
         self.view.refresh_settings(settings)
 
     def on_menu_settings_clicked(self, *_: Any) -> None:
@@ -175,18 +175,18 @@ class Presenter:
             key = re.sub('_spinbutton$', '', widget.get_name())
             value = widget.get_value_as_int()
         if key is not None and value is not None:
-            self.__settings_interactor.set_bool(key, value)
+            self._settings_interactor.set_bool(key, value)
 
     def on_stack_visible_child_changed(self, *_: Any) -> None:
         pass
 
     def on_fan_profile_selected(self, widget: Any, *_: Any) -> None:
         profile_id = widget.get_model()[widget.get_active()][0]
-        self.__select_speed_profile(profile_id, ChannelType.FAN)
+        self._select_speed_profile(profile_id, ChannelType.FAN)
 
     def on_pump_profile_selected(self, widget: Any, *_: Any) -> None:
         profile_id = widget.get_model()[widget.get_active()][0]
-        self.__select_speed_profile(profile_id, ChannelType.PUMP)
+        self._select_speed_profile(profile_id, ChannelType.PUMP)
 
     def on_quit_clicked(self, *_: Any) -> None:
         self.application_quit()
@@ -194,63 +194,63 @@ class Presenter:
     def on_toggle_app_window_clicked(self, *_: Any) -> None:
         self.view.toggle_window_visibility()
 
-    def __select_speed_profile(self, profile_id: int, channel: ChannelType) -> None:
+    def _select_speed_profile(self, profile_id: int, channel: ChannelType) -> None:
         if profile_id == _ADD_NEW_PROFILE_INDEX:
             self.view.set_apply_button_enabled(channel, False)
             self.view.set_edit_button_enabled(channel, False)
             self.view.show_add_speed_profile_dialog(channel)
         else:
             profile: SpeedProfile = SpeedProfile.get(id=profile_id)
-            self.__profile_selected[profile.channel] = profile
+            self._profile_selected[profile.channel] = profile
             self.view.set_apply_button_enabled(channel, True)
             self.view.set_edit_button_enabled(channel, True)
             self.view.refresh_chart(profile)
 
     @staticmethod
-    def __get_profile_data(profile: SpeedProfile) -> List[Tuple[int, int]]:
+    def _get_profile_data(profile: SpeedProfile) -> List[Tuple[int, int]]:
         return [(p.temperature, p.duty) for p in profile.steps]
 
     def on_fan_edit_button_clicked(self, *_: Any) -> None:
-        self.__on_edit_button_clicked(ChannelType.FAN)
+        self._on_edit_button_clicked(ChannelType.FAN)
 
     def on_pump_edit_button_clicked(self, *_: Any) -> None:
-        self.__on_edit_button_clicked(ChannelType.PUMP)
+        self._on_edit_button_clicked(ChannelType.PUMP)
 
-    def __on_edit_button_clicked(self, channel: ChannelType) -> None:
-        profile = self.__profile_selected[channel.value]
+    def _on_edit_button_clicked(self, channel: ChannelType) -> None:
+        profile = self._profile_selected[channel.value]
         if profile.single_step:
             self.view.show_fixed_speed_profile_popover(profile)
 
     def on_fixed_speed_apply_button_clicked(self, *_: Any) -> None:
         value, channel = self.view.dismiss_and_get_value_fixed_speed_popover()
-        profile = self.__profile_selected[channel]
+        profile = self._profile_selected[channel]
         speed_step: SpeedStep = profile.steps[0]
         speed_step.duty = value
         speed_step.save()
         if channel == ChannelType.FAN.value:
-            self.__should_update_fan_speed = False
+            self._should_update_fan_speed = False
         self.view.refresh_chart(profile)
 
     def on_fan_apply_button_clicked(self, *_: Any) -> None:
-        self.__set_speed_profile(self.__profile_selected[ChannelType.FAN.value])
-        self.__should_update_fan_speed = True
+        self._set_speed_profile(self._profile_selected[ChannelType.FAN.value])
+        self._should_update_fan_speed = True
 
     def on_pump_apply_button_clicked(self, *_: Any) -> None:
-        self.__set_speed_profile(self.__profile_selected[ChannelType.PUMP.value])
+        self._set_speed_profile(self._profile_selected[ChannelType.PUMP.value])
 
-    def __set_speed_profile(self, profile: SpeedProfile) -> None:
-        observable = self.__set_speed_profile_interactor \
-            .execute(profile.channel, self.__get_profile_data(profile))
-        self.__composite_disposable \
+    def _set_speed_profile(self, profile: SpeedProfile) -> None:
+        observable = self._set_speed_profile_interactor \
+            .execute(profile.channel, self._get_profile_data(profile))
+        self._composite_disposable \
             .add(observable
-                 .subscribe_on(self.__scheduler)
+                 .subscribe_on(self._scheduler)
                  .observe_on(GtkScheduler())
-                 .subscribe(on_next=lambda _: self.__update_current_speed_profile(profile),
+                 .subscribe(on_next=lambda _: self._update_current_speed_profile(profile),
                             on_error=lambda e: (LOG.exception("Set cooling error: %s", str(e)),
                                                 self.view.set_statusbar_text('Error applying %s speed profile!'
                                                                              % profile.channel))))
 
-    def __update_current_speed_profile(self, profile: SpeedProfile) -> None:
+    def _update_current_speed_profile(self, profile: SpeedProfile) -> None:
         current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=profile.channel)
         if current is None:
             CurrentSpeedProfile.create(channel=profile.channel, profile=profile)
@@ -259,11 +259,11 @@ class Presenter:
             current.save()
         self.view.set_statusbar_text('%s cooling profile applied' % profile.channel.capitalize())
 
-    def __log_exception_return_empty_observable(self, ex: Exception) -> Observable:
+    def _log_exception_return_empty_observable(self, ex: Exception) -> Observable:
         LOG.exception("Err = %s", ex)
         self.view.set_statusbar_text(str(ex))
         return Observable.just(None)
 
-    def __get_status(self) -> Observable:
-        return self.__get_status_interactor.execute() \
-            .catch_exception(self.__log_exception_return_empty_observable)
+    def _get_status(self) -> Observable:
+        return self._get_status_interactor.execute() \
+            .catch_exception(self._log_exception_return_empty_observable)
