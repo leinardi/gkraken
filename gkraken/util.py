@@ -24,9 +24,12 @@ from pathlib import Path
 from typing import Optional, Any
 
 from gi.repository import GLib, Gtk
+from matplotlib.axes import Axes
+from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+from matplotlib.figure import Figure
 from xdg import BaseDirectory
 
-from gkraken.conf import APP_PACKAGE_NAME
+from gkraken.conf import APP_PACKAGE_NAME, MIN_TEMP, MAX_TEMP
 
 LOG = logging.getLogger(__name__)
 UDEV_RULES_DIR = '/lib/udev/rules.d/'
@@ -145,3 +148,23 @@ _ROOT = os.path.abspath(os.path.dirname(__file__))
 def hide_on_delete(widget: Gtk.Widget, *_: Any) -> Any:
     widget.hide()
     return widget.hide_on_delete()
+
+
+def init_plot_chart(scrolled_window: Gtk.ScrolledWindow,
+                    figure: Figure,
+                    canvas: FigureCanvas,
+                    axis: Axes) -> Any:
+    axis.grid(True, linestyle=':')
+    axis.margins(x=0, y=0.05)
+    axis.set_facecolor('#00000000')
+    axis.set_xlabel('Liquid temperature [°C]')
+    axis.set_ylabel('Duty [%]')
+    figure.subplots_adjust(top=1)
+    canvas.set_size_request(400, 300)
+    scrolled_window.add_with_viewport(canvas)
+    # Returns a tuple of line objects, thus the comma
+    lines = axis.plot([], [], 'o-', linewidth=3.0, markersize=10, antialiased=True)
+    axis.set_ybound(lower=0, upper=105)
+    axis.set_xbound(MIN_TEMP, MAX_TEMP)
+    figure.canvas.draw()
+    return lines

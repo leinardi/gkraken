@@ -15,16 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with gsi.  If not, see <http://www.gnu.org/licenses/>.
 import logging
-from typing import Optional, Any
+from collections import OrderedDict
+from typing import Optional, Any, Dict
 
 from gi.repository import Gtk
 from injector import singleton, inject
+from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+from matplotlib.figure import Figure
 
 from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DUTY, APP_MAIN_UI_NAME
 from gkraken.di import EditSpeedProfileBuilder
 from gkraken.model import SpeedProfile, SpeedStep, ChannelType
 from gkraken.presenter_edit_speed_profile import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
-from gkraken.util import  get_data_path
+from gkraken.util import get_data_path, init_plot_chart
 
 LOG = logging.getLogger(__name__)
 
@@ -42,9 +45,10 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
         self._builder: Gtk.Builder = builder
         self._builder.connect_signals(self._presenter)
         self._builder.add_from_file(get_data_path(APP_MAIN_UI_NAME))
+        self._init_widgets()
+
+    def _init_widgets(self):
         self._dialog: Gtk.Dialog = self._builder.get_object('dialog')
-        self._save_profile_button: Gtk.Button = self._builder \
-            .get_object('save_profile_button')
         self._delete_profile_button: Gtk.Button = self._builder \
             .get_object('delete_profile_button')
         self._profile_name_entry: Gtk.Entry = self._builder \
@@ -60,27 +64,54 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
             .get_object('duty_scale')
         self._controls_grid: Gtk.Grid = self._builder.get_object('controls_grid')
         self._treeselection: Gtk.TreeSelection = self._builder.get_object('treeselection')
+        self._treeview: Gtk.TreeView = self._builder.get_object('treeview')
         self._add_step_button: Gtk.Button = self._builder.get_object('add_step_button')
         self._save_step_button: Gtk.Button = self._builder \
             .get_object('save_step_button')
         self._delete_step_button: Gtk.Button = self._builder \
             .get_object('delete_step_button')
+        self._init_plot_charts()
 
-    def show(self, profile: Optional[SpeedProfile] = None, channel: Optional[ChannelType] = None) -> None:
+    # pylint: disable=attribute-defined-outside-init
+    def _init_plot_charts(self, ) -> None:
+        self._chart_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
+        self._chart_canvas = FigureCanvas(self._chart_figure)  # a Gtk.DrawingArea+
+        self._chart_axis = self._chart_figure.add_subplot(111)
+        self._chart_line, = init_plot_chart(
+            self._builder.get_object('scrolled_window'),
+            self._chart_figure,
+            self._chart_canvas,
+            self._chart_axis
+        )
+
+    def _plot_chart(self, data: Dict[int, int]) -> None:
+        sorted_data = OrderedDict(sorted(data.items()))
+        temperature = list(sorted_data.keys())
+        duty = list(sorted_data.values())
+        self._chart_line.set_xdata(temperature)
+        self._chart_line.set_ydata(duty)
+        self._chart_canvas.draw()
+        self._chart_canvas.flush_events()
+
+    # TODO remove code duplication with MainView
+    @staticmethod
+    def _get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
+        data = {p.temperature: p.duty for p in profile.steps}
+        if len(data) > 0:
+            if profile.single_step:
+                data.update({MAX_TEMP: profile.steps[0].duty})
+            else:
+                if MIN_TEMP not in data:
+                    data[MIN_TEMP] = data[min(data.keys())]
+                data.update({MAX_TEMP: MAX_DUTY})
+        return data
+
+    def show(self, profile: SpeedProfile) -> None:
         self._treeselection.unselect_all()
-        if profile is None and channel is None:
-            raise ValueError("Both arguments are None")
-
-        if profile is None:
-            self._save_profile_button.set_visible(True)
-            self._delete_profile_button.set_visible(False)
-        else:
-            self._save_profile_button.set_visible(False)
-            self._delete_profile_button.set_visible(True)
-            self._profile_name_entry.set_text(profile.name)
-            self.refresh_liststore(profile)
+        self._profile_name_entry.set_text(profile.name)
+        self.refresh_liststore(profile)
         self.refresh_controls()
-        self._dialog.show()
+        self._dialog.show_all()
 
     def hide(self) -> None:
         self._dialog.hide()
@@ -94,19 +125,22 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
     def get_duty(self) -> int:
         return int(self._duty_adjustment.get_value())
 
+    def has_a_step_selected(self) -> bool:
+        return self._treeselection.get_selected()[1] is not None
+
     def refresh_liststore(self, profile: SpeedProfile) -> None:
         self._liststore.clear()
         for step in profile.steps:
             self._liststore.append([step.id, step.temperature, step.duty])
-
         if profile.steps:
-            self._save_profile_button.set_sensitive(True)
             if profile.steps[-1].temperature == MAX_TEMP or profile.steps[-1].duty == MAX_DUTY:
                 self._add_step_button.set_sensitive(False)
             else:
                 self._add_step_button.set_sensitive(True)
         else:
-            self._save_profile_button.set_sensitive(False)
+            self._add_step_button.set_sensitive(True)
+
+        self._plot_chart(self._get_speed_profile_data(profile))
 
     def refresh_controls(self, step: Optional[SpeedStep] = None, unselect_list: bool = False) -> None:
         if unselect_list:
@@ -145,7 +179,6 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
                 self._duty_adjustment.set_upper(next_steps[0].duty)
 
             self._controls_grid.set_sensitive(True)
-            self._save_profile_button.set_sensitive(True)
             self._temperature_scale.clear_marks()
             self._temperature_scale.add_mark(step.temperature, Gtk.PositionType.BOTTOM)
             self._temperature_adjustment.set_value(step.temperature)

@@ -21,11 +21,10 @@ from typing import Optional, Dict, Any, List, Tuple
 
 from gkraken.di import MainBuilder
 from gkraken.view_edit_speed_profile import EditSpeedProfileView
-from gkraken.util import get_data_path, hide_on_delete
+from gkraken.util import get_data_path, hide_on_delete, init_plot_chart
 from injector import inject, singleton
 import gi
 from gi.repository import Gtk
-from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
@@ -252,7 +251,7 @@ class MainView(MainViewInterface):
         self._fan_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
         self._fan_canvas = FigureCanvas(self._fan_figure)  # a Gtk.DrawingArea+
         self._fan_axis = self._fan_figure.add_subplot(111)
-        self._fan_line, = self._init_plot_chart(
+        self._fan_line, = init_plot_chart(
             fan_scrolled_window,
             self._fan_figure,
             self._fan_canvas,
@@ -262,7 +261,7 @@ class MainView(MainViewInterface):
         self._pump_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
         self._pump_canvas = FigureCanvas(self._pump_figure)  # a Gtk.DrawingArea+
         self._pump_axis = self._pump_figure.add_subplot(111)
-        self._pump_line, = self._init_plot_chart(
+        self._pump_line, = init_plot_chart(
             pump_scrolled_window,
             self._pump_figure,
             self._pump_canvas,
@@ -277,26 +276,6 @@ class MainView(MainViewInterface):
             elif isinstance(value, int):
                 spinbutton: Gtk.SpinButton = self._builder.get_object(key + '_spinbutton')
                 spinbutton.set_value(value)
-
-    @staticmethod
-    def _init_plot_chart(fan_scrolled_window: Gtk.ScrolledWindow,
-                         figure: Figure,
-                         canvas: FigureCanvas,
-                         axis: Axes) -> Any:
-        axis.grid(True, linestyle=':')
-        axis.margins(x=0, y=0.05)
-        axis.set_facecolor('#00000000')
-        axis.set_xlabel('Liquid temperature [°C]')
-        axis.set_ylabel('Duty [%]')
-        figure.subplots_adjust(top=1)
-        canvas.set_size_request(400, 300)
-        fan_scrolled_window.add_with_viewport(canvas)
-        # Returns a tuple of line objects, thus the comma
-        lines = axis.plot([], [], 'o-', linewidth=3.0, markersize=10, antialiased=True)
-        axis.set_ybound(lower=0, upper=105)
-        axis.set_xbound(MIN_TEMP, MAX_TEMP)
-        figure.canvas.draw()
-        return lines
 
     def _plot_chart(self, channel_name: str, data: Dict[int, int]) -> None:
         sorted_data = OrderedDict(sorted(data.items()))

@@ -73,21 +73,6 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
             <property name="pack_type">end</property>
           </packing>
         </child>
-        <child>
-          <object class="GtkButton" id="save_profile_button">
-            <property name="label">Save profile</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <style>
-              <class name="suggested-action"/>
-            </style>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
       </object>
     </child>
     <child internal-child="vbox">
@@ -149,7 +134,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="min_content_height">190</property>
                     <property name="propagate_natural_width">True</property>
                     <child>
-                      <object class="GtkTreeView">
+                      <object class="GtkTreeView" id="treeview">
                         <property name="width_request">220</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -376,6 +361,8 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                 <property name="height_request">300</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
                 <property name="propagate_natural_width">True</property>
                 <property name="propagate_natural_height">True</property>
                 <child>

@@ -28,7 +28,7 @@ LOG = logging.getLogger(__name__)
 
 
 class EditSpeedProfileViewInterface:
-    def show(self, profile: Optional[SpeedProfile] = None, channel: Optional[ChannelType] = None) -> None:
+    def show(self, profile: SpeedProfile) -> None:
         raise NotImplementedError()
 
     def hide(self) -> None:
@@ -41,6 +41,9 @@ class EditSpeedProfileViewInterface:
         raise NotImplementedError()
 
     def get_duty(self) -> int:
+        raise NotImplementedError()
+
+    def has_a_step_selected(self) -> bool:
         raise NotImplementedError()
 
     def refresh_controls(self, step: Optional[SpeedStep] = None, unselect_list: bool = False) -> None:
@@ -60,15 +63,17 @@ class EditSpeedProfilePresenter:
         self._selected_step: Optional[SpeedStep] = None
         self._channel_name: str = ""
 
-    def show(self, profile: Optional[SpeedProfile] = None, channel: Optional[ChannelType] = None) -> None:
-        if profile is None and channel is None:
-            raise ValueError("Both arguments are None")
+    def show_add(self, channel: ChannelType) -> None:
+        self._channel_name = channel.value
+        profile = SpeedProfile()
+        profile.name = 'New profile'
+        profile.channel = channel.value
+        profile.save()
+        self.show_edit(profile)
 
-        if profile:
-            self._channel_name = profile.channel
-            self._profile = profile
-        else:
-            self._channel_name = channel.value
+    def show_edit(self, profile: SpeedProfile) -> None:
+        self._channel_name = profile.channel
+        self._profile = profile
         self._view.show(profile)
 
     def on_dialog_delete_event(self, widget: Gtk.Widget, *_: Any) -> Any:
@@ -106,6 +111,10 @@ class EditSpeedProfilePresenter:
 
         self.refresh_controls(step, True)
 
+    def on_add_profile_clicked(self, *_: Any) -> None:
+        self._profile.delete_instance(recursive=True)
+        self._view.hide()
+
     def on_delete_profile_clicked(self, *_: Any) -> None:
         self._profile.delete_instance(recursive=True)
         self._view.hide()
@@ -119,3 +128,5 @@ class EditSpeedProfilePresenter:
         self._selected_step.duty = self._view.get_duty()
         self._selected_step.save()
         self._view.refresh_liststore(self._profile)
+        if not self._view.has_a_step_selected():
+            self.refresh_controls()

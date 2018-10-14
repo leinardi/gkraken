@@ -246,6 +246,7 @@ class MainPresenter:
             self.main_view.set_edit_button_enabled(channel, False)
             self.main_view.show_add_speed_profile_dialog(channel)
             self.main_view.refresh_chart(channel_to_reset=channel.value)
+            self._edit_speed_profile_presenter.show_add(channel)
         else:
             profile: SpeedProfile = SpeedProfile.get(id=profile_id)
             self._profile_selected[profile.channel] = profile
@@ -268,7 +269,7 @@ class MainPresenter:
         if profile.single_step:
             self.main_view.show_fixed_speed_profile_popover(profile)
         else:
-            self._edit_speed_profile_presenter.show(profile)
+            self._edit_speed_profile_presenter.show_edit(profile)
 
     def on_fixed_speed_apply_button_clicked(self, *_: Any) -> None:
         value, channel = self.main_view.dismiss_and_get_value_fixed_speed_popover()
