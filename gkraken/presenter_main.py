@@ -250,8 +250,11 @@ class MainPresenter:
         else:
             profile: SpeedProfile = SpeedProfile.get(id=profile_id)
             self._profile_selected[profile.channel] = profile
+            if profile.read_only:
+                self.main_view.set_edit_button_enabled(channel, False)
+            else:
+                self.main_view.set_edit_button_enabled(channel, True)
             self.main_view.set_apply_button_enabled(channel, True)
-            self.main_view.set_edit_button_enabled(channel, True)
             self.main_view.refresh_chart(profile)
 
     @staticmethod

@@ -25,6 +25,7 @@ from peewee import CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, 
     ForeignKeyField, BooleanField, BlobField
 from playhouse.sqlite_ext import AutoIncrementField
 
+from gkraken.conf import FAN_MIN_DUTY, PUMP_MIN_DUTY
 from gkraken.di import INJECTOR, SpeedProfileChangedSubject, SpeedStepChangedSubject
 
 LOG = logging.getLogger(__name__)
@@ -142,30 +143,20 @@ def load_db_default_data() -> None:
     # Fan Silent
     SpeedStep.create(profile=fan_silent.id, temperature=20, duty=25)
     SpeedStep.create(profile=fan_silent.id, temperature=35, duty=25)
-    SpeedStep.create(profile=fan_silent.id, temperature=40, duty=35)
-    SpeedStep.create(profile=fan_silent.id, temperature=45, duty=45)
     SpeedStep.create(profile=fan_silent.id, temperature=50, duty=55)
-    SpeedStep.create(profile=fan_silent.id, temperature=55, duty=75)
     SpeedStep.create(profile=fan_silent.id, temperature=60, duty=100)
 
     # Fan Performance
     SpeedStep.create(profile=fan_perf.id, temperature=20, duty=50)
     SpeedStep.create(profile=fan_perf.id, temperature=35, duty=50)
-    SpeedStep.create(profile=fan_perf.id, temperature=40, duty=60)
-    SpeedStep.create(profile=fan_perf.id, temperature=45, duty=70)
-    SpeedStep.create(profile=fan_perf.id, temperature=50, duty=80)
-    SpeedStep.create(profile=fan_perf.id, temperature=55, duty=90)
     SpeedStep.create(profile=fan_perf.id, temperature=60, duty=100)
 
     # Fan Fixed
-    SpeedStep.create(profile=fan_fixed.id, temperature=20, duty=25)
+    SpeedStep.create(profile=fan_fixed.id, temperature=20, duty=FAN_MIN_DUTY)
 
     # Pump Silent
     SpeedStep.create(profile=pump_silent.id, temperature=20, duty=60)
     SpeedStep.create(profile=pump_silent.id, temperature=35, duty=60)
-    SpeedStep.create(profile=pump_silent.id, temperature=40, duty=70)
-    SpeedStep.create(profile=pump_silent.id, temperature=45, duty=80)
-    SpeedStep.create(profile=pump_silent.id, temperature=50, duty=90)
     SpeedStep.create(profile=pump_silent.id, temperature=55, duty=100)
     SpeedStep.create(profile=pump_silent.id, temperature=60, duty=100)
 
@@ -173,10 +164,7 @@ def load_db_default_data() -> None:
     SpeedStep.create(profile=pump_perf.id, temperature=20, duty=70)
     SpeedStep.create(profile=pump_perf.id, temperature=35, duty=70)
     SpeedStep.create(profile=pump_perf.id, temperature=40, duty=80)
-    SpeedStep.create(profile=pump_perf.id, temperature=45, duty=85)
-    SpeedStep.create(profile=pump_perf.id, temperature=50, duty=90)
-    SpeedStep.create(profile=pump_perf.id, temperature=55, duty=95)
     SpeedStep.create(profile=pump_perf.id, temperature=60, duty=100)
 
     # Pump Fixed
-    SpeedStep.create(profile=pump_fixed.id, temperature=20, duty=60)
+    SpeedStep.create(profile=pump_fixed.id, temperature=20, duty=PUMP_MIN_DUTY)
