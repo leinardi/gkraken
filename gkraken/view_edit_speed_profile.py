@@ -20,10 +20,11 @@ from typing import Optional, Any
 from gi.repository import Gtk
 from injector import singleton, inject
 
-from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DUTY
+from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DUTY, APP_MAIN_UI_NAME
+from gkraken.di import EditSpeedProfileBuilder
 from gkraken.model import SpeedProfile, SpeedStep, ChannelType
-from gkraken.presenter import EditSpeedProfileViewInterface, Presenter
-from gkraken.util import hide_on_delete
+from gkraken.presenter_edit_speed_profile import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
+from gkraken.util import  get_data_path
 
 LOG = logging.getLogger(__name__)
 
@@ -32,58 +33,38 @@ LOG = logging.getLogger(__name__)
 class EditSpeedProfileView(EditSpeedProfileViewInterface):
     @inject
     def __init__(self,
-                 presenter: Presenter,
-                 builder: Gtk.Builder,
+                 presenter: EditSpeedProfilePresenter,
+                 builder: EditSpeedProfileBuilder,
                  ) -> None:
         LOG.debug('init EditSpeedProfileView')
-        self._presenter: Presenter = presenter
-        self._presenter.edit_speed_profile_view = self
+        self._presenter: EditSpeedProfilePresenter = presenter
+        self._presenter._view = self
         self._builder: Gtk.Builder = builder
-        self._profile: Optional[SpeedProfile] = None
-        self._selected_step: Optional[SpeedStep] = None
-        self._channel_name: str = ""
-        self._dialog: Gtk.Dialog = self._builder.get_object('cooling_edit_speed_dialog')
-        self._dialog.connect("delete-event", self.on_delete_event)
+        self._builder.connect_signals(self._presenter)
+        self._builder.add_from_file(get_data_path(APP_MAIN_UI_NAME))
+        self._dialog: Gtk.Dialog = self._builder.get_object('dialog')
         self._save_profile_button: Gtk.Button = self._builder \
-            .get_object('cooling_edit_speed_save_profile_button')
+            .get_object('save_profile_button')
         self._delete_profile_button: Gtk.Button = self._builder \
-            .get_object('cooling_edit_speed_delete_profile_button')
+            .get_object('delete_profile_button')
         self._profile_name_entry: Gtk.Entry = self._builder \
-            .get_object('cooling_edit_speed_profile_name_entry')
-        self._liststore: Gtk.ListStore = self._builder.get_object('cooling_edit_speed_liststore')
+            .get_object('profile_name_entry')
+        self._liststore: Gtk.ListStore = self._builder.get_object('liststore')
         self._temperature_adjustment: Gtk.Adjustment = self._builder \
-            .get_object('cooling_edit_speed_temperature_adjustment')
+            .get_object('temperature_adjustment')
         self._duty_adjustment: Gtk.Adjustment = self._builder \
-            .get_object('cooling_edit_speed_duty_adjustment')
+            .get_object('duty_adjustment')
         self._temperature_scale: Gtk.Scale = self._builder \
-            .get_object('cooling_edit_speed_temperature_scale')
+            .get_object('temperature_scale')
         self._duty_scale: Gtk.Scale = self._builder \
-            .get_object('cooling_edit_speed_duty_scale')
-        self._controls_grid: Gtk.Grid = self._builder.get_object('cooling_edit_speed_controls_grid')
-        self._treeselection: Gtk.TreeSelection = self._builder.get_object('cooling_edit_speed_treeselection')
-        self._treeselection.connect("changed", self.on_step_selected)
-        self._add_step_button: Gtk.Button = self._builder.get_object('cooling_edit_speed_add_step_button')
-        self._add_step_button.connect('clicked', self.on_add_step_clicked)
+            .get_object('duty_scale')
+        self._controls_grid: Gtk.Grid = self._builder.get_object('controls_grid')
+        self._treeselection: Gtk.TreeSelection = self._builder.get_object('treeselection')
+        self._add_step_button: Gtk.Button = self._builder.get_object('add_step_button')
         self._save_step_button: Gtk.Button = self._builder \
-            .get_object('cooling_edit_speed_save_step_button')
+            .get_object('save_step_button')
         self._delete_step_button: Gtk.Button = self._builder \
-            .get_object('cooling_edit_speed_delete_step_button')
-        delete_profile_button: Gtk.Button = self._builder \
-            .get_object('cooling_edit_speed_delete_profile_button')
-        delete_profile_button.connect('clicked', self.on_delete_profile_clicked)
-        delete_step_button: Gtk.Button = self._builder \
-            .get_object('cooling_edit_speed_delete_step_button')
-        delete_step_button.connect('clicked', self.on_delete_step_clicked)
-        save_step_button: Gtk.Button = self._builder \
-            .get_object('cooling_edit_speed_save_step_button')
-        save_step_button.connect('clicked', self.on_save_step_clicked)
-
-    def on_delete_event(self, widget: Gtk.Widget, *_: Any) -> Any:
-        if self._profile is not None:
-            if self._profile_name_entry.get_text() != self._profile.name:
-                self._profile.name = self._profile_name_entry.get_text()
-                self._profile.save()
-        return hide_on_delete(widget)
+            .get_object('delete_step_button')
 
     def show(self, profile: Optional[SpeedProfile] = None, channel: Optional[ChannelType] = None) -> None:
         self._treeselection.unselect_all()
@@ -91,61 +72,29 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
             raise ValueError("Both arguments are None")
 
         if profile is None:
-            self._channel_name = channel.value
             self._save_profile_button.set_visible(True)
             self._delete_profile_button.set_visible(False)
         else:
-            self._profile = profile
-            self._channel_name = profile.channel
             self._save_profile_button.set_visible(False)
             self._delete_profile_button.set_visible(True)
             self._profile_name_entry.set_text(profile.name)
-            self._refresh_liststore(profile)
-        self._refresh_controls()
+            self.refresh_liststore(profile)
+        self.refresh_controls()
         self._dialog.show()
 
     def hide(self) -> None:
         self._dialog.hide()
 
-    def on_step_selected(self, tree_selection: Gtk.TreeSelection) -> None:
-        LOG.debug("selected")
-        list_store, tree_iter = tree_selection.get_selected()
-        step = None if tree_iter is None else SpeedStep.get_or_none(id=list_store.get_value(tree_iter, 0))
-        self._refresh_controls(step)
+    def get_profile_name(self) -> str:
+        return str(self._profile_name_entry.get_text())
 
-    def on_delete_profile_clicked(self, *_: Any) -> None:
-        self._profile.delete_instance(recursive=True)
-        self.hide()
+    def get_temperature(self) -> int:
+        return int(self._temperature_adjustment.get_value())
 
-    def on_add_step_clicked(self, *_: Any) -> None:
-        self._treeselection.unselect_all()
-        step = SpeedStep()
-        step.profile = self._profile
-        last_steps = (SpeedStep
-                      .select()
-                      .where(SpeedStep.profile == step.profile)
-                      .order_by(SpeedStep.temperature.desc())
-                      .limit(1))
-        if len(last_steps) == 0:
-            step.temperature = MIN_TEMP
-            step.duty = FAN_MIN_DUTY if step.profile.channel == ChannelType.FAN.value else PUMP_MIN_DUTY
-        else:
-            step.temperature = last_steps[0].temperature + 1
-            step.duty = last_steps[0].duty
+    def get_duty(self) -> int:
+        return int(self._duty_adjustment.get_value())
 
-        self._refresh_controls(step)
-
-    def on_delete_step_clicked(self, *_: Any) -> None:
-        self._selected_step.delete_instance()
-        self._refresh_liststore(self._profile)
-
-    def on_save_step_clicked(self, *_: Any) -> None:
-        self._selected_step.temperature = self._temperature_adjustment.get_value()
-        self._selected_step.duty = self._duty_adjustment.get_value()
-        self._selected_step.save()
-        self._refresh_liststore(self._profile)
-
-    def _refresh_liststore(self, profile: SpeedProfile) -> None:
+    def refresh_liststore(self, profile: SpeedProfile) -> None:
         self._liststore.clear()
         for step in profile.steps:
             self._liststore.append([step.id, step.temperature, step.duty])
@@ -159,11 +108,12 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
         else:
             self._save_profile_button.set_sensitive(False)
 
-    def _refresh_controls(self, step: Optional[SpeedStep] = None) -> None:
+    def refresh_controls(self, step: Optional[SpeedStep] = None, unselect_list: bool = False) -> None:
+        if unselect_list:
+            self._treeselection.unselect_all()
         if step is None:
             self._controls_grid.set_sensitive(False)
         else:
-            self._selected_step = step
             prev_steps = (SpeedStep
                           .select()
                           .where(SpeedStep.profile == step.profile, SpeedStep.temperature < step.temperature)
@@ -176,13 +126,12 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
                           .limit(1))
             if len(prev_steps) == 0:
                 self._temperature_adjustment.set_lower(MIN_TEMP)
-                if self._channel_name == ChannelType.FAN.value:
+                if step.profile.channel == ChannelType.FAN.value:
                     self._duty_adjustment.set_lower(FAN_MIN_DUTY)
-                elif self._channel_name == ChannelType.PUMP.value:
+                elif step.profile.channel == ChannelType.PUMP.value:
                     self._duty_adjustment.set_lower(PUMP_MIN_DUTY)
                 else:
-                    raise ValueError("Unknown channel: %s" % self._channel_name)
-                self._duty_adjustment.set_lower(FAN_MIN_DUTY)
+                    raise ValueError("Unknown channel: %s" % step.profile.channel)
             else:
                 LOG.debug("prev = %s", prev_steps[0].temperature)
                 self._temperature_adjustment.set_lower(prev_steps[0].temperature + 1)

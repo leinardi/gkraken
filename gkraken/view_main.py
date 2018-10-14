@@ -19,6 +19,7 @@ import logging
 from collections import OrderedDict
 from typing import Optional, Dict, Any, List, Tuple
 
+from gkraken.di import MainBuilder
 from gkraken.view_edit_speed_profile import EditSpeedProfileView
 from gkraken.util import get_data_path, hide_on_delete
 from injector import inject, singleton
@@ -40,7 +41,7 @@ except (ImportError, ValueError):
 from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, MAX_DUTY, PUMP_MIN_DUTY, APP_NAME, \
     APP_VERSION, APP_SOURCE_URL, MIN_TEMP, MAX_TEMP
 from gkraken.model import Status, SpeedProfile, ChannelType
-from gkraken.presenter import Presenter, MainViewInterface
+from gkraken.presenter_main import MainPresenter, MainViewInterface
 
 LOG = logging.getLogger(__name__)
 if AppIndicator3 is None:
@@ -52,13 +53,13 @@ class MainView(MainViewInterface):
 
     @inject
     def __init__(self,
-                 presenter: Presenter,
+                 presenter: MainPresenter,
                  edit_speed_profile_view: EditSpeedProfileView,
-                 builder: Gtk.Builder,
+                 builder: MainBuilder,
                  settings_interactor: SettingsInteractor,
                  ) -> None:
         LOG.debug('init MainView')
-        self._presenter: Presenter = presenter
+        self._presenter: MainPresenter = presenter
         self._edit_speed_profile_view = edit_speed_profile_view
         self._presenter.main_view = self
         self._builder: Gtk.Builder = builder

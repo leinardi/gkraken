@@ -32,10 +32,11 @@ setuptools.setup(
     package_data={
         APP_PACKAGE_NAME: [
             'data/60-gkraken.rules',
-            'data/gkraken.glade',
+            'data/edit_speed_profile.glade',
             'data/gkraken.svg',
             'data/gkraken.svg-path826-6-4294967105.png',
             'data/gkraken-symbolic.svg',
+            'data/main.glade',
         ],
 
     },

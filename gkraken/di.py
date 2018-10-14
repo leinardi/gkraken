@@ -26,24 +26,35 @@ from peewee import SqliteDatabase
 from rx.disposables import CompositeDisposable
 from rx.subjects import Subject
 
-from gkraken.conf import APP_PACKAGE_NAME, APP_UI_NAME, APP_DB_NAME
+from gkraken.conf import APP_PACKAGE_NAME, APP_MAIN_UI_NAME, APP_DB_NAME, APP_EDIT_SPEED_PROFILE_UI_NAME
 from gkraken.util import get_data_path, get_config_path
 
 LOG = logging.getLogger(__name__)
 
 SpeedProfileChangedSubject = Key("SpeedProfileChangedSubject")
 SpeedStepChangedSubject = Key("SpeedStepChangedSubject")
+MainBuilder = Key(APP_MAIN_UI_NAME)
+EditSpeedProfileBuilder = Key(APP_EDIT_SPEED_PROFILE_UI_NAME)
 
 
 # pylint: disable=no-self-use
 class ProviderModule(Module):
     @singleton
     @provider
-    def provide_builder(self) -> Gtk.Builder:
+    def provide_main_builder(self) -> MainBuilder:
         LOG.debug("provide Gtk.Builder")
         builder = Gtk.Builder()
         builder.set_translation_domain(APP_PACKAGE_NAME)
-        builder.add_from_file(get_data_path(APP_UI_NAME))
+        builder.add_from_file(get_data_path(APP_MAIN_UI_NAME))
+        return builder
+
+    @singleton
+    @provider
+    def provide_edit_speed_profile_builder(self) -> EditSpeedProfileBuilder:
+        LOG.debug("provide Gtk.Builder")
+        builder = Gtk.Builder()
+        builder.set_translation_domain(APP_PACKAGE_NAME)
+        builder.add_from_file(get_data_path(APP_EDIT_SPEED_PROFILE_UI_NAME))
         return builder
 
     @singleton

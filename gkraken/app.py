@@ -26,8 +26,9 @@ from injector import inject
 from peewee import SqliteDatabase
 
 from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
+from gkraken.di import MainBuilder
 from gkraken.model import SpeedProfile, SpeedStep, Setting, CurrentSpeedProfile, load_db_default_data
-from gkraken.presenter import Presenter
+from gkraken.presenter_main import MainPresenter
 from gkraken.util import build_glib_option, add_udev_rule, remove_udev_rule, LOG_DEBUG_FORMAT
 from gkraken.view_main import MainView
 
@@ -39,8 +40,8 @@ class Application(Gtk.Application):
     def __init__(self,
                  database: SqliteDatabase,
                  view: MainView,
-                 presenter: Presenter,
-                 builder: Gtk.Builder,
+                 presenter: MainPresenter,
+                 builder: MainBuilder,
                  *args: Any,
                  **kwargs: Any) -> None:
         LOG.debug("init Application")

@@ -1,0 +1,121 @@
+# This file is part of gkraken.
+#
+# Copyright (c) 2018 Roberto Leinardi
+#
+# gsi is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# gsi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with gsi.  If not, see <http://www.gnu.org/licenses/>.
+import logging
+from typing import Optional, Any
+
+from gi.repository import Gtk
+from injector import singleton, inject
+
+from gkraken.conf import MIN_TEMP, PUMP_MIN_DUTY, FAN_MIN_DUTY
+from gkraken.model import SpeedProfile, ChannelType, SpeedStep
+from gkraken.util import hide_on_delete
+
+LOG = logging.getLogger(__name__)
+
+
+class EditSpeedProfileViewInterface:
+    def show(self, profile: Optional[SpeedProfile] = None, channel: Optional[ChannelType] = None) -> None:
+        raise NotImplementedError()
+
+    def hide(self) -> None:
+        raise NotImplementedError()
+
+    def get_profile_name(self) -> str:
+        raise NotImplementedError()
+
+    def get_temperature(self) -> int:
+        raise NotImplementedError()
+
+    def get_duty(self) -> int:
+        raise NotImplementedError()
+
+    def refresh_controls(self, step: Optional[SpeedStep] = None, unselect_list: bool = False) -> None:
+        raise NotImplementedError()
+
+    def refresh_liststore(self, profile: SpeedProfile) -> None:
+        raise NotImplementedError()
+
+
+@singleton
+class EditSpeedProfilePresenter:
+    @inject
+    def __init__(self) -> None:
+        LOG.debug("init EditSpeedProfilePresenter ")
+        self._view: EditSpeedProfileViewInterface = EditSpeedProfileViewInterface()
+        self._profile = SpeedProfile()
+        self._selected_step: Optional[SpeedStep] = None
+        self._channel_name: str = ""
+
+    def show(self, profile: Optional[SpeedProfile] = None, channel: Optional[ChannelType] = None) -> None:
+        if profile is None and channel is None:
+            raise ValueError("Both arguments are None")
+
+        if profile:
+            self._channel_name = profile.channel
+            self._profile = profile
+        else:
+            self._channel_name = channel.value
+        self._view.show(profile)
+
+    def on_dialog_delete_event(self, widget: Gtk.Widget, *_: Any) -> Any:
+        if self._profile is not None:
+            name = self._view.get_profile_name()
+            if name != self._profile.name:
+                self._profile.name = name
+                self._profile.save()
+        return hide_on_delete(widget)
+
+    def refresh_controls(self, step: Optional[SpeedStep] = None, unselect_list: bool = False) -> None:
+        self._selected_step = step
+        self._view.refresh_controls(step, unselect_list)
+
+    def on_step_selected(self, tree_selection: Gtk.TreeSelection) -> None:
+        LOG.debug("selected")
+        list_store, tree_iter = tree_selection.get_selected()
+        step = None if tree_iter is None else SpeedStep.get_or_none(id=list_store.get_value(tree_iter, 0))
+        self.refresh_controls(step)
+
+    def on_add_step_clicked(self, *_: Any) -> None:
+        step = SpeedStep()
+        step.profile = self._profile
+        last_steps = (SpeedStep
+                      .select()
+                      .where(SpeedStep.profile == step.profile)
+                      .order_by(SpeedStep.temperature.desc())
+                      .limit(1))
+        if len(last_steps) == 0:
+            step.temperature = MIN_TEMP
+            step.duty = FAN_MIN_DUTY if step.profile.channel == ChannelType.FAN.value else PUMP_MIN_DUTY
+        else:
+            step.temperature = last_steps[0].temperature + 1
+            step.duty = last_steps[0].duty
+
+        self.refresh_controls(step, True)
+
+    def on_delete_profile_clicked(self, *_: Any) -> None:
+        self._profile.delete_instance(recursive=True)
+        self._view.hide()
+
+    def on_delete_step_clicked(self, *_: Any) -> None:
+        self._selected_step.delete_instance()
+        self._view.refresh_liststore(self._profile)
+
+    def on_save_step_clicked(self, *_: Any) -> None:
+        self._selected_step.temperature = self._view.get_temperature()
+        self._selected_step.duty = self._view.get_duty()
+        self._selected_step.save()
+        self._view.refresh_liststore(self._profile)

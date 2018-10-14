@@ -33,6 +33,7 @@ from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor, \
     CheckNewVersionInteractor
 from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep, DbChange
+from gkraken.presenter_edit_speed_profile import EditSpeedProfilePresenter
 
 LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
@@ -87,15 +88,11 @@ class MainViewInterface:
         raise NotImplementedError()
 
 
-class EditSpeedProfileViewInterface:
-    def show(self, profile: Optional[SpeedProfile] = None, channel: Optional[ChannelType] = None) -> None:
-        raise NotImplementedError()
-
-
 @singleton
-class Presenter:
+class MainPresenter:
     @inject
     def __init__(self,
+                 edit_speed_profile_presenter: EditSpeedProfilePresenter,
                  get_status_interactor: GetStatusInteractor,
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
                  settings_interactor: SettingsInteractor,
@@ -104,9 +101,9 @@ class Presenter:
                  speed_step_changed_subject: SpeedStepChangedSubject,
                  composite_disposable: CompositeDisposable,
                  ) -> None:
-        LOG.debug("init Presenter ")
+        LOG.debug("init MainPresenter ")
         self.main_view: MainViewInterface = MainViewInterface()
-        self.edit_speed_profile_view: EditSpeedProfileViewInterface = EditSpeedProfileViewInterface()
+        self._edit_speed_profile_presenter = edit_speed_profile_presenter
         self._scheduler: SchedulerBase = ThreadPoolScheduler(multiprocessing.cpu_count())
         self._get_status_interactor: GetStatusInteractor = get_status_interactor
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
@@ -271,7 +268,7 @@ class Presenter:
         if profile.single_step:
             self.main_view.show_fixed_speed_profile_popover(profile)
         else:
-            self.edit_speed_profile_view.show(profile)
+            self._edit_speed_profile_presenter.show(profile)
 
     def on_fixed_speed_apply_button_clicked(self, *_: Any) -> None:
         value, channel = self.main_view.dismiss_and_get_value_fixed_speed_popover()
