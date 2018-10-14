@@ -42,7 +42,7 @@ class Status:
                  ) -> None:
         self.liquid_temperature: float = liquid_temperature
         self.fan_rpm: int = fan_rpm
-        self.fan_speed: Optional[int] = None
+        self.fan_duty: Optional[float] = None
         self.pump_rpm: int = pump_rpm
         self.firmware_version: str = firmware_version
 

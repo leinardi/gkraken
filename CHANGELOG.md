@@ -1,5 +1,7 @@
-**[0.11.0] 2018-10-12**
+**[0.11.0] 2018-10-14**
  - Added check for new versions
+ - Added Add/Edit/Delete of multi speed profiles
+ - Small icon change
 
 **[0.10.0] 2018-10-12**
  - Added about dialog

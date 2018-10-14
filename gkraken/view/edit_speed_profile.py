@@ -16,7 +16,7 @@
 # along with gsi.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 from collections import OrderedDict
-from typing import Optional, Any, Dict
+from typing import Optional, Dict
 
 from gi.repository import Gtk
 from injector import singleton, inject
@@ -26,8 +26,9 @@ from matplotlib.figure import Figure
 from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DUTY, APP_MAIN_UI_NAME
 from gkraken.di import EditSpeedProfileBuilder
 from gkraken.model import SpeedProfile, SpeedStep, ChannelType
-from gkraken.presenter_edit_speed_profile import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
-from gkraken.util import get_data_path, init_plot_chart
+from gkraken.presenter.edit_speed_profile import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
+from gkraken.util import get_data_path
+from gkraken.view.util import init_plot_chart, get_speed_profile_data
 
 LOG = logging.getLogger(__name__)
 
@@ -93,19 +94,6 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
         self._chart_canvas.draw()
         self._chart_canvas.flush_events()
 
-    # TODO remove code duplication with MainView
-    @staticmethod
-    def _get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
-        data = {p.temperature: p.duty for p in profile.steps}
-        if len(data) > 0:
-            if profile.single_step:
-                data.update({MAX_TEMP: profile.steps[0].duty})
-            else:
-                if MIN_TEMP not in data:
-                    data[MIN_TEMP] = data[min(data.keys())]
-                data.update({MAX_TEMP: MAX_DUTY})
-        return data
-
     def show(self, profile: SpeedProfile) -> None:
         self._treeselection.unselect_all()
         self._profile_name_entry.set_text(profile.name)
@@ -140,7 +128,7 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
         else:
             self._add_step_button.set_sensitive(True)
 
-        self._plot_chart(self._get_speed_profile_data(profile))
+        self._plot_chart(get_speed_profile_data(profile))
 
     def refresh_controls(self, step: Optional[SpeedStep] = None, unselect_list: bool = False) -> None:
         if unselect_list:

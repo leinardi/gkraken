@@ -22,7 +22,7 @@ from injector import singleton, inject
 
 from gkraken.conf import MIN_TEMP, PUMP_MIN_DUTY, FAN_MIN_DUTY
 from gkraken.model import SpeedProfile, ChannelType, SpeedStep
-from gkraken.util import hide_on_delete
+from gkraken.view.util import hide_on_delete
 
 LOG = logging.getLogger(__name__)
 

@@ -20,8 +20,9 @@ from collections import OrderedDict
 from typing import Optional, Dict, Any, List, Tuple
 
 from gkraken.di import MainBuilder
-from gkraken.view_edit_speed_profile import EditSpeedProfileView
-from gkraken.util import get_data_path, hide_on_delete, init_plot_chart
+from gkraken.view.edit_speed_profile import EditSpeedProfileView
+from gkraken.util import get_data_path
+from gkraken.view.util import hide_on_delete, init_plot_chart, get_speed_profile_data
 from injector import inject, singleton
 import gi
 from gi.repository import Gtk
@@ -38,9 +39,9 @@ except (ImportError, ValueError):
     AppIndicator3 = None
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, MAX_DUTY, PUMP_MIN_DUTY, APP_NAME, \
-    APP_VERSION, APP_SOURCE_URL, MIN_TEMP, MAX_TEMP
+    APP_VERSION, APP_SOURCE_URL
 from gkraken.model import Status, SpeedProfile, ChannelType
-from gkraken.presenter_main import MainPresenter, MainViewInterface
+from gkraken.presenter.main import MainPresenter, MainViewInterface
 
 LOG = logging.getLogger(__name__)
 if AppIndicator3 is None:
@@ -77,7 +78,7 @@ class MainView(MainViewInterface):
         self._main_infobar.set_revealed(False)
         self._statusbar: Gtk.Statusbar = self._builder.get_object('statusbar')
         self._context = self._statusbar.get_context_id(APP_PACKAGE_NAME)
-        self._cooling_fan_speed: Gtk.Label = self._builder.get_object('cooling_fan_speed')
+        self._cooling_fan_duty: Gtk.Label = self._builder.get_object('cooling_fan_duty')
         self._cooling_fan_rpm: Gtk.Label = self._builder.get_object('cooling_fan_rpm')
         self._cooling_liquid_temp: Gtk.Label = self._builder.get_object('cooling_liquid_temp')
         self._cooling_pump_rpm: Gtk.Label = self._builder.get_object('cooling_pump_rpm')
@@ -166,8 +167,8 @@ class MainView(MainViewInterface):
         LOG.debug('view status')
         if status:
             self._cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
-            self._cooling_fan_speed.set_markup("<span size=\"xx-large\">%s</span> %%" %
-                                               ('-' if status.fan_speed is None else status.fan_speed))
+            self._cooling_fan_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %
+                                              ('-' if status.fan_duty is None else "%.0f" % status.fan_duty))
             self._cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
             self._cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
             self._firmware_version.set_label("firmware %s - %s %s"
@@ -189,19 +190,7 @@ class MainView(MainViewInterface):
         if channel_to_reset is not None:
             self._plot_chart(channel_to_reset, {})
         else:
-            self._plot_chart(profile.channel, self._get_speed_profile_data(profile))
-
-    @staticmethod
-    def _get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
-        data = {p.temperature: p.duty for p in profile.steps}
-        if len(data) > 0:
-            if profile.single_step:
-                data.update({MAX_TEMP: profile.steps[0].duty})
-            else:
-                if MIN_TEMP not in data:
-                    data[MIN_TEMP] = data[min(data.keys())]
-                data.update({MAX_TEMP: MAX_DUTY})
-        return data
+            self._plot_chart(profile.channel, get_speed_profile_data(profile))
 
     def refresh_profile_combobox(self, channel: ChannelType, data: List[Tuple[int, str]],
                                  active: Optional[int]) -> None:

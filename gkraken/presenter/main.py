@@ -33,7 +33,7 @@ from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor, \
     CheckNewVersionInteractor
 from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep, DbChange
-from gkraken.presenter_edit_speed_profile import EditSpeedProfilePresenter
+from gkraken.presenter.edit_speed_profile import EditSpeedProfilePresenter
 
 LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
@@ -161,11 +161,21 @@ class MainPresenter:
             if self._should_update_fan_speed:
                 last_applied: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=ChannelType.FAN.value)
                 if last_applied is not None:
-                    duties = [i.duty for i in last_applied.profile.steps if status.liquid_temperature >= i.temperature]
-                    if duties:
-                        status.fan_speed = duties[-1]
+                    status.fan_duty = self._get_fan_duty(last_applied.profile, status.liquid_temperature)
 
             self.main_view.refresh_status(status)
+
+    def _get_fan_duty(self, profile: SpeedProfile, liquid_temperature: float) -> float:
+        p1 = ([(i.temperature, i.duty) for i in profile.steps if i.temperature <= liquid_temperature] or [None])[-1]
+        p2 = next(((i.temperature, i.duty) for i in profile.steps if i.temperature > liquid_temperature), None)
+        duty = 0.0
+        if p1 and p2:
+            duty = ((p2[1] - p1[1]) / (p2[0] - p1[0])) * (liquid_temperature - p1[0]) + p1[1]
+        elif p1:
+            duty = float(p1[1])
+        elif p2:
+            duty = float(p2[1])
+        return duty
 
     # def _load_last_profile(self) -> None:
     #     for current in CurrentSpeedProfile.select():

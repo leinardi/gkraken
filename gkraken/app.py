@@ -28,9 +28,10 @@ from peewee import SqliteDatabase
 from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
 from gkraken.model import SpeedProfile, SpeedStep, Setting, CurrentSpeedProfile, load_db_default_data
-from gkraken.presenter_main import MainPresenter
-from gkraken.util import build_glib_option, add_udev_rule, remove_udev_rule, LOG_DEBUG_FORMAT
-from gkraken.view_main import MainView
+from gkraken.presenter.main import MainPresenter
+from gkraken.util import add_udev_rule, remove_udev_rule, LOG_DEBUG_FORMAT
+from gkraken.view.util import build_glib_option
+from gkraken.view.main import MainView
 
 LOG = logging.getLogger(__name__)
 
