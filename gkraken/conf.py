@@ -27,10 +27,11 @@ APP_SOURCE_URL = 'https://gitlab.com/leinardi/gkraken'
 APP_AUTHOR = 'Roberto Leinardi'
 APP_AUTHOR_EMAIL = 'roberto@leinardi.com'
 
+MIN_TEMP = 20
+MAX_TEMP = 60
 FAN_MIN_DUTY = 25
-FAN_MAX_DUTY = 100
 PUMP_MIN_DUTY = 60
-PUMP_MAX_DUTY = 100
+MAX_DUTY = 100
 
 SETTINGS_DEFAULTS: Dict[str, Any] = {
     'settings_load_last_profile': True,

@@ -16,14 +16,20 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 # pylint: disable=too-many-locals,too-many-instance-attributes
+import logging
 from enum import Enum
-from typing import Optional
+from typing import Optional, Any
 
-from peewee import Model, CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, Check, \
+from playhouse.signals import Model, post_save, post_delete
+from peewee import CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, Check, \
     ForeignKeyField, BooleanField, BlobField
 from playhouse.sqlite_ext import AutoIncrementField
 
-from gkraken.di import INJECTOR
+from gkraken.di import INJECTOR, SpeedProfileChangedSubject, SpeedStepChangedSubject
+
+LOG = logging.getLogger(__name__)
+SPEED_PROFILE_CHANGED_SUBJECT = INJECTOR.get(SpeedProfileChangedSubject)
+SPEED_STEP_CHANGED_SUBJECT = INJECTOR.get(SpeedStepChangedSubject)
 
 
 class Status:
@@ -38,6 +44,16 @@ class Status:
         self.fan_speed: Optional[int] = None
         self.pump_rpm: int = pump_rpm
         self.firmware_version: str = firmware_version
+
+
+class DbChange:
+    INSERT = 0
+    DELETE = 1
+    UPDATE = 2
+
+    def __init__(self, entry: Any, cahnge_type: int) -> None:
+        self.entry: Any = entry
+        self.type: int = cahnge_type
 
 
 class ChannelType(Enum):
@@ -59,6 +75,18 @@ class SpeedProfile(Model):
         database = INJECTOR.get(SqliteDatabase)
 
 
+@post_save(sender=SpeedProfile)
+def on_speed_profile_added(_: Any, profile: SpeedProfile, created: bool) -> None:
+    LOG.debug("Profile added")
+    SPEED_PROFILE_CHANGED_SUBJECT.on_next(DbChange(profile, DbChange.INSERT if created else DbChange.UPDATE))
+
+
+@post_delete(sender=SpeedProfile)
+def on_speed_profile_deleted(_: Any, profile: SpeedProfile) -> None:
+    LOG.debug("Profile deleted")
+    SPEED_PROFILE_CHANGED_SUBJECT.on_next(DbChange(profile, DbChange.DELETE))
+
+
 class SpeedStep(Model):
     profile = ForeignKeyField(SpeedProfile, backref='steps')
     temperature = IntegerField()
@@ -68,6 +96,18 @@ class SpeedStep(Model):
     class Meta:
         legacy_table_names = False
         database = INJECTOR.get(SqliteDatabase)
+
+
+@post_save(sender=SpeedStep)
+def on_speed_step_added(_: Any, step: SpeedStep, created: bool) -> None:
+    LOG.debug("Profile added")
+    SPEED_STEP_CHANGED_SUBJECT.on_next(DbChange(step, DbChange.INSERT if created else DbChange.UPDATE))
+
+
+@post_delete(sender=SpeedStep)
+def on_speed_step_deleted(_: Any, step: SpeedStep) -> None:
+    LOG.debug("Step deleted")
+    SPEED_STEP_CHANGED_SUBJECT.on_next(DbChange(step, DbChange.DELETE))
 
 
 class CurrentSpeedProfile(Model):

@@ -29,9 +29,10 @@ from rx.concurrency.schedulerbase import SchedulerBase
 from rx.disposables import CompositeDisposable
 
 from gkraken.conf import SETTINGS_DEFAULTS, APP_NAME, APP_SOURCE_URL
+from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor, \
     CheckNewVersionInteractor
-from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep
+from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep, DbChange
 
 LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
@@ -48,7 +49,7 @@ class ViewInterface:
                                  active: Optional[int]) -> None:
         raise NotImplementedError()
 
-    def refresh_chart(self, profile: SpeedProfile) -> None:
+    def refresh_chart(self, profile: Optional[SpeedProfile] = None, channel_to_reset: Optional[str] = None) -> None:
         raise NotImplementedError()
 
     def set_apply_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
@@ -72,6 +73,10 @@ class ViewInterface:
     def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
         raise NotImplementedError()
 
+    def show_edit_speed_profile_dialog(self, profile: Optional[SpeedProfile] = None,
+                                       channel: Optional[ChannelType] = None) -> None:
+        raise NotImplementedError()
+
     def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
         raise NotImplementedError()
 
@@ -90,6 +95,8 @@ class Presenter:
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
                  settings_interactor: SettingsInteractor,
                  check_new_version_interactor: CheckNewVersionInteractor,
+                 speed_profile_changed_subject: SpeedProfileChangedSubject,
+                 speed_step_changed_subject: SpeedStepChangedSubject,
                  composite_disposable: CompositeDisposable,
                  ) -> None:
         LOG.debug("init Presenter ")
@@ -99,16 +106,38 @@ class Presenter:
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
         self._settings_interactor = settings_interactor
         self._check_new_version_interactor = check_new_version_interactor
+        self._speed_profile_changed_subject = speed_profile_changed_subject
+        self._speed_step_changed_subject = speed_step_changed_subject
         self._composite_disposable: CompositeDisposable = composite_disposable
         self._profile_selected: Dict[str, SpeedProfile] = {}
         self._should_update_fan_speed: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
 
     def on_start(self) -> None:
-        self._init_speed_profiles()
+        self._refresh_speed_profiles(True)
         self._init_settings()
+        self._register_db_listeners()
         self._start_refresh()
         self._check_new_version()
+
+    def _register_db_listeners(self) -> None:
+        self._speed_profile_changed_subject.subscribe(on_next=self._on_speed_profile_list_changed,
+                                                      on_error=lambda e: LOG.exception("Db signal error: %s", str(e)))
+        self._speed_step_changed_subject.subscribe(on_next=self._on_speed_step_list_changed,
+                                                   on_error=lambda e: LOG.exception("Db signal error: %s", str(e)))
+
+    def _on_speed_profile_list_changed(self, db_change: DbChange) -> None:
+        profile = db_change.entry
+        if db_change.type == DbChange.DELETE:
+            self._refresh_speed_profile(ChannelType(profile.channel))
+            self._profile_selected.pop(profile.channel, None)
+        elif db_change.type == DbChange.INSERT or db_change.type == DbChange.UPDATE:
+            self._refresh_speed_profile(ChannelType(profile.channel), profile_id=profile.id)
+
+    def _on_speed_step_list_changed(self, db_change: DbChange) -> None:
+        profile = db_change.entry.profile
+        if profile.channel in self._profile_selected and self._profile_selected[profile.channel].id == profile.id:
+            self.view.refresh_chart(profile)
 
     def _start_refresh(self) -> None:
         LOG.debug("start refresh")
@@ -142,21 +171,24 @@ class Presenter:
     def _get_profile_list(channel: ChannelType) -> List[Tuple[int, str]]:
         return [(p.id, p.name) for p in SpeedProfile.select().where(SpeedProfile.channel == channel.value)]
 
-    def _init_speed_profiles(self) -> None:
+    def _refresh_speed_profiles(self, init: bool = False, selecter_profile_id: Optional[int] = None) -> None:
         for channel in ChannelType:
-            data = self._get_profile_list(channel)
+            self._refresh_speed_profile(channel, init, selecter_profile_id)
 
-            active = None
-            if self._settings_interactor.get_bool('settings_load_last_profile'):
-                self._should_update_fan_speed = True
-                current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
-                if current is not None:
-                    active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
-                    self._set_speed_profile(current.profile)
-
-            data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
-
-            self.view.refresh_profile_combobox(channel, data, active)
+    def _refresh_speed_profile(self, channel: ChannelType, init: bool = False,
+                               profile_id: Optional[int] = None) -> None:
+        data = self._get_profile_list(channel)
+        active = None
+        if profile_id is not None:
+            active = next(i for i, item in enumerate(data) if item[0] == profile_id)
+        elif init and self._settings_interactor.get_bool('settings_load_last_profile'):
+            self._should_update_fan_speed = True
+            current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
+            if current is not None:
+                active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
+                self._set_speed_profile(current.profile)
+        data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
+        self.view.refresh_profile_combobox(channel, data, active)
 
     def _init_settings(self) -> None:
         settings: Dict[str, Any] = {}
@@ -188,12 +220,22 @@ class Presenter:
         pass
 
     def on_fan_profile_selected(self, widget: Any, *_: Any) -> None:
-        profile_id = widget.get_model()[widget.get_active()][0]
-        self._select_speed_profile(profile_id, ChannelType.FAN)
+        active = widget.get_active()
+        if active < 0:
+            # TODO clean chart
+            pass
+        else:
+            profile_id = widget.get_model()[active][0]
+            self._select_speed_profile(profile_id, ChannelType.FAN)
 
     def on_pump_profile_selected(self, widget: Any, *_: Any) -> None:
-        profile_id = widget.get_model()[widget.get_active()][0]
-        self._select_speed_profile(profile_id, ChannelType.PUMP)
+        active = widget.get_active()
+        if active < 0:
+            # TODO clean chart
+            pass
+        else:
+            profile_id = widget.get_model()[active][0]
+            self._select_speed_profile(profile_id, ChannelType.PUMP)
 
     def on_quit_clicked(self, *_: Any) -> None:
         self.application_quit()
@@ -206,6 +248,7 @@ class Presenter:
             self.view.set_apply_button_enabled(channel, False)
             self.view.set_edit_button_enabled(channel, False)
             self.view.show_add_speed_profile_dialog(channel)
+            # TODO clean chart
         else:
             profile: SpeedProfile = SpeedProfile.get(id=profile_id)
             self._profile_selected[profile.channel] = profile
@@ -227,6 +270,8 @@ class Presenter:
         profile = self._profile_selected[channel.value]
         if profile.single_step:
             self.view.show_fixed_speed_profile_popover(profile)
+        else:
+            self.view.show_edit_speed_profile_dialog(profile)
 
     def on_fixed_speed_apply_button_clicked(self, *_: Any) -> None:
         value, channel = self.view.dismiss_and_get_value_fixed_speed_popover()

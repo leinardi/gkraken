@@ -56,7 +56,7 @@ create a custom udev rule
 #### Automatic way
 Once GKraken is installed, the udev rule can be easily crated executing
 ```bash
-sudo gkraken --udev-add-rule
+sudo `which gkraken` --udev-add-rule
 ```
 
 #### Manual way
@@ -95,7 +95,7 @@ If you don't want to create this custom rule you can run gkraken as root
 * pyxdg
 * rx
 
-## How to compile it on Ubuntu 18.04
+## How to run the repository sources
 
 ```
 sudo apt install python3-pip

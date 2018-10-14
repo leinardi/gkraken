@@ -19,16 +19,20 @@ import logging
 
 from typing import Optional
 from gi.repository import Gtk
-from injector import Module, provider, singleton, Injector
+from injector import Module, provider, singleton, Injector, Key
 from liquidctl.cli import find_all_supported_devices
 from liquidctl.driver.kraken_two import KrakenTwoDriver
 from peewee import SqliteDatabase
 from rx.disposables import CompositeDisposable
+from rx.subjects import Subject
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_UI_NAME, APP_DB_NAME
 from gkraken.util import get_data_path, get_config_path
 
 LOG = logging.getLogger(__name__)
+
+SpeedProfileChangedSubject = Key("SpeedProfileChangedSubject")
+SpeedStepChangedSubject = Key("SpeedStepChangedSubject")
 
 
 # pylint: disable=no-self-use
@@ -58,6 +62,16 @@ class ProviderModule(Module):
     def provide_kraken_two_driver(self) -> Optional[KrakenTwoDriver]:
         LOG.debug("provide KrakenTwoDriver")
         return next((dev for dev in find_all_supported_devices() if isinstance(dev, KrakenTwoDriver)), None)
+
+    @singleton
+    @provider
+    def provide_speed_profile_changed_subject(self) -> SpeedProfileChangedSubject:
+        return Subject()
+
+    @singleton
+    @provider
+    def provide_speed_step_changed_subject(self) -> SpeedStepChangedSubject:
+        return Subject()
 
 
 INJECTOR = Injector(ProviderModule)

@@ -35,9 +35,9 @@ try:
 except (ImportError, ValueError):
     AppIndicator3 = None
 
-from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, FAN_MAX_DUTY, PUMP_MIN_DUTY, PUMP_MAX_DUTY, APP_NAME, \
-    APP_VERSION, APP_SOURCE_URL
-from gkraken.model import Status, SpeedProfile, ChannelType
+from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, MAX_DUTY, PUMP_MIN_DUTY, APP_NAME, \
+    APP_VERSION, APP_SOURCE_URL, MIN_TEMP, MAX_TEMP
+from gkraken.model import Status, SpeedProfile, ChannelType, SpeedStep, DbChange
 from gkraken.presenter import Presenter, ViewInterface
 
 LOG = logging.getLogger(__name__)
@@ -62,6 +62,7 @@ class View(ViewInterface):
         self._init_widgets()
 
     def _init_widgets(self) -> None:
+        self._cooling_edit_speed_adapter = _EditSpeedProfileAdapter(self)
         self._app_indicator: Optional[AppIndicator3.Indicator] = None
         self._window = self._builder.get_object("application_window")
         self._settings_dialog: Gtk.Dialog = self._builder.get_object("settings_dialog")
@@ -138,11 +139,11 @@ class View(ViewInterface):
         if profile.channel == ChannelType.FAN.value:
             self._cooling_fixed_speed_popover.set_relative_to(self._cooling_fan_edit_button)
             self._cooling_fixed_speed_adjustment.set_lower(FAN_MIN_DUTY)
-            self._cooling_fixed_speed_adjustment.set_upper(FAN_MAX_DUTY)
+            self._cooling_fixed_speed_adjustment.set_upper(MAX_DUTY)
         elif profile.channel == ChannelType.PUMP.value:
             self._cooling_fixed_speed_popover.set_relative_to(self._cooling_pump_edit_button)
             self._cooling_fixed_speed_adjustment.set_lower(PUMP_MIN_DUTY)
-            self._cooling_fixed_speed_adjustment.set_upper(PUMP_MAX_DUTY)
+            self._cooling_fixed_speed_adjustment.set_upper(MAX_DUTY)
         else:
             raise ValueError("Unknown channel: %s" % profile.channel)
         self._cooling_fixed_speed_scale.set_name(profile.channel)
@@ -152,6 +153,10 @@ class View(ViewInterface):
     def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
         self._cooling_fixed_speed_popover.hide()
         return self._cooling_fixed_speed_scale.get_value(), self._cooling_fixed_speed_scale.get_name()
+
+    def show_edit_speed_profile_dialog(self, profile: Optional[SpeedProfile] = None,
+                                       channel: Optional[ChannelType] = None) -> None:
+        self._cooling_edit_speed_adapter.show(profile, channel)
 
     def show_about_dialog(self) -> None:
         self._about_dialog.show()
@@ -183,8 +188,16 @@ class View(ViewInterface):
                 else:
                     self._app_indicator.set_label("", "")
 
-    def refresh_chart(self, profile: SpeedProfile) -> None:
-        if profile.channel == ChannelType.FAN.value:
+    def refresh_chart(self, profile: Optional[SpeedProfile] = None, channel_to_reset: Optional[str] = None) -> None:
+        if profile is None and channel_to_reset is None:
+            raise ValueError("Both parameters are note!")
+
+        if channel_to_reset is not None:
+            if channel_to_reset == ChannelType.FAN.value:
+                self._plot_fan_chart({})
+            elif channel_to_reset == ChannelType.PUMP.value:
+                self._plot_pump_chart({})
+        elif profile.channel == ChannelType.FAN.value:
             self._plot_fan_chart(self._get_speed_profile_data(profile))
         elif profile.channel == ChannelType.PUMP.value:
             self._plot_pump_chart(self._get_speed_profile_data(profile))
@@ -195,27 +208,33 @@ class View(ViewInterface):
     def _get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
         data = {p.temperature: p.duty for p in profile.steps}
         if profile.single_step:
-            data.update({60: profile.steps[0].duty})
+            data.update({MAX_TEMP: profile.steps[0].duty})
         else:
-            data.update({60: 100})
+            data.update({MAX_TEMP: MAX_DUTY})
         return data
 
     def refresh_profile_combobox(self, channel: ChannelType, data: List[Tuple[int, str]],
                                  active: Optional[int]) -> None:
         if channel is ChannelType.FAN:
+            self._cooling_fan_liststore.clear()
             for item in data:
                 self._cooling_fan_liststore.append([item[0], item[1]])
             self._cooling_fan_combobox.set_model(self._cooling_fan_liststore)
             self._cooling_fan_combobox.set_sensitive(len(self._cooling_fan_liststore) > 1)
             if active is not None:
                 self._cooling_fan_combobox.set_active(active)
+            else:
+                self.refresh_chart(channel_to_reset=channel.value)
         elif channel is ChannelType.PUMP:
+            self._cooling_pump_liststore.clear()
             for item in data:
                 self._cooling_pump_liststore.append([item[0], item[1]])
             self._cooling_pump_combobox.set_model(self._cooling_pump_liststore)
             self._cooling_pump_combobox.set_sensitive(len(self._cooling_pump_liststore) > 1)
             if active is not None:
                 self._cooling_pump_combobox.set_active(active)
+            else:
+                self.refresh_chart(channel_to_reset=channel.value)
         else:
             raise ValueError("Unknown channel: %s" % channel.name)
 
@@ -277,14 +296,14 @@ class View(ViewInterface):
         axis.margins(x=0, y=0.05)
         axis.set_facecolor('#00000000')
         axis.set_xlabel('Liquid temperature [°C]')
-        axis.set_ylabel('Fan speed [%]')
+        axis.set_ylabel('Duty [%]')
         figure.subplots_adjust(top=1)
         canvas.set_size_request(400, 300)
         fan_scrolled_window.add_with_viewport(canvas)
         # Returns a tuple of line objects, thus the comma
         lines = axis.plot([], [], 'o-', linewidth=3.0, markersize=10, antialiased=True)
         axis.set_ybound(lower=0, upper=105)
-        axis.set_xbound(20, 60)
+        axis.set_xbound(MIN_TEMP, MAX_TEMP)
         figure.canvas.draw()
         return lines
 
@@ -303,3 +322,147 @@ class View(ViewInterface):
         self._pump_line.set_ydata(duty)
         self._pump_canvas.draw()
         self._pump_canvas.flush_events()
+
+
+class _EditSpeedProfileAdapter:
+    def __init__(self, root_view: View) -> None:
+        self._profile: Optional[SpeedProfile] = None
+        self._selected_step: Optional[SpeedStep] = None
+        self._channel_name: str = ""
+        self._root_view = root_view
+        self._dialog: Gtk.Dialog = self._root_view._builder.get_object('cooling_edit_speed_dialog')
+        self._dialog.connect("delete-event", self.on_delete_event)
+        self._save_profile_button: Gtk.Button = self._root_view._builder \
+            .get_object('cooling_edit_speed_save_profile_button')
+        self._delete_profile_button: Gtk.Button = self._root_view._builder \
+            .get_object('cooling_edit_speed_delete_profile_button')
+        self._profile_name_entry: Gtk.Entry = self._root_view._builder \
+            .get_object('cooling_edit_speed_profile_name_entry')
+        self._liststore: Gtk.ListStore = self._root_view._builder.get_object('cooling_edit_speed_liststore')
+        self._temperature_adjustment: Gtk.Adjustment = self._root_view._builder \
+            .get_object('cooling_edit_speed_temperature_adjustment')
+        self._duty_adjustment: Gtk.Adjustment = self._root_view._builder \
+            .get_object('cooling_edit_speed_duty_adjustment')
+        self._temperature_scale: Gtk.Scale = self._root_view._builder \
+            .get_object('cooling_edit_speed_temperature_scale')
+        self._duty_scale: Gtk.Scale = self._root_view._builder \
+            .get_object('cooling_edit_speed_duty_scale')
+        self._controls_grid: Gtk.Grid = self._root_view._builder.get_object('cooling_edit_speed_controls_grid')
+        self._treeselection: Gtk.TreeSelection = self._root_view._builder.get_object('cooling_edit_speed_treeselection')
+        self._treeselection.connect("changed", self.on_step_selected)
+        self._cooling_edit_speed_save_step_button: Gtk.Button = self._root_view._builder \
+            .get_object('cooling_edit_speed_save_step_button')
+        self._delete_step_button: Gtk.Button = self._root_view._builder \
+            .get_object('cooling_edit_speed_delete_step_button')
+        delete_profile_button: Gtk.Button = self._root_view._builder \
+            .get_object('cooling_edit_speed_delete_profile_button')
+        delete_profile_button.connect('clicked', self.on_delete_profile_clicked)
+        delete_step_button: Gtk.Button = self._root_view._builder \
+            .get_object('cooling_edit_speed_delete_step_button')
+        delete_step_button.connect('clicked', self.on_delete_step_clicked)
+        save_step_button: Gtk.Button = self._root_view._builder \
+            .get_object('cooling_edit_speed_save_step_button')
+        save_step_button.connect('clicked', self.on_save_step_clicked)
+
+    def on_delete_event(self, widget: Gtk.Widget, *_: Any) -> Any:
+        if self._profile is not None:
+            if self._profile_name_entry.get_text() != self._profile.name:
+                self._profile.name = self._profile_name_entry.get_text()
+                self._profile.save()
+        return self._root_view._hide_on_delete(widget)
+
+    def show(self, profile: Optional[SpeedProfile] = None, channel: Optional[ChannelType] = None) -> None:
+        self._treeselection.unselect_all()
+        if profile is None and channel is None:
+            raise ValueError("Both arguments are None")
+
+        if profile is None:
+            self._channel_name = channel.value
+            self._save_profile_button.set_visible(True)
+            self._delete_profile_button.set_visible(False)
+        else:
+            self._profile = profile
+            self._channel_name = profile.channel
+            self._save_profile_button.set_visible(False)
+            self._delete_profile_button.set_visible(True)
+            self._profile_name_entry.set_text(profile.name)
+            self._refresh_liststore(profile)
+        self._refresh_controls()
+        self._dialog.show()
+
+    def hide(self) -> None:
+        self._dialog.hide()
+
+    def on_step_selected(self, tree_selection: Gtk.TreeSelection) -> None:
+        LOG.debug("selected")
+        list_store, tree_iter = tree_selection.get_selected()
+        step = None if tree_iter is None else SpeedStep.get_or_none(id=list_store.get_value(tree_iter, 0))
+        self._refresh_controls(step)
+
+    def on_delete_profile_clicked(self, *_: Any) -> None:
+        self._profile.delete_instance(recursive=True)
+        self.hide()
+
+    def on_delete_step_clicked(self, *_: Any) -> None:
+        self._selected_step.delete_instance()
+        self._refresh_liststore(self._profile)
+
+    def on_save_step_clicked(self, *_: Any) -> None:
+        self._selected_step.temperature = self._temperature_adjustment.get_value()
+        self._selected_step.duty = self._duty_adjustment.get_value()
+        self._selected_step.save()
+        self._refresh_liststore(self._profile)
+
+    def _refresh_liststore(self, profile: SpeedProfile) -> None:
+        self._liststore.clear()
+        for step in profile.steps:
+            self._liststore.append([step.id, step.temperature, step.duty])
+        if len(self._liststore) > 0:
+            self._save_profile_button.set_sensitive(True)
+        else:
+            self._save_profile_button.set_sensitive(False)
+
+    def _refresh_controls(self, step: Optional[SpeedStep] = None) -> None:
+        if step is None:
+            self._controls_grid.set_sensitive(False)
+        else:
+            self._selected_step = step
+            prev_steps = (SpeedStep
+                          .select()
+                          .where(SpeedStep.profile == step.profile, SpeedStep.temperature < step.temperature)
+                          .order_by(SpeedStep.temperature.desc())
+                          .limit(1))
+            next_steps = (SpeedStep
+                          .select()
+                          .where(SpeedStep.profile == step.profile, SpeedStep.temperature > step.temperature)
+                          .order_by(SpeedStep.temperature)
+                          .limit(1))
+            if len(prev_steps) == 0:
+                self._temperature_adjustment.set_lower(MIN_TEMP)
+                if self._channel_name == ChannelType.FAN.value:
+                    self._duty_adjustment.set_lower(FAN_MIN_DUTY)
+                elif self._channel_name == ChannelType.PUMP.value:
+                    self._duty_adjustment.set_lower(PUMP_MIN_DUTY)
+                else:
+                    raise ValueError("Unknown channel: %s" % self._channel_name)
+                self._duty_adjustment.set_lower(FAN_MIN_DUTY)
+            else:
+                LOG.debug("prev = %s", prev_steps[0].temperature)
+                self._temperature_adjustment.set_lower(prev_steps[0].temperature + 1)
+                self._duty_adjustment.set_lower(prev_steps[0].duty)
+
+            if len(next_steps) == 0:
+                self._temperature_adjustment.set_upper(MAX_TEMP)
+                self._duty_adjustment.set_upper(MAX_DUTY)
+            else:
+                self._temperature_adjustment.set_upper(next_steps[0].temperature - 1)
+                self._duty_adjustment.set_upper(next_steps[0].duty)
+
+            self._controls_grid.set_sensitive(True)
+            self._save_profile_button.set_sensitive(True)
+            self._temperature_scale.clear_marks()
+            self._temperature_scale.add_mark(step.temperature, Gtk.PositionType.BOTTOM)
+            self._temperature_adjustment.set_value(step.temperature)
+            self._duty_scale.clear_marks()
+            self._duty_scale.add_mark(step.duty, Gtk.PositionType.BOTTOM)
+            self._duty_adjustment.set_value(step.duty)
