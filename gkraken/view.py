@@ -201,12 +201,13 @@ class View(ViewInterface):
     @staticmethod
     def _get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
         data = {p.temperature: p.duty for p in profile.steps}
-        if profile.single_step:
-            data.update({MAX_TEMP: profile.steps[0].duty})
-        else:
-            if MIN_TEMP not in data:
-                data[MIN_TEMP] = data[min(data.keys())]
-            data.update({MAX_TEMP: MAX_DUTY})
+        if len(data) > 0:
+            if profile.single_step:
+                data.update({MAX_TEMP: profile.steps[0].duty})
+            else:
+                if MIN_TEMP not in data:
+                    data[MIN_TEMP] = data[min(data.keys())]
+                data.update({MAX_TEMP: MAX_DUTY})
         return data
 
     def refresh_profile_combobox(self, channel: ChannelType, data: List[Tuple[int, str]],
@@ -320,11 +321,7 @@ class View(ViewInterface):
         else:
             raise ValueError("Unknown channel: %s" % channel_name)
 
-    def _plot_pump_chart(self, data: Dict[int, int]) -> None:
-        temperature = list(data.keys())
-        duty = list(data.values())
-
-
+# TODO split in view and presenter
 class _EditSpeedProfileAdapter:
     def __init__(self, root_view: View) -> None:
         self._profile: Optional[SpeedProfile] = None
@@ -351,7 +348,9 @@ class _EditSpeedProfileAdapter:
         self._controls_grid: Gtk.Grid = self._root_view._builder.get_object('cooling_edit_speed_controls_grid')
         self._treeselection: Gtk.TreeSelection = self._root_view._builder.get_object('cooling_edit_speed_treeselection')
         self._treeselection.connect("changed", self.on_step_selected)
-        self._cooling_edit_speed_save_step_button: Gtk.Button = self._root_view._builder \
+        self._add_step_button: Gtk.Button = self._root_view._builder.get_object('cooling_edit_speed_add_step_button')
+        self._add_step_button.connect('clicked', self.on_add_step_clicked)
+        self._save_step_button: Gtk.Button = self._root_view._builder \
             .get_object('cooling_edit_speed_save_step_button')
         self._delete_step_button: Gtk.Button = self._root_view._builder \
             .get_object('cooling_edit_speed_delete_step_button')
@@ -404,6 +403,24 @@ class _EditSpeedProfileAdapter:
         self._profile.delete_instance(recursive=True)
         self.hide()
 
+    def on_add_step_clicked(self, *_: Any) -> None:
+        self._treeselection.unselect_all()
+        step = SpeedStep()
+        step.profile = self._profile
+        last_steps = (SpeedStep
+                      .select()
+                      .where(SpeedStep.profile == step.profile)
+                      .order_by(SpeedStep.temperature.desc())
+                      .limit(1))
+        if len(last_steps) == 0:
+            step.temperature = MIN_TEMP
+            step.duty = FAN_MIN_DUTY if step.profile.channel == ChannelType.FAN.value else PUMP_MIN_DUTY
+        else:
+            step.temperature = last_steps[0].temperature + 1
+            step.duty = last_steps[0].duty
+
+        self._refresh_controls(step)
+
     def on_delete_step_clicked(self, *_: Any) -> None:
         self._selected_step.delete_instance()
         self._refresh_liststore(self._profile)
@@ -418,8 +435,13 @@ class _EditSpeedProfileAdapter:
         self._liststore.clear()
         for step in profile.steps:
             self._liststore.append([step.id, step.temperature, step.duty])
-        if len(self._liststore) > 0:
+
+        if profile.steps:
             self._save_profile_button.set_sensitive(True)
+            if profile.steps[-1].temperature == MAX_TEMP or profile.steps[-1].duty == MAX_DUTY:
+                self._add_step_button.set_sensitive(False)
+            else:
+                self._add_step_button.set_sensitive(True)
         else:
             self._save_profile_button.set_sensitive(False)
 
