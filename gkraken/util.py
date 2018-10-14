@@ -21,9 +21,9 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 
-from gi.repository import GLib
+from gi.repository import GLib, Gtk
 from xdg import BaseDirectory
 
 from gkraken.conf import APP_PACKAGE_NAME
@@ -61,6 +61,7 @@ def set_log_level(level: int) -> None:
     logging.getLogger('injector').setLevel(logging.INFO)
     logging.getLogger('peewee').setLevel(logging.INFO)
     logging.getLogger('matplotlib').setLevel(logging.INFO)
+    logging.getLogger('requests').setLevel(logging.INFO)
 
 
 def get_data_path(path: str) -> str:
@@ -139,3 +140,8 @@ def remove_udev_rule() -> int:
 
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
+
+
+def hide_on_delete(widget: Gtk.Widget, *_: Any) -> Any:
+    widget.hide()
+    return widget.hide_on_delete()

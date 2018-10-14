@@ -27,10 +27,10 @@ from peewee import SqliteDatabase
 from rx.disposables import CompositeDisposable
 
 from gkraken.conf import APP_PACKAGE_NAME
-from gkraken.util import set_log_level
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GLib
+from gkraken.util import set_log_level
 from gkraken.repository import KrakenRepository
 from gkraken.di import INJECTOR
 from gkraken.app import Application
