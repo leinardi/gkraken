@@ -16,6 +16,7 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from collections import OrderedDict
 from typing import Optional, Dict, Any, List, Tuple
 
 from gkraken.util import get_data_path
@@ -193,16 +194,9 @@ class View(ViewInterface):
             raise ValueError("Both parameters are note!")
 
         if channel_to_reset is not None:
-            if channel_to_reset == ChannelType.FAN.value:
-                self._plot_fan_chart({})
-            elif channel_to_reset == ChannelType.PUMP.value:
-                self._plot_pump_chart({})
-        elif profile.channel == ChannelType.FAN.value:
-            self._plot_fan_chart(self._get_speed_profile_data(profile))
-        elif profile.channel == ChannelType.PUMP.value:
-            self._plot_pump_chart(self._get_speed_profile_data(profile))
+            self._plot_chart(channel_to_reset, {})
         else:
-            raise ValueError("Unknown channel: %s" % profile.channel)
+            self._plot_chart(profile.channel, self._get_speed_profile_data(profile))
 
     @staticmethod
     def _get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
@@ -210,6 +204,8 @@ class View(ViewInterface):
         if profile.single_step:
             data.update({MAX_TEMP: profile.steps[0].duty})
         else:
+            if MIN_TEMP not in data:
+                data[MIN_TEMP] = data[min(data.keys())]
             data.update({MAX_TEMP: MAX_DUTY})
         return data
 
@@ -307,21 +303,26 @@ class View(ViewInterface):
         figure.canvas.draw()
         return lines
 
-    def _plot_fan_chart(self, data: Dict[int, int]) -> None:
-        temperature = list(data.keys())
-        duty = list(data.values())
-        self._fan_line.set_xdata(temperature)
-        self._fan_line.set_ydata(duty)
-        self._fan_canvas.draw()
-        self._fan_canvas.flush_events()
+    def _plot_chart(self, channel_name: str, data: Dict[int, int]) -> None:
+        sorted_data = OrderedDict(sorted(data.items()))
+        temperature = list(sorted_data.keys())
+        duty = list(sorted_data.values())
+        if channel_name == ChannelType.FAN.value:
+            self._fan_line.set_xdata(temperature)
+            self._fan_line.set_ydata(duty)
+            self._fan_canvas.draw()
+            self._fan_canvas.flush_events()
+        elif channel_name == ChannelType.PUMP.value:
+            self._pump_line.set_xdata(temperature)
+            self._pump_line.set_ydata(duty)
+            self._pump_canvas.draw()
+            self._pump_canvas.flush_events()
+        else:
+            raise ValueError("Unknown channel: %s" % channel_name)
 
     def _plot_pump_chart(self, data: Dict[int, int]) -> None:
         temperature = list(data.keys())
         duty = list(data.values())
-        self._pump_line.set_xdata(temperature)
-        self._pump_line.set_ydata(duty)
-        self._pump_canvas.draw()
-        self._pump_canvas.flush_events()
 
 
 class _EditSpeedProfileAdapter:

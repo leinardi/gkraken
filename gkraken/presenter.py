@@ -221,19 +221,13 @@ class Presenter:
 
     def on_fan_profile_selected(self, widget: Any, *_: Any) -> None:
         active = widget.get_active()
-        if active < 0:
-            # TODO clean chart
-            pass
-        else:
+        if active >= 0:
             profile_id = widget.get_model()[active][0]
             self._select_speed_profile(profile_id, ChannelType.FAN)
 
     def on_pump_profile_selected(self, widget: Any, *_: Any) -> None:
         active = widget.get_active()
-        if active < 0:
-            # TODO clean chart
-            pass
-        else:
+        if active >= 0:
             profile_id = widget.get_model()[active][0]
             self._select_speed_profile(profile_id, ChannelType.PUMP)
 
@@ -248,7 +242,7 @@ class Presenter:
             self.view.set_apply_button_enabled(channel, False)
             self.view.set_edit_button_enabled(channel, False)
             self.view.show_add_speed_profile_dialog(channel)
-            # TODO clean chart
+            self.view.refresh_chart(channel_to_reset=channel.value)
         else:
             profile: SpeedProfile = SpeedProfile.get(id=profile_id)
             self._profile_selected[profile.channel] = profile
