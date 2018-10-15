@@ -21,7 +21,7 @@ The project is still in an early stage, use it at your own risk.
 - [ ] Add command line option to add/remove icon
 - [x] Edit Fixed speed profile
 - [ ] Allow to select profiles from app indicator
-- [ ] Add/Delete/Edit multi speed profiles
+- [x] Add/Delete/Edit multi speed profiles
 - [x] About dialog
 - [x] Find better icons for app and app indicator
 - [ ] Disable unsupported preferences
