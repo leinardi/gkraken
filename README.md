@@ -29,9 +29,17 @@ The project is still in an early stage, use it at your own risk.
 - [ ] Provide Ubuntu PPA
 - [ ] Add support for i18n (internationalization and localization)
 
-## Dependencies for (K/X)Ubuntu 18.04 or newer
+## Distribution dependencies
+### (K/X)Ubuntu 18.04 or newer
 ```bash
 sudo apt install gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo python3-pip
+```
+### Fedora 28+
+Install [(K)StatusNotifierItem/AppIndicator Support](https://extensions.gnome.org/extension/615/appindicator-support/)
+
+### Arch Linux (Gnome)
+```bash
+sudo pacman -Syu python-pip libappindicator-gtk3
 ```
 
 ## Install using PIP
