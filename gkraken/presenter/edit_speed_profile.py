@@ -22,7 +22,7 @@ from injector import singleton, inject
 
 from gkraken.conf import MIN_TEMP, PUMP_MIN_DUTY, FAN_MIN_DUTY
 from gkraken.model import SpeedProfile, ChannelType, SpeedStep
-from gkraken.view.util import hide_on_delete
+from gkraken.util.view import hide_on_delete
 
 LOG = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ class EditSpeedProfilePresenter:
     @inject
     def __init__(self) -> None:
         LOG.debug("init EditSpeedProfilePresenter ")
-        self._view: EditSpeedProfileViewInterface = EditSpeedProfileViewInterface()
+        self.view: EditSpeedProfileViewInterface = EditSpeedProfileViewInterface()
         self._profile = SpeedProfile()
         self._selected_step: Optional[SpeedStep] = None
         self._channel_name: str = ""
@@ -74,11 +74,11 @@ class EditSpeedProfilePresenter:
     def show_edit(self, profile: SpeedProfile) -> None:
         self._channel_name = profile.channel
         self._profile = profile
-        self._view.show(profile)
+        self.view.show(profile)
 
     def on_dialog_delete_event(self, widget: Gtk.Widget, *_: Any) -> Any:
         if self._profile is not None:
-            name = self._view.get_profile_name()
+            name = self.view.get_profile_name()
             if name != self._profile.name:
                 self._profile.name = name
                 self._profile.save()
@@ -86,7 +86,7 @@ class EditSpeedProfilePresenter:
 
     def refresh_controls(self, step: Optional[SpeedStep] = None, unselect_list: bool = False) -> None:
         self._selected_step = step
-        self._view.refresh_controls(step, unselect_list)
+        self.view.refresh_controls(step, unselect_list)
 
     def on_step_selected(self, tree_selection: Gtk.TreeSelection) -> None:
         LOG.debug("selected")
@@ -102,7 +102,7 @@ class EditSpeedProfilePresenter:
                       .where(SpeedStep.profile == step.profile)
                       .order_by(SpeedStep.temperature.desc())
                       .limit(1))
-        if len(last_steps) == 0:
+        if not last_steps:
             step.temperature = MIN_TEMP
             step.duty = FAN_MIN_DUTY if step.profile.channel == ChannelType.FAN.value else PUMP_MIN_DUTY
         else:
@@ -113,20 +113,20 @@ class EditSpeedProfilePresenter:
 
     def on_add_profile_clicked(self, *_: Any) -> None:
         self._profile.delete_instance(recursive=True)
-        self._view.hide()
+        self.view.hide()
 
     def on_delete_profile_clicked(self, *_: Any) -> None:
         self._profile.delete_instance(recursive=True)
-        self._view.hide()
+        self.view.hide()
 
     def on_delete_step_clicked(self, *_: Any) -> None:
         self._selected_step.delete_instance()
-        self._view.refresh_liststore(self._profile)
+        self.view.refresh_liststore(self._profile)
 
     def on_save_step_clicked(self, *_: Any) -> None:
-        self._selected_step.temperature = self._view.get_temperature()
-        self._selected_step.duty = self._view.get_duty()
+        self._selected_step.temperature = self.view.get_temperature()
+        self._selected_step.duty = self.view.get_duty()
         self._selected_step.save()
-        self._view.refresh_liststore(self._profile)
-        if not self._view.has_a_step_selected():
+        self.view.refresh_liststore(self._profile)
+        if not self.view.has_a_step_selected():
             self.refresh_controls()

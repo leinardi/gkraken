@@ -21,9 +21,9 @@ from enum import Enum
 from typing import Optional, Any
 
 from playhouse.signals import Model, post_save, post_delete
+from playhouse.sqlite_ext import AutoIncrementField
 from peewee import CharField, DateTimeField, SqliteDatabase, SQL, IntegerField, Check, \
     ForeignKeyField, BooleanField, BlobField
-from playhouse.sqlite_ext import AutoIncrementField
 
 from gkraken.conf import FAN_MIN_DUTY, PUMP_MIN_DUTY
 from gkraken.di import INJECTOR, SpeedProfileChangedSubject, SpeedStepChangedSubject

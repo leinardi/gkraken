@@ -21,6 +21,8 @@ import locale
 import gettext
 import logging
 import sys
+from typing import Type, Any
+
 import gi
 from os.path import abspath, join, dirname
 from peewee import SqliteDatabase
@@ -30,7 +32,7 @@ from gkraken.conf import APP_PACKAGE_NAME
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GLib
-from gkraken.util import set_log_level
+from gkraken.util.log import set_log_level
 from gkraken.repository import KrakenRepository
 from gkraken.di import INJECTOR
 from gkraken.app import Application
@@ -61,7 +63,7 @@ def _cleanup() -> None:
     # futures.thread._threads_queues.clear()
 
 
-def handle_exception(exc_type, exc_value, exc_traceback) -> None:
+def handle_exception(exc_type: Type[BaseException], exc_value: BaseException, exc_traceback: Any) -> None:
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return

@@ -165,16 +165,17 @@ class MainPresenter:
 
             self.main_view.refresh_status(status)
 
-    def _get_fan_duty(self, profile: SpeedProfile, liquid_temperature: float) -> float:
-        p1 = ([(i.temperature, i.duty) for i in profile.steps if i.temperature <= liquid_temperature] or [None])[-1]
-        p2 = next(((i.temperature, i.duty) for i in profile.steps if i.temperature > liquid_temperature), None)
+    @staticmethod
+    def _get_fan_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
+        p_1 = ([(i.temperature, i.duty) for i in profile.steps if i.temperature <= liquid_temperature] or [None])[-1]
+        p_2 = next(((i.temperature, i.duty) for i in profile.steps if i.temperature > liquid_temperature), None)
         duty = 0.0
-        if p1 and p2:
-            duty = ((p2[1] - p1[1]) / (p2[0] - p1[0])) * (liquid_temperature - p1[0]) + p1[1]
-        elif p1:
-            duty = float(p1[1])
-        elif p2:
-            duty = float(p2[1])
+        if p_1 and p_2:
+            duty = ((p_2[1] - p_1[1]) / (p_2[0] - p_1[0])) * (liquid_temperature - p_1[0]) + p_1[1]
+        elif p_1:
+            duty = float(p_1[1])
+        elif p_2:
+            duty = float(p_2[1])
         return duty
 
     # def _load_last_profile(self) -> None:

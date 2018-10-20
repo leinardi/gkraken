@@ -27,7 +27,7 @@ from rx.disposables import CompositeDisposable
 from rx.subjects import Subject
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_MAIN_UI_NAME, APP_DB_NAME, APP_EDIT_SPEED_PROFILE_UI_NAME
-from gkraken.util import get_data_path, get_config_path
+from gkraken.util.path import get_data_path, get_config_path
 
 LOG = logging.getLogger(__name__)
 

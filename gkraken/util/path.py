@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # This file is part of gkraken.
 #
 # Copyright (c) 2018 Roberto Leinardi
@@ -16,6 +14,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with gsi.  If not, see <http://www.gnu.org/licenses/>.
-from gkraken import main
 
-main.main()
+from pathlib import Path
+
+from xdg import BaseDirectory
+
+from gkraken.conf import APP_PACKAGE_NAME
+
+_ROOT: Path = Path(__file__).parent.parent
+
+
+def get_data_path(path: str) -> str:
+    return str(_ROOT.joinpath('data').joinpath(path))
+
+
+def get_config_path(file: str) -> str:
+    return str(Path(BaseDirectory.save_config_path(APP_PACKAGE_NAME)).joinpath(file))

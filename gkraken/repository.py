@@ -25,7 +25,7 @@ from liquidctl.driver.kraken_two import KrakenTwoDriver
 
 from gkraken.model import Status
 from gkraken.di import INJECTOR
-from gkraken.util import synchronized_with_attr
+from gkraken.util.concurrency import synchronized_with_attr
 
 LOG = logging.getLogger(__name__)
 

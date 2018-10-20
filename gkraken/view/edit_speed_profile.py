@@ -27,8 +27,8 @@ from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DU
 from gkraken.di import EditSpeedProfileBuilder
 from gkraken.model import SpeedProfile, SpeedStep, ChannelType
 from gkraken.presenter.edit_speed_profile import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
-from gkraken.util import get_data_path
-from gkraken.view.util import init_plot_chart, get_speed_profile_data
+from gkraken.util.path import get_data_path
+from gkraken.util.view import init_plot_chart, get_speed_profile_data
 
 LOG = logging.getLogger(__name__)
 
@@ -42,13 +42,13 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
                  ) -> None:
         LOG.debug('init EditSpeedProfileView')
         self._presenter: EditSpeedProfilePresenter = presenter
-        self._presenter._view = self
+        self._presenter.view = self
         self._builder: Gtk.Builder = builder
         self._builder.connect_signals(self._presenter)
         self._builder.add_from_file(get_data_path(APP_MAIN_UI_NAME))
         self._init_widgets()
 
-    def _init_widgets(self):
+    def _init_widgets(self) -> None:
         self._dialog: Gtk.Dialog = self._builder.get_object('dialog')
         self._delete_profile_button: Gtk.Button = self._builder \
             .get_object('delete_profile_button')
@@ -146,7 +146,7 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
                           .where(SpeedStep.profile == step.profile, SpeedStep.temperature > step.temperature)
                           .order_by(SpeedStep.temperature)
                           .limit(1))
-            if len(prev_steps) == 0:
+            if not prev_steps:
                 self._temperature_adjustment.set_lower(MIN_TEMP)
                 if step.profile.channel == ChannelType.FAN.value:
                     self._duty_adjustment.set_lower(FAN_MIN_DUTY)
@@ -159,7 +159,7 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
                 self._temperature_adjustment.set_lower(prev_steps[0].temperature + 1)
                 self._duty_adjustment.set_lower(prev_steps[0].duty)
 
-            if len(next_steps) == 0:
+            if not next_steps:
                 self._temperature_adjustment.set_upper(MAX_TEMP)
                 self._duty_adjustment.set_upper(MAX_DUTY)
             else:

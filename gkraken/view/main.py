@@ -21,8 +21,8 @@ from typing import Optional, Dict, Any, List, Tuple
 
 from gkraken.di import MainBuilder
 from gkraken.view.edit_speed_profile import EditSpeedProfileView
-from gkraken.util import get_data_path
-from gkraken.view.util import hide_on_delete, init_plot_chart, get_speed_profile_data
+from gkraken.util.path import get_data_path
+from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
 from injector import inject, singleton
 import gi
 from gi.repository import Gtk
@@ -115,7 +115,10 @@ class MainView(MainViewInterface):
         if AppIndicator3:
             self._app_indicator = AppIndicator3.Indicator \
                 .new(APP_ID, get_data_path('gkraken-symbolic.svg'), AppIndicator3.IndicatorCategory.HARDWARE)
-            self._app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
+            if self._settings_interactor.get_bool('settings_show_app_indicator'):
+                self._app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+            else:
+                self._app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
             self._app_indicator.set_menu(self._app_indicator_menu)
 
     def show_main_infobar_message(self, message: str, markup: bool = False) -> None:
