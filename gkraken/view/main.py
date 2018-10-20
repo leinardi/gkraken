@@ -31,6 +31,7 @@ from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCan
 
 # AppIndicator3 may not be installed
 from gkraken.interactor import SettingsInteractor
+from gkraken.view.preferences import PreferencesView
 
 try:
     gi.require_version('AppIndicator3', '0.1')
@@ -55,12 +56,14 @@ class MainView(MainViewInterface):
     def __init__(self,
                  presenter: MainPresenter,
                  edit_speed_profile_view: EditSpeedProfileView,
+                 preferences_view: PreferencesView,
                  builder: MainBuilder,
                  settings_interactor: SettingsInteractor,
                  ) -> None:
         LOG.debug('init MainView')
         self._presenter: MainPresenter = presenter
         self._edit_speed_profile_view = edit_speed_profile_view
+        self._preferences_view = preferences_view
         self._presenter.main_view = self
         self._builder: Gtk.Builder = builder
         self._settings_interactor = settings_interactor
@@ -69,9 +72,7 @@ class MainView(MainViewInterface):
     def _init_widgets(self) -> None:
         self._app_indicator: Optional[AppIndicator3.Indicator] = None
         self._window = self._builder.get_object("application_window")
-        self._settings_dialog: Gtk.Dialog = self._builder.get_object("settings_dialog")
-        self._settings_dialog.connect("delete-event", hide_on_delete)
-        self._app_indicator_menu = self._builder.get_object("app_indicator_menu")
+        self._main_menu: Gtk.Menu = self._builder.get_object("main_menu")
         self._main_infobar: Gtk.InfoBar = self._builder.get_object("main_infobar")
         self._main_infobar.connect("response", lambda b, _: b.set_revealed(False))
         self._main_infobar_label: Gtk.Label = self._builder.get_object("main_infobar_label")
@@ -119,7 +120,7 @@ class MainView(MainViewInterface):
                 self._app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
             else:
                 self._app_indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
-            self._app_indicator.set_menu(self._app_indicator_menu)
+            self._app_indicator.set_menu(self._main_menu)
 
     def show_main_infobar_message(self, message: str, markup: bool = False) -> None:
         if markup:
@@ -158,9 +159,6 @@ class MainView(MainViewInterface):
 
     def show_about_dialog(self) -> None:
         self._about_dialog.show()
-
-    def show_settings_dialog(self) -> None:
-        self._settings_dialog.show()
 
     def set_statusbar_text(self, text: str) -> None:
         self._statusbar.remove_all(self._context)
@@ -259,15 +257,6 @@ class MainView(MainViewInterface):
             self._pump_canvas,
             self._pump_axis
         )
-
-    def refresh_settings(self, settings: Dict[str, Any]) -> None:
-        for key, value in settings.items():
-            if isinstance(value, bool):
-                switch: Gtk.Switch = self._builder.get_object(key + '_switch')
-                switch.set_active(value)
-            elif isinstance(value, int):
-                spinbutton: Gtk.SpinButton = self._builder.get_object(key + '_spinbutton')
-                spinbutton.set_value(value)
 
     def _plot_chart(self, channel_name: str, data: Dict[int, int]) -> None:
         sorted_data = OrderedDict(sorted(data.items()))

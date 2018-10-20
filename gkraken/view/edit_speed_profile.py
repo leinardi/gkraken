@@ -23,11 +23,10 @@ from injector import singleton, inject
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 from matplotlib.figure import Figure
 
-from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DUTY, APP_MAIN_UI_NAME
+from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DUTY
 from gkraken.di import EditSpeedProfileBuilder
 from gkraken.model import SpeedProfile, SpeedStep, ChannelType
 from gkraken.presenter.edit_speed_profile import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
-from gkraken.util.path import get_data_path
 from gkraken.util.view import init_plot_chart, get_speed_profile_data
 
 LOG = logging.getLogger(__name__)
@@ -45,7 +44,6 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
         self._presenter.view = self
         self._builder: Gtk.Builder = builder
         self._builder.connect_signals(self._presenter)
-        self._builder.add_from_file(get_data_path(APP_MAIN_UI_NAME))
         self._init_widgets()
 
     def _init_widgets(self) -> None:

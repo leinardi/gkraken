@@ -1,6 +1,7 @@
 import setuptools
 
-from gkraken.conf import APP_PACKAGE_NAME, APP_VERSION, APP_SOURCE_URL, APP_AUTHOR, APP_AUTHOR_EMAIL
+from gkraken.conf import APP_PACKAGE_NAME, APP_VERSION, APP_SOURCE_URL, APP_AUTHOR, APP_AUTHOR_EMAIL, APP_MAIN_UI_NAME, \
+    APP_EDIT_SPEED_PROFILE_UI_NAME, APP_PREFERENCES_UI_NAME, APP_DESCRIPTION
 
 # with open('README.md', 'r', encoding='utf-8') as fh:
 #     long_description = (fh.read().split('<!-- stop here for PyPI -->', 1)[0]
@@ -9,7 +10,7 @@ from gkraken.conf import APP_PACKAGE_NAME, APP_VERSION, APP_SOURCE_URL, APP_AUTH
 setuptools.setup(
     name=APP_PACKAGE_NAME,
     version=APP_VERSION,
-    description='GUI to control cooling and lighting of NZXT Kraken X (X42, X52, X62 or X72) pumps',
+    description=APP_DESCRIPTION,
     # long_description=long_description,
     # long_description_content_type='text/markdown',
     url=APP_SOURCE_URL,
@@ -32,11 +33,12 @@ setuptools.setup(
     package_data={
         APP_PACKAGE_NAME: [
             'data/60-gkraken.rules',
-            'data/edit_speed_profile.glade',
             'data/gkraken.svg',
             'data/gkraken.svg-path826-6-4294967105.png',
             'data/gkraken-symbolic.svg',
-            'data/main.glade',
+            'data/' + APP_MAIN_UI_NAME,
+            'data/' + APP_EDIT_SPEED_PROFILE_UI_NAME,
+            'data/' + APP_PREFERENCES_UI_NAME,
         ],
 
     },

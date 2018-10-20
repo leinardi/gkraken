@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # This file is part of gkraken.
 #
 # Copyright (c) 2018 Roberto Leinardi
@@ -16,8 +14,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with gsi.  If not, see <http://www.gnu.org/licenses/>.
-
-from gkraken import main
-
-if __name__ == "__main__":
-    main.main()

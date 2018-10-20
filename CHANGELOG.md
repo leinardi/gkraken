@@ -1,3 +1,9 @@
+**[0.12.0] 2018-10-20**
+ - Added option to launch the app hidden on login
+ - Synced app and indicator menus
+ - Added missing dependencies to PyPI
+ - Some code refactoring
+
 **[0.11.0] 2018-10-14**
  - Added check for new versions
  - Added Add/Edit/Delete of multi speed profiles

@@ -18,10 +18,8 @@
 
 import logging
 import multiprocessing
-import re
 from typing import Optional, Any, List, Tuple, Dict, Callable
 
-from gi.repository import Gtk
 from injector import inject, singleton
 from rx import Observable
 from rx.concurrency import GtkScheduler, ThreadPoolScheduler
@@ -34,6 +32,7 @@ from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, S
     CheckNewVersionInteractor
 from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep, DbChange
 from gkraken.presenter.edit_speed_profile import EditSpeedProfilePresenter
+from gkraken.presenter.preferences import PreferencesPresenter
 
 LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
@@ -62,9 +61,6 @@ class MainViewInterface:
     def set_statusbar_text(self, text: str) -> None:
         raise NotImplementedError()
 
-    def refresh_settings(self, settings: Dict[str, Any]) -> None:
-        raise NotImplementedError()
-
     def show_main_infobar_message(self, message: str, markup: bool = False) -> None:
         raise NotImplementedError()
 
@@ -84,15 +80,13 @@ class MainViewInterface:
     def show_about_dialog(self) -> None:
         raise NotImplementedError()
 
-    def show_settings_dialog(self) -> None:
-        raise NotImplementedError()
-
 
 @singleton
 class MainPresenter:
     @inject
     def __init__(self,
                  edit_speed_profile_presenter: EditSpeedProfilePresenter,
+                 preferences_presenter: PreferencesPresenter,
                  get_status_interactor: GetStatusInteractor,
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
                  settings_interactor: SettingsInteractor,
@@ -104,6 +98,7 @@ class MainPresenter:
         LOG.debug("init MainPresenter ")
         self.main_view: MainViewInterface = MainViewInterface()
         self._edit_speed_profile_presenter = edit_speed_profile_presenter
+        self._preferences_presenter = preferences_presenter
         self._scheduler: SchedulerBase = ThreadPoolScheduler(multiprocessing.cpu_count())
         self._get_status_interactor: GetStatusInteractor = get_status_interactor
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
@@ -118,7 +113,6 @@ class MainPresenter:
 
     def on_start(self) -> None:
         self._refresh_speed_profiles(True)
-        self._init_settings()
         self._register_db_listeners()
         self._start_refresh()
         self._check_new_version()
@@ -204,31 +198,11 @@ class MainPresenter:
         data.append((_ADD_NEW_PROFILE_INDEX, "<span style='italic' alpha='50%'>Add new profile...</span>"))
         self.main_view.refresh_profile_combobox(channel, data, active)
 
-    def _init_settings(self) -> None:
-        settings: Dict[str, Any] = {}
-        for key, default_value in SETTINGS_DEFAULTS.items():
-            if isinstance(default_value, bool):
-                settings[key] = self._settings_interactor.get_bool(key)
-            elif isinstance(default_value, int):
-                settings[key] = self._settings_interactor.get_int(key)
-        self.main_view.refresh_settings(settings)
-
     def on_menu_settings_clicked(self, *_: Any) -> None:
-        self.main_view.show_settings_dialog()
+        self._preferences_presenter.show()
 
     def on_menu_about_clicked(self, *_: Any) -> None:
         self.main_view.show_about_dialog()
-
-    def on_setting_changed(self, widget: Any, *args: Any) -> None:
-        key = value = None
-        if isinstance(widget, Gtk.Switch):
-            value = args[0]
-            key = re.sub('_switch$', '', widget.get_name())
-        elif isinstance(widget, Gtk.SpinButton):
-            key = re.sub('_spinbutton$', '', widget.get_name())
-            value = widget.get_value_as_int()
-        if key is not None and value is not None:
-            self._settings_interactor.set_bool(key, value)
 
     def on_stack_visible_child_changed(self, *_: Any) -> None:
         pass

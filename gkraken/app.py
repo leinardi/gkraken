@@ -29,6 +29,7 @@ from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
 from gkraken.model import SpeedProfile, SpeedStep, Setting, CurrentSpeedProfile, load_db_default_data
 from gkraken.presenter.main import MainPresenter
+from gkraken.util.autostart import set_autostart_enabled
 from gkraken.util.log import LOG_DEBUG_FORMAT
 from gkraken.util.udev import add_udev_rule, remove_udev_rule
 from gkraken.util.view import build_glib_option
@@ -100,8 +101,8 @@ class Application(Gtk.Application):
                 handler.formatter = logging.Formatter(LOG_DEBUG_FORMAT)
             LOG.debug("Option %s selected", _Options.DEBUG.value)
 
-        if _Options.MINIMIZED.value in options:
-            LOG.debug("Option %s selected", _Options.MINIMIZED.value)
+        if _Options.HIDE_WINDOW.value in options:
+            LOG.debug("Option %s selected", _Options.HIDE_WINDOW.value)
             self._start_hidden = True
 
         if _Options.UDEV_ADD_RULE.value in options:
@@ -112,6 +113,16 @@ class Application(Gtk.Application):
         if _Options.UDEV_REMOVE_RULE.value in options:
             LOG.debug("Option %s selected", _Options.UDEV_REMOVE_RULE.value)
             exit_value += remove_udev_rule()
+            start_app = False
+
+        if _Options.AUTOSTART_ON.value in options:
+            LOG.debug("Option %s selected", _Options.AUTOSTART_ON.value)
+            set_autostart_enabled(True)
+            start_app = False
+
+        if _Options.AUTOSTART_OFF.value in options:
+            LOG.debug("Option %s selected", _Options.AUTOSTART_OFF.value)
+            set_autostart_enabled(True)
             start_app = False
 
         if start_app:
@@ -126,12 +137,14 @@ class Application(Gtk.Application):
                               description="Show the app version"),
             build_glib_option(_Options.DEBUG.value,
                               description="Show debug messages"),
-            build_glib_option(_Options.MINIMIZED.value,
-                              short_name='m',
-                              description="Start minimized to the notification area"),
+            build_glib_option(_Options.HIDE_WINDOW.value,
+                              description="Start with the main window hidden"),
         ]
         linux_options = [
-
+            build_glib_option(_Options.AUTOSTART_ON.value,
+                              description="Enable automatic start of the app on login"),
+            build_glib_option(_Options.AUTOSTART_OFF.value,
+                              description="Disable automatic start of the app on login"),
             build_glib_option(_Options.UDEV_ADD_RULE.value,
                               description="Add udev rule to allow execution without root permission"),
             build_glib_option(_Options.UDEV_REMOVE_RULE.value,
@@ -147,6 +160,8 @@ class Application(Gtk.Application):
 class _Options(Enum):
     VERSION = 'version'
     DEBUG = 'debug'
-    MINIMIZED = 'minimized'
+    HIDE_WINDOW = 'hide-window'
+    AUTOSTART_ON = 'autostart-on'
+    AUTOSTART_OFF = 'autostart-off'
     UDEV_ADD_RULE = 'udev-add-rule'
     UDEV_REMOVE_RULE = 'udev-remove-rule'
