@@ -72,6 +72,8 @@ class MainView(MainViewInterface):
     def _init_widgets(self) -> None:
         self._app_indicator: Optional[AppIndicator3.Indicator] = None
         self._window = self._builder.get_object("application_window")
+        self._edit_speed_profile_view.set_transient_for(self._window)
+        self._preferences_view.set_transient_for(self._window)
         self._main_menu: Gtk.Menu = self._builder.get_object("main_menu")
         self._main_infobar: Gtk.InfoBar = self._builder.get_object("main_infobar")
         self._main_infobar.connect("response", lambda b, _: b.set_revealed(False))

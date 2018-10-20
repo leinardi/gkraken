@@ -1,3 +1,6 @@
+**[0.12.1] 2018-10-20**
+ - Set dialogs "transient for" property
+
 **[0.12.0] 2018-10-20**
  - Added option to launch the app hidden on login
  - Added command line option to add desktop entry

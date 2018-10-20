@@ -45,6 +45,9 @@ class PreferencesView(PreferencesViewInterface):
         self._dialog: Gtk.Dialog = self._builder.get_object('dialog')
         self._dialog.connect("delete-event", hide_on_delete)
 
+    def set_transient_for(self, window: Gtk.Window) -> None:
+        self._dialog.set_transient_for(window)
+
     def show(self) -> None:
         self._dialog.show_all()
 

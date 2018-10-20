@@ -71,6 +71,9 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
             .get_object('delete_step_button')
         self._init_plot_charts()
 
+    def set_transient_for(self, window: Gtk.Window) -> None:
+        self._dialog.set_transient_for(window)
+
     # pylint: disable=attribute-defined-outside-init
     def _init_plot_charts(self, ) -> None:
         self._chart_figure = Figure(figsize=(8, 6), dpi=72, facecolor='#00000000')
