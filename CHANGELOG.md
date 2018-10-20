@@ -1,5 +1,6 @@
 **[0.12.0] 2018-10-20**
  - Added option to launch the app hidden on login
+ - Added command line option to add desktop entry
  - Synced app and indicator menus
  - Added missing dependencies to PyPI
  - Some code refactoring

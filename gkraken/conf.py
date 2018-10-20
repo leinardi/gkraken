@@ -50,7 +50,6 @@ DESKTOP_ENTRY: Dict[str, str] = {
     'Encoding': 'UTF-8',
     'Name': APP_NAME,
     'Comment': APP_DESCRIPTION,
-    'Exec': '%s --hide-window' % APP_PACKAGE_NAME,
     'Terminal': 'false',
     'Categories': 'System;Settings;',
 }

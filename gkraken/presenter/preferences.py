@@ -23,7 +23,7 @@ from injector import singleton, inject
 
 from gkraken.conf import SETTINGS_DEFAULTS
 from gkraken.interactor import SettingsInteractor
-from gkraken.util.autostart import set_autostart_enabled, AUTOSTART_FILE_PATH
+from gkraken.util.desktop_entry import set_autostart_entry, AUTOSTART_FILE_PATH
 
 LOG = logging.getLogger(__name__)
 
@@ -75,4 +75,4 @@ class PreferencesPresenter:
         if key is not None and value is not None:
             self._settings_interactor.set_bool(key, value)
             if key == 'settings_launch_on_login':
-                set_autostart_enabled(value)
+                set_autostart_entry(value)

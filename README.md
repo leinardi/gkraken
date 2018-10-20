@@ -18,7 +18,7 @@ The project is still in an early stage, use it at your own risk.
 - [x] Add command line option to start the app hidden
 - [x] Add command line option to add/remove udev rule
 - [x] Add Refresh timeout to settings 
-- [ ] Add command line option to add/remove icon
+- [x] Add command line option to add desktop entry
 - [x] Edit Fixed speed profile
 - [ ] Allow to select profiles from app indicator
 - [x] Add/Delete/Edit multi speed profiles
@@ -67,6 +67,12 @@ Once GKraken is installed, the udev rule can be easily crated executing
 sudo `which gkraken` --udev-add-rule
 ```
 
+### Application entry
+To add a desktop entry for the application run the following command:
+```bash
+gkraken --application-entry 
+```
+
 #### Manual way
 If for some reason the automatic way fails, you can always do if manually creating a new 
 file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
@@ -89,20 +95,16 @@ If you don't want to create this custom rule you can run gkraken as root
   |---------------------------|------------|
   |-v, --version              |Show the app version|
   |--debug                    |Show debug messages|
-  |-m, --minimized            |Start minimized to the notification area
+  |--hide-window              |Start with the main window hidden|
+  |--application-entry        |Add a desktop entry for the application|
+  |--autostart-on             |Enable automatic start of the app on login|
+  |--autostart-off            |Disable automatic start of the app on login|
   |--udev-add-rule            |Add udev rule to allow execution without root permission|
   |--udev-remove-rule         |Remove udev rule that allow execution without root permission|
 
 
-## Python dependencies
-### PIP
-* injector
-* liquidctl
-* matplotlib
-* peewee
-* pyxdg
-* rx
 
+## Python dependencies
 ## How to run the repository sources
 
 ```
@@ -112,7 +114,9 @@ pip3 install injector
 pip3 install liquidctl
 pip3 install matplotlib
 pip3 install peewee
+pip3 install pygobject
 pip3 install pyxdg
+pip3 install requests
 pip3 install rx
 ca gkraken
 ./run
