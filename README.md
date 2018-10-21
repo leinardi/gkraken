@@ -36,7 +36,7 @@ pump from Linux.
 <img src="/art/screenshot-05.png" width="844"/>
 
 ## Video
-Click [here](/art/video.mp4) to see a short video of the application.
+Click [here](/blob/master/art/video.mp4) to see a short video of the application.
 
 ## Distribution dependencies
 ### (K/X)Ubuntu 18.04 or newer
