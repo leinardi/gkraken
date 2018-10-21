@@ -1,11 +1,13 @@
 # GKraken
+<img src="/art/gkraken.png" width="256" align="right" hspace="0" />
 
-![GKraken video](/art/gkraken-video.gif)
+GKraken is a GTK application that allows you to control the cooling
+(and soon also the lighting) of a NXZT Kraken X (X42, X52, X62 or X72) 
+pump from Linux.
 
-## Work in progress
-The project is still in an early stage, use it at your own risk.
+## Sreenshots
 
-### TODO
+## TODO
 
 - [x] Show fan and pump rpm
 - [x] Show liquid temp in both app and app indicator
@@ -121,6 +123,12 @@ pip3 install rx
 ca gkraken
 ./run
 ```
+
+## How can I support this project?
+
+The best way to support this plugin is to star it on both [GitLab](https://gitlab.com/leinardi/gkraken) and [GitHub](https://github.com/leinardi/gkraken).
+Feedback is always welcome: if you found a bug or would like to suggest a feature,
+feel free to open an issue on the [issue tracker](https://gitlab.com/leinardi/gkraken/issues).
 
 ## Lincense
 ```
