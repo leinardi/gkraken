@@ -1,13 +1,10 @@
 # GKraken
-<img src="/art/gkraken.png" width="256" align="right" hspace="0" />
-
 GKraken is a GTK application that allows you to control the cooling
 (and soon also the lighting) of a NXZT Kraken X (X42, X52, X62 or X72) 
 pump from Linux.
 
-## Sreenshots
-
 ## TODO
+<img src="/art/gkraken.png" width="256" align="right" hspace="0" />
 
 - [x] Show fan and pump rpm
 - [x] Show liquid temp in both app and app indicator
@@ -30,6 +27,13 @@ pump from Linux.
 - [ ] Lighting
 - [ ] Provide Ubuntu PPA
 - [ ] Add support for i18n (internationalization and localization)
+
+## Sreenshots
+<img src="/art/screenshot-09.png" width="844"/>
+
+<img src="/art/screenshot-05.png" width="844"/>
+
+<img src="/art/screenshot-08.png" width="844"/>
 
 ## Distribution dependencies
 ### (K/X)Ubuntu 18.04 or newer
