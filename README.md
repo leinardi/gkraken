@@ -12,7 +12,7 @@ pump from Linux.
 - [x] Show pump firmware version
 - [x] Allow to select and apply a profile
 - [x] Publish on PIP
-- [x] Add option to restore last applyied profile on startup
+- [x] Add option to restore last applied profile on startup
 - [x] Allow to hide main app window
 - [x] Add command line option to start the app hidden
 - [x] Add command line option to add/remove udev rule
