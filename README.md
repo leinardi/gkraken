@@ -1,6 +1,6 @@
 # GKraken
 GKraken is a GTK application that allows you to control the cooling
-(and soon also the lighting) of a NXZT Kraken X (X42, X52, X62 or X72) 
+(and soon also the lighting) of a NZXT Kraken X (X42, X52, X62 or X72) 
 pump from Linux.
 
 ## TODO
@@ -28,7 +28,7 @@ pump from Linux.
 - [ ] Provide Ubuntu PPA
 - [ ] Add support for i18n (internationalization and localization)
 
-## Sreenshots
+## Screenshots
 <img src="/art/screenshot-09.png" width="844"/>
 
 <img src="/art/screenshot-08.png" width="844"/>
@@ -83,7 +83,7 @@ gkraken --application-entry
 ```
 
 #### Manual way
-If for some reason the automatic way fails, you can always do if manually creating a new 
+If for some reason the automatic way fails, you can always do it manually by creating a new 
 file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
 ```bash
 SUBSYSTEM=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
@@ -137,7 +137,7 @@ The best way to support this plugin is to star it on both [GitLab](https://gitla
 Feedback is always welcome: if you found a bug or would like to suggest a feature,
 feel free to open an issue on the [issue tracker](https://gitlab.com/leinardi/gkraken/issues).
 
-## Lincense
+## License
 ```
 This file is part of gkraken.
 
