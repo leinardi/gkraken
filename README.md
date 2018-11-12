@@ -119,14 +119,7 @@ If you don't want to create this custom rule you can run gkraken as root
 ```
 sudo apt install python3-pip
 git clone https://gitlab.com/leinardi/gkraken.git
-pip3 install injector
-pip3 install liquidctl
-pip3 install matplotlib
-pip3 install peewee
-pip3 install pygobject
-pip3 install pyxdg
-pip3 install requests
-pip3 install rx
+pip3 install -r requirements.txt
 ca gkraken
 ./run
 ```

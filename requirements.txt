@@ -1,0 +1,8 @@
+injector
+liquidctl
+matplotlib
+peewee
+pygobject
+pyxdg
+requests
+rx
