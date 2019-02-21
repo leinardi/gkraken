@@ -119,8 +119,8 @@ If you don't want to create this custom rule you can run gkraken as root
 ```
 sudo apt install python3-pip
 git clone https://gitlab.com/leinardi/gkraken.git
+cd gkraken
 pip3 install -r requirements.txt
-ca gkraken
 ./run
 ```
 
