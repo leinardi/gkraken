@@ -188,7 +188,7 @@ class MainView(MainViewInterface):
 
     def refresh_chart(self, profile: Optional[SpeedProfile] = None, channel_to_reset: Optional[str] = None) -> None:
         if profile is None and channel_to_reset is None:
-            raise ValueError("Both parameters are note!")
+            raise ValueError("Both parameters are None!")
 
         if channel_to_reset is not None:
             self._plot_chart(channel_to_reset, {})
