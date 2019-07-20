@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=GKraken
+Comment=Allows you to control the cooling of a NZXT Kraken X pump from Linux
+Exec=@bindir@/gkraken %U
+Icon=com.leinardi.gkraken
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=
+Categories=Utility;GTK;GNOME;
+Keywords=Kraken;

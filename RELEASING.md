@@ -1,14 +1,14 @@
 # Releasing
 
 1. Bump the `APP_VERSION` property in `gkraken/conf.py` based on Major.Minor.Patch naming scheme
-2. Update `CHANGELOG.md` for the impending release.
+2. Update `data/com.leinardi.gkraken.appdata.xml` for the impending release.
 3. Update the `README.md` with the new changes (if necessary).
-4. `python3 setup.py sdist bdist_wheel` 
-5. `git commit -am "Prepare for release X.Y.Z" && git push"` (where X.Y.Z is the version you set in step 1)
-6. Create a new release on Github
-    1. Tag version `X.Y.Z` (`git tag -s X.Y.Z && git push --tags`)
-    2. Release title `X.Y.Z`
-    3. Paste the content from `CHANGELOG.md` as the description
-    4. Upload the `dist/gkraken-X.X.X.tar.gz`
-7. Create a PR from [master](../../tree/master) to [release](../../tree/release)
-8. `twine upload dist/*`
+4. `git commit -am "Prepare for release X.Y.Z"` (where X.Y.Z is the version you set in step 1)
+5. `flatpak uninstall com.leinardi.gkraken --assumeyes; ./build.sh --flatpak-local --flatpak-install --flatpak-bundle && flatpak run com.leinardi.gkraken --debug`
+6. Tag version `X.Y.Z` (`git tag -s X.Y.Z`) (where X.Y.Z is the version you set in step 1)
+7. Update tag and SHA in `flatpak/com.leinardi.gkraken.json`
+8. `git push --follow-tags` 
+9. Trigger Flathub build bot `cd flatpak && git commit -am "Release X.Y.Z" && git push` (where X.Y.Z is the version you set in step 1)
+10. Make a PR to the Flathub repository master, test the build and, if OK, merge the PR
+11. `git commit -am "Release X.X.X" && git push` (where X.Y.Z is the version you set in step 1)
+12. Create a PR from [master](../../tree/master) to [release](../../tree/release)

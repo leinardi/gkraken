@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/com/leinardi/gkraken">
+        <file compressed="true">com.leinardi.gkraken.service.desktop</file>
+
+        <file preprocess="xml-stripblanks">ui/main.glade</file>
+        <file preprocess="xml-stripblanks">ui/edit_speed_profile.glade</file>
+        <file preprocess="xml-stripblanks">ui/preferences.glade</file>
+
+        <!--<file preprocess="xml-stripblanks">icons/com.leinardi.gkraken.svg</file>-->
+        <!--<file preprocess="xml-stripblanks">icons/com.leinardi.com.leinardi.gkraken-symbolic.svg</file>-->
+
+    </gresource>
+</gresources>

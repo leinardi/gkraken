@@ -28,7 +28,7 @@ from rx.subjects import Subject
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_MAIN_UI_NAME, APP_DB_NAME, APP_EDIT_SPEED_PROFILE_UI_NAME, \
     APP_PREFERENCES_UI_NAME
-from gkraken.util.path import get_data_path, get_config_path
+from gkraken.util.path import get_config_path
 
 LOG = logging.getLogger(__name__)
 
@@ -38,6 +38,7 @@ MainBuilder = Key(APP_MAIN_UI_NAME)
 EditSpeedProfileBuilder = Key(APP_EDIT_SPEED_PROFILE_UI_NAME)
 PreferencesBuilder = Key(APP_PREFERENCES_UI_NAME)
 
+_UI_RESOURCE_PATH = "/com/leinardi/gkraken/ui/{}"
 
 # pylint: disable=no-self-use
 class ProviderModule(Module):
@@ -47,7 +48,7 @@ class ProviderModule(Module):
         LOG.debug("provide Gtk.Builder")
         builder = Gtk.Builder()
         builder.set_translation_domain(APP_PACKAGE_NAME)
-        builder.add_from_file(get_data_path(APP_MAIN_UI_NAME))
+        builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_MAIN_UI_NAME))
         return builder
 
     @singleton
@@ -56,7 +57,7 @@ class ProviderModule(Module):
         LOG.debug("provide Gtk.Builder")
         builder = Gtk.Builder()
         builder.set_translation_domain(APP_PACKAGE_NAME)
-        builder.add_from_file(get_data_path(APP_EDIT_SPEED_PROFILE_UI_NAME))
+        builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_EDIT_SPEED_PROFILE_UI_NAME))
         return builder
 
     @singleton
@@ -65,7 +66,7 @@ class ProviderModule(Module):
         LOG.debug("provide Gtk.Builder")
         builder = Gtk.Builder()
         builder.set_translation_domain(APP_PACKAGE_NAME)
-        builder.add_from_file(get_data_path(APP_PREFERENCES_UI_NAME))
+        builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_PREFERENCES_UI_NAME))
         return builder
 
     @singleton
