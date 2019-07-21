@@ -20,6 +20,7 @@ from distutils.version import LooseVersion
 from typing import List, Tuple, Optional
 
 import requests
+import rx
 from injector import singleton, inject
 from rx import Observable
 
@@ -40,7 +41,7 @@ class GetStatusInteractor:
 
     def execute(self) -> Observable:
         LOG.debug("GetStatusInteractor.execute()")
-        return Observable.defer(lambda: Observable.just(self._kraken_repository.get_status()))
+        return rx.defer(lambda _: rx.just(self._kraken_repository.get_status()))
 
 
 @singleton
@@ -53,8 +54,7 @@ class SetSpeedProfileInteractor:
 
     def execute(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> Observable:
         LOG.debug("SetSpeedProfileInteractor.execute()")
-        return Observable.defer(lambda: Observable.just(
-            self._kraken_repository.set_speed_profile(channel_value, profile_data)))
+        return rx.defer(lambda _: rx.just(self._kraken_repository.set_speed_profile(channel_value, profile_data)))
 
 
 @singleton
@@ -128,7 +128,7 @@ class CheckNewVersionInteractor:
 
     def execute(self) -> Observable:
         LOG.debug("SetSpeedProfileInteractor.execute()")
-        return Observable.defer(lambda: Observable.just(self.__check_new_version()))
+        return rx.defer(lambda _: rx.just(self.__check_new_version()))
 
     def __check_new_version(self) -> Optional[LooseVersion]:
         req = requests.get(self.URL_PATTERN.format(package=APP_PACKAGE_NAME))

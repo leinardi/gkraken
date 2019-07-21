@@ -26,7 +26,7 @@ from typing import Type, Any
 import gi
 from os.path import abspath, join, dirname
 from peewee import SqliteDatabase
-from rx.disposables import CompositeDisposable
+from rx.disposable import CompositeDisposable
 
 from gkraken.conf import APP_PACKAGE_NAME
 
@@ -54,7 +54,7 @@ gettext.textdomain(APP_PACKAGE_NAME)
 
 def _cleanup() -> None:
     LOG.debug("cleanup")
-    composite_disposable: CompositeDisposable = INJECTOR.get(CompositeDisposable)
+    composite_disposable = INJECTOR.get(CompositeDisposable)
     composite_disposable.dispose()
     database = INJECTOR.get(SqliteDatabase)
     database.close()

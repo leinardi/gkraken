@@ -23,8 +23,8 @@ from injector import Module, provider, singleton, Injector, Key
 from liquidctl.cli import find_all_supported_devices
 from liquidctl.driver.kraken_two import KrakenTwoDriver
 from peewee import SqliteDatabase
-from rx.disposables import CompositeDisposable
-from rx.subjects import Subject
+from rx.disposable import CompositeDisposable
+from rx.subject import Subject
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_MAIN_UI_NAME, APP_DB_NAME, APP_EDIT_SPEED_PROFILE_UI_NAME, \
     APP_PREFERENCES_UI_NAME

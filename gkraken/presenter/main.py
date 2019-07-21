@@ -20,11 +20,13 @@ import logging
 import multiprocessing
 from typing import Optional, Any, List, Tuple, Dict, Callable
 
+import rx
+from gi.repository import GLib
 from injector import inject, singleton
-from rx import Observable
-from rx.concurrency import GtkScheduler, ThreadPoolScheduler
-from rx.concurrency.schedulerbase import SchedulerBase
-from rx.disposables import CompositeDisposable
+from rx import Observable, operators
+from rx.disposable import CompositeDisposable
+from rx.scheduler import ThreadPoolScheduler
+from rx.scheduler.mainloop import GtkScheduler
 
 from gkraken.conf import SETTINGS_DEFAULTS, APP_NAME, APP_SOURCE_URL
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
@@ -99,7 +101,7 @@ class MainPresenter:
         self.main_view: MainViewInterface = MainViewInterface()
         self._edit_speed_profile_presenter = edit_speed_profile_presenter
         self._preferences_presenter = preferences_presenter
-        self._scheduler: SchedulerBase = ThreadPoolScheduler(multiprocessing.cpu_count())
+        self._scheduler = ThreadPoolScheduler(multiprocessing.cpu_count())
         self._get_status_interactor: GetStatusInteractor = get_status_interactor
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
         self._settings_interactor = settings_interactor
@@ -138,17 +140,14 @@ class MainPresenter:
 
     def _start_refresh(self) -> None:
         LOG.debug("start refresh")
-        refresh_interval_ms = self._settings_interactor.get_int('settings_refresh_interval') * 1000
-        self._composite_disposable \
-            .add(Observable
-                 .interval(refresh_interval_ms, scheduler=self._scheduler)
-                 .start_with(0)
-                 .subscribe_on(self._scheduler)
-                 .flat_map(lambda _: self._get_status())
-                 .observe_on(GtkScheduler())
-                 .subscribe(on_next=self._update_status,
-                            on_error=lambda e: LOG.exception("Refresh error: %s", str(e)))
-                 )
+        refresh_interval = self._settings_interactor.get_int('settings_refresh_interval')
+        self._composite_disposable.add(rx.interval(refresh_interval, scheduler=self._scheduler).pipe(
+            operators.start_with(0),
+            operators.subscribe_on(self._scheduler),
+            operators.flat_map(lambda _: self._get_status()),
+            operators.observe_on(GtkScheduler(GLib)),
+        ).subscribe(on_next=self._update_status,
+                    on_error=lambda e: LOG.exception("Refresh error: %s", str(e))))
 
     def _update_status(self, status: Optional[Status]) -> None:
         if status is not None:
@@ -279,14 +278,13 @@ class MainPresenter:
     def _set_speed_profile(self, profile: SpeedProfile) -> None:
         observable = self._set_speed_profile_interactor \
             .execute(profile.channel, self._get_profile_data(profile))
-        self._composite_disposable \
-            .add(observable
-                 .subscribe_on(self._scheduler)
-                 .observe_on(GtkScheduler())
-                 .subscribe(on_next=lambda _: self._update_current_speed_profile(profile),
-                            on_error=lambda e: (LOG.exception("Set cooling error: %s", str(e)),
-                                                self.main_view.set_statusbar_text('Error applying %s speed profile!'
-                                                                                  % profile.channel))))
+        self._composite_disposable.add(observable.pipe(
+            operators.subscribe_on(self._scheduler),
+            operators.observe_on(GtkScheduler(GLib)),
+        ).subscribe(on_next=lambda _: self._update_current_speed_profile(profile),
+                    on_error=lambda e: (LOG.exception("Set cooling error: %s", str(e)),
+                                        self.main_view.set_statusbar_text('Error applying %s speed profile!'
+                                                                          % profile.channel))))
 
     def _update_current_speed_profile(self, profile: SpeedProfile) -> None:
         current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=profile.channel)
@@ -297,23 +295,26 @@ class MainPresenter:
             current.save()
         self.main_view.set_statusbar_text('%s cooling profile applied' % profile.channel.capitalize())
 
-    def _log_exception_return_empty_observable(self, ex: Exception) -> Observable:
+    def _log_exception_return_empty_observable(self, ex: Exception, _: Observable) -> Observable:
         LOG.exception("Err = %s", ex)
         self.main_view.set_statusbar_text(str(ex))
-        return Observable.just(None)
+        observable = rx.just(None)
+        assert isinstance(operators, Observable)
+        return observable
 
     def _get_status(self) -> Observable:
-        return self._get_status_interactor.execute() \
-            .catch_exception(self._log_exception_return_empty_observable)
+        observable = self._get_status_interactor.execute().pipe(
+            operators.catch(self._log_exception_return_empty_observable)
+        )
+        assert isinstance(observable, Observable)
+        return observable
 
     def _check_new_version(self) -> None:
-        self._composite_disposable \
-            .add(self._check_new_version_interactor.execute()
-                 .subscribe_on(self._scheduler)
-                 .observe_on(GtkScheduler())
-                 .subscribe(on_next=self._handle_new_version_response,
-                            on_error=lambda e: LOG.exception("Check new version error: %s", str(e)))
-                 )
+        self._composite_disposable.add(self._check_new_version_interactor.execute().pipe(
+            operators.subscribe_on(self._scheduler),
+            operators.observe_on(GtkScheduler(GLib)),
+        ).subscribe(on_next=self._handle_new_version_response,
+                    on_error=lambda e: LOG.exception("Check new version error: %s", str(e))))
 
     def _handle_new_version_response(self, version: Optional[str]) -> None:
         if version is not None:
