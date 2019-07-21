@@ -1,7 +1,7 @@
 injector==0.17.0
 liquidctl==1.1.0
 matplotlib==3.1.1
-peewee==3.8.2
+peewee==3.9.6
 pygobject
 pyxdg==0.26
 requests
