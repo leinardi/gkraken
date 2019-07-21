@@ -17,7 +17,7 @@
 
 import logging
 
-from typing import Optional
+from typing import Optional, NewType
 from gi.repository import Gtk
 from injector import Module, provider, singleton, Injector, Key
 from liquidctl.cli import find_all_supported_devices
@@ -32,13 +32,14 @@ from gkraken.util.path import get_config_path
 
 LOG = logging.getLogger(__name__)
 
-SpeedProfileChangedSubject = Key("SpeedProfileChangedSubject")
-SpeedStepChangedSubject = Key("SpeedStepChangedSubject")
-MainBuilder = Key(APP_MAIN_UI_NAME)
-EditSpeedProfileBuilder = Key(APP_EDIT_SPEED_PROFILE_UI_NAME)
-PreferencesBuilder = Key(APP_PREFERENCES_UI_NAME)
+SpeedProfileChangedSubject = NewType("SpeedProfileChangedSubject", Subject)
+SpeedStepChangedSubject = NewType("SpeedStepChangedSubject", Subject)
+MainBuilder = NewType('MainBuilder', Gtk.Builder)
+EditSpeedProfileBuilder = NewType('EditSpeedProfileBuilder', Gtk.Builder)
+PreferencesBuilder = NewType('PreferencesBuilder', Gtk.Builder)
 
 _UI_RESOURCE_PATH = "/com/leinardi/gkraken/ui/{}"
+
 
 # pylint: disable=no-self-use
 class ProviderModule(Module):
@@ -46,7 +47,7 @@ class ProviderModule(Module):
     @provider
     def provide_main_builder(self) -> MainBuilder:
         LOG.debug("provide Gtk.Builder")
-        builder = Gtk.Builder()
+        builder = MainBuilder(Gtk.Builder())
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_MAIN_UI_NAME))
         return builder
@@ -55,7 +56,7 @@ class ProviderModule(Module):
     @provider
     def provide_edit_speed_profile_builder(self) -> EditSpeedProfileBuilder:
         LOG.debug("provide Gtk.Builder")
-        builder = Gtk.Builder()
+        builder = EditSpeedProfileBuilder(Gtk.Builder())
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_EDIT_SPEED_PROFILE_UI_NAME))
         return builder
@@ -64,7 +65,7 @@ class ProviderModule(Module):
     @provider
     def provide_preferences_builder(self) -> PreferencesBuilder:
         LOG.debug("provide Gtk.Builder")
-        builder = Gtk.Builder()
+        builder = PreferencesBuilder(Gtk.Builder())
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_PREFERENCES_UI_NAME))
         return builder
@@ -89,12 +90,12 @@ class ProviderModule(Module):
     @singleton
     @provider
     def provide_speed_profile_changed_subject(self) -> SpeedProfileChangedSubject:
-        return Subject()
+        return SpeedProfileChangedSubject(Subject())
 
     @singleton
     @provider
     def provide_speed_step_changed_subject(self) -> SpeedStepChangedSubject:
-        return Subject()
+        return SpeedStepChangedSubject(Subject())
 
 
 INJECTOR = Injector(ProviderModule)
