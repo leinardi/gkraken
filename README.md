@@ -38,28 +38,71 @@ pump from Linux.
 ## Video
 Click [here](https://gitlab.com/leinardi/gkraken/blob/master/art/video.mp4) to see a short video of the application.
 
-## Distribution dependencies
-### (K/X)Ubuntu 18.04 or newer
-```bash
-sudo apt install gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo python3-pip
-```
-### Fedora 28+
-Install [(K)StatusNotifierItem/AppIndicator Support](https://extensions.gnome.org/extension/615/appindicator-support/)
+## 📦 How to get GKraken
+### Install from Flathub
+This is the preferred way to get GKraken on any major distribution (Arch, Fedora, Linux Mint, openSUSE, Ubuntu, etc).
 
-### Arch Linux (Gnome)
+If you don't have Flatpak installed you can find step by step instructions [here](https://flatpak.org/setup/).
+
+Make sure to have the Flathub remote added to the current user:
+
 ```bash
-sudo pacman -Syu python-pip libappindicator-gtk3
+flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
 
-## Install using PIP
+#### Install
 ```bash
-pip3 install gkraken
+flatpak --user install flathub com.leinardi.gkraken
 ```
-Add the the executable path `~/.local/bin` to your PATH variable if missing.
 
-## Update using PIP
+#### Run
 ```bash
-pip3 install -U gkraken
+flatpak run com.leinardi.gkraken
+```
+
+### Distro specific packages
+### Install from source code
+#### Dependencies for (K/X)Ubuntu 18.10 or newer
+```bash
+sudo apt install git meson python3-pip libcairo2-dev libgirepository1.0-dev libglib2.0-dev libdazzle-1.0-dev gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo appstream-util
+```
+
+#### Dependencies for Fedora 28 or newer
+```bash
+dnf install desktop-file-utils git gobject-introspection-devel gtk3-devel libappstream-glib libdazzle libnotify meson python3-cairocffi python3-devel python3-pip redhat-rpm-config
+```
+
+#### Clone project and install
+If you have not installed GKraken yet:
+```bash
+git clone --recurse-submodules -j4 https://gitlab.com/leinardi/gkraken.git
+cd gkraken
+git checkout release
+pip3 install -r requirements.txt
+meson . build --prefix /usr
+ninja -v -C build
+ninja -v -C build install
+```
+
+#### Update old installation
+If you installed GKraken from source code previously and you want to update it:
+```bash
+cd gkraken
+git fetch
+git checkout release
+git reset --hard origin/release
+git submodule init
+git submodule update
+pip3 install -r requirements.txt
+meson . build --prefix /usr
+ninja -v -C build
+ninja -v -C build install
+```
+
+#### Run
+Once installed, to start it you can simply execute on a terminal:
+```bash
+gkraken
 ```
 
 ## Running the app
@@ -70,21 +113,7 @@ To allow normal users to access the Kraken's USB interface you can
 create a custom udev rule
 
 ### Udev rule
-#### Automatic way
-Once GKraken is installed, the udev rule can be easily crated executing
-```bash
-sudo `which gkraken` --udev-add-rule
-```
-
-### Application entry
-To add a desktop entry for the application run the following command:
-```bash
-gkraken --application-entry 
-```
-
-#### Manual way
-If for some reason the automatic way fails, you can always do it manually by creating a new 
-file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
+Simply create a new file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
 ```bash
 SUBSYSTEM=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
 ```
@@ -100,35 +129,127 @@ If you don't want to create this custom rule you can run gkraken as root
 
 ## Command line options
 
-  | Parameter                 | Description|
-  |---------------------------|------------|
-  |-v, --version              |Show the app version|
-  |--debug                    |Show debug messages|
-  |--hide-window              |Start with the main window hidden|
-  |--application-entry        |Add a desktop entry for the application|
-  |--autostart-on             |Enable automatic start of the app on login|
-  |--autostart-off            |Disable automatic start of the app on login|
-  |--udev-add-rule            |Add udev rule to allow execution without root permission|
-  |--udev-remove-rule         |Remove udev rule that allow execution without root permission|
+  | Parameter                 | Description                                                 | Source | Flatpak |
+  |---------------------------|-------------------------------------------------------------|:------:|:-------:|
+  |-v, --version              |Show the app version                                         |    x   |    x    |
+  |--debug                    |Show debug messages                                          |    x   |    x    |
+  |--hide-window              |Start with the main window hidden                            |    x   |    x    |
+  |--application-entry        |Add a desktop entry for the application                      |    x   |         |
+  |--autostart-on             |Enable automatic start of the app on login                   |    x   |         |
+  |--autostart-off            |Disable automatic start of the app on login                  |    x   |         |
+  |--udev-add-rule            |Add udev rule to allow execution without root permission     |    x   |         |
+  |--udev-remove-rule         |Remove udev rule that allow execution without root permission|    x   |         |
 
 
+## 🖥️ Build, install and run with Flatpak
+If you don't have Flatpak installed you can find step by step instructions [here](https://flatpak.org/setup/).
 
-## Python dependencies
-## How to run the repository sources
+Make sure to have the Flathub remote added to the current user:
 
+```bash
+flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
-sudo apt install python3-pip
-git clone https://gitlab.com/leinardi/gkraken.git
+
+### Clone the repo
+```bash
+git clone --recurse-submodules -j4 https://gitlab.com/leinardi/gkraken.git
+```
+It is possible to build the local source or the remote one (the same that Flathub uses)
+### Local repository
+```bash
+./build.sh --flatpak-local --flatpak-install
+```
+### Remote repository
+```bash
+./build.sh --flatpak-remote --flatpak-install
+```
+### Run
+```bash
+flatpak run com.leinardi.gkraken --debug
+```
+
+## 🖥️ How to build and run the source code
+If you want to clone the project and run directly from the source you need to manually install all the needed
+dependencies.
+ 
+### (K/X)Ubuntu 18.04 or newer
+See [Install from source](https://gitlab.com/leinardi/gkraken#kxubuntu-1810-or-newer-dependencies)
+
+### Fedora 28+ (outdated, please let me know if new dependencies are needed)
+Install [(K)StatusNotifierItem/AppIndicator Support](https://extensions.gnome.org/extension/615/appindicator-support/)
+
+### Python dependencies
+```bash
+git clone --recurse-submodules -j4 https://gitlab.com/leinardi/gkraken.git
 cd gkraken
 pip3 install -r requirements.txt
-./run
 ```
 
-## How can I support this project?
+### Build and Run
+```bash
+./run.sh
+```
 
-The best way to support this plugin is to star it on both [GitLab](https://gitlab.com/leinardi/gkraken) and [GitHub](https://github.com/leinardi/gkraken).
+## ❓ FAQ
+### The Flatpak version of GKraken is not using my theme, how can I fix it?
+Due to sandboxing, Flatpak applications use the default Gnome theme (Adwaita), 
+and not whatever Gtk theme you're currently using.  
+The fix for this issue is to install your current Gtk theme from Flathub. 
+This way, Flatpak applications will automatically pick the installed Gtk theme 
+and use that instead of Adwaita.
+
+Use this command to get a list of all the available Gtk themes on Flathub:
+```bash
+flatpak --user remote-ls flathub | grep org.gtk.Gtk3theme
+```
+And then just install your preferred theme. For example, to install Yaru:
+```
+flatpak install flathub org.gtk.Gtk3theme.Yaru
+```
+
+### Where are the settings and profiles stored on the filesystem?
+| Installation type |                     Location                     |
+|-------------------|:------------------------------------------------:|
+| Flatpak           |        `$HOME/.var/app/com.leinardi.gkraken/`        |
+| Source code       | `$XDG_CONFIG_HOME` (usually `$HOME/.config/gkraken`) |
+
+## 💚 How to help the project
+
+### Discord server
+If you want to help testing or developing it would be easier to get in touch using the discord server of the project: https://discord.gg/YjPdNff  
+Just write a message on the general channel saying how you want to help (test, dev, etc) and quoting @leinardi. If you don't use discor but still want to help just open a new issue here.
+
+
+### Can I support this project some other way?
+
+Something simple that everyone can do is to star it on both [GitLab](https://gitlab.com/leinardi/gkraken) and [GitHub](https://github.com/leinardi/gkraken).
 Feedback is always welcome: if you found a bug or would like to suggest a feature,
 feel free to open an issue on the [issue tracker](https://gitlab.com/leinardi/gkraken/issues).
+
+## ⚠ Dropped PyPI support
+Development builds were previously distributed using PyPI. This way of distributing the software is simple
+but requires the user to manually install all the non Python dependencies like cairo, glib, appindicator3, etc.  
+The current implementation of the historical data uses a new library, Dazzle, that requires Gnome 3.30 which is
+available, using Python Object introspection, only starting from Ubuntu 18.10 making the latest Ubuntu LTS, 18.04,
+unsupported.    
+A solution for all this problems is distributing the app via Flatpak, since with it all the dependencies
+will be bundled and provided automatically, making possible to use Gnome 3.30 features also on distributions
+using an older version of Gnome.
+
+**No new build will be published on PyPI**.
+
+### Uninstall pip version
+If you have already installed GKraken via `pip`, please make sure to uninstall it completely before moving to a newer version:
+
+```bash
+pip3 uninstall gkraken
+rm -rf ~/.config/gkraken
+```
+
+## ℹ️ Acknowledgements
+Thanks to:
+
+ - Jonas Malaco for the [`liquidctl`](https://github.com/jonasmalacofilho/liquidctl) CLI library
 
 ## License
 ```

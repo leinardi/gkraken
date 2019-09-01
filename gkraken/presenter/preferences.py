@@ -23,6 +23,7 @@ from injector import singleton, inject
 
 from gkraken.conf import SETTINGS_DEFAULTS
 from gkraken.interactor import SettingsInteractor
+from gkraken.util.deployment import is_flatpak
 from gkraken.util.desktop_entry import set_autostart_entry, AUTOSTART_FILE_PATH
 
 LOG = logging.getLogger(__name__)
@@ -65,14 +66,13 @@ class PreferencesPresenter:
         self.view.refresh_settings(settings)
 
     def on_setting_changed(self, widget: Any, *args: Any) -> None:
-        key = value = None
         if isinstance(widget, Gtk.Switch):
             value = args[0]
             key = re.sub('_switch$', '', widget.get_name())
+            self._settings_interactor.set_bool(key, value)
+            if key == 'settings_launch_on_login' and not is_flatpak():
+                set_autostart_entry(value)
         elif isinstance(widget, Gtk.SpinButton):
             key = re.sub('_spinbutton$', '', widget.get_name())
             value = widget.get_value_as_int()
-        if key is not None and value is not None:
-            self._settings_interactor.set_bool(key, value)
-            if key == 'settings_launch_on_login':
-                set_autostart_entry(value)
+            self._settings_interactor.set_int(key, value)

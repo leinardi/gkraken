@@ -777,9 +777,11 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">application_window</property>
-    <property name="logo">gkraken.svg</property>
+    <property name="website">https://gitlab.com/leinardi/gkraken</property>
+    <property name="authors">Roberto Leinardi &lt;roberto@leinardi.com&gt;</property>
+    <property name="logo_icon_name">com.leinardi.gkraken</property>
     <property name="license_type">gpl-3-0</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">

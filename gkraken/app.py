@@ -29,6 +29,7 @@ from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
 from gkraken.model import SpeedProfile, SpeedStep, Setting, CurrentSpeedProfile, load_db_default_data
 from gkraken.presenter.main import MainPresenter
+from gkraken.util.deployment import is_flatpak
 from gkraken.util.desktop_entry import set_autostart_entry, add_application_entry
 from gkraken.util.log import LOG_DEBUG_FORMAT
 from gkraken.util.udev import add_udev_rule, remove_udev_rule
@@ -145,22 +146,17 @@ class Application(Gtk.Application):
             build_glib_option(_Options.HIDE_WINDOW.value,
                               description="Start with the main window hidden"),
         ]
-        linux_options = [
-            build_glib_option(_Options.APPLICATION_ENTRY.value,
-                              description="Add a desktop entry for the application"),
-            build_glib_option(_Options.AUTOSTART_ON.value,
-                              description="Enable automatic start of the app on login"),
-            build_glib_option(_Options.AUTOSTART_OFF.value,
-                              description="Disable automatic start of the app on login"),
-            build_glib_option(_Options.UDEV_ADD_RULE.value,
-                              description="Add udev rule to allow execution without root permission"),
-            build_glib_option(_Options.UDEV_REMOVE_RULE.value,
-                              description="Remove udev rule that allow execution without root permission"),
-        ]
-
-        if sys.platform.startswith('linux'):
-            options += linux_options
-
+        if not is_flatpak():
+            options.append(build_glib_option(_Options.APPLICATION_ENTRY.value,
+                                             description="Add a desktop entry for the application"))
+            options.append(build_glib_option(_Options.AUTOSTART_ON.value,
+                                             description="Enable automatic start of the app on login"))
+            options.append(build_glib_option(_Options.AUTOSTART_OFF.value,
+                                             description="Disable automatic start of the app on login"))
+            options.append(build_glib_option(_Options.UDEV_ADD_RULE.value,
+                                             description="Add udev rule to allow execution without root permission"))
+            options.append(build_glib_option(_Options.UDEV_REMOVE_RULE.value,
+                                             description="Remove udev rule that allow execution without root permission"))
         return options
 
 
