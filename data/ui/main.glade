@@ -66,6 +66,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
         <property name="label" translatable="yes">Show/Hide app window</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_toggle_app_window_clicked" swapped="no"/>
+        <accelerator key="h" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
     <child>
@@ -75,6 +76,15 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
         <property name="label" translatable="yes">Preferences</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_menu_settings_clicked" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Changelog</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_menu_changelog_clicked" swapped="no"/>
       </object>
     </child>
     <child>
@@ -99,6 +109,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
         <property name="label" translatable="yes">Quit</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_quit_clicked" swapped="no"/>
+        <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
   </object>
@@ -106,6 +117,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
     <property name="can_focus">False</property>
     <property name="icon">gkraken.svg</property>
     <property name="gravity">north</property>
+    <signal name="delete-event" handler="on_application_window_delete_event" swapped="no"/>
     <child type="titlebar">
       <object class="GtkBox">
         <property name="visible">True</property>

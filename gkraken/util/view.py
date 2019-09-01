@@ -17,7 +17,7 @@
 
 from typing import Optional, Any, Dict
 
-from gi.repository import GLib, Gtk
+from gi.repository import GLib, Gtk, Gdk
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 from matplotlib.figure import Figure
@@ -79,3 +79,7 @@ def get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
                 data[MIN_TEMP] = data[min(data.keys())]
             data.update({MAX_TEMP: MAX_DUTY})
     return data
+
+
+def open_uri(uri: str, parent: Gtk.Window = None, timestamp: int = Gdk.CURRENT_TIME) -> None:
+    Gtk.show_uri_on_window(parent, uri, timestamp)

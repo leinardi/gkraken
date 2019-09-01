@@ -28,13 +28,14 @@ from rx.disposable import CompositeDisposable
 from rx.scheduler import ThreadPoolScheduler
 from rx.scheduler.mainloop import GtkScheduler
 
-from gkraken.conf import SETTINGS_DEFAULTS, APP_NAME, APP_SOURCE_URL
+from gkraken.conf import APP_NAME, APP_SOURCE_URL, APP_VERSION
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor, \
     CheckNewVersionInteractor
 from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep, DbChange
 from gkraken.presenter.edit_speed_profile import EditSpeedProfilePresenter
 from gkraken.presenter.preferences import PreferencesPresenter
+from gkraken.util.view import open_uri
 
 LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
@@ -119,6 +120,12 @@ class MainPresenter:
         self._start_refresh()
         self._check_new_version()
 
+    def on_application_window_delete_event(self, *_: Any) -> bool:
+        if self._settings_interactor.get_int('settings_minimize_to_tray'):
+            self.on_toggle_app_window_clicked()
+            return True
+        return False
+
     def _register_db_listeners(self) -> None:
         self._speed_profile_changed_subject.subscribe(on_next=self._on_speed_profile_list_changed,
                                                       on_error=lambda e: LOG.exception("Db signal error: %s", str(e)))
@@ -199,6 +206,9 @@ class MainPresenter:
 
     def on_menu_settings_clicked(self, *_: Any) -> None:
         self._preferences_presenter.show()
+
+    def on_menu_changelog_clicked(self, *_: Any) -> None:
+        open_uri(self._get_changelog_uri())
 
     def on_menu_about_clicked(self, *_: Any) -> None:
         self.main_view.show_about_dialog()
@@ -321,3 +331,7 @@ class MainPresenter:
             message = "%s version <b>%s</b> is available! Click <a href=\"%s/blob/%s/CHANGELOG.md\"><b>here</b></a> " \
                       "to see what's new." % (APP_NAME, version, APP_SOURCE_URL, version)
             self.main_view.show_main_infobar_message(message, True)
+
+    @staticmethod
+    def _get_changelog_uri(version: str = APP_VERSION) -> str:
+        return f"{APP_SOURCE_URL}/blob/{version}/CHANGELOG.md"

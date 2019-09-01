@@ -1,3 +1,13 @@
+Version 0.13.0
+==============
+Released: 2019-09-01
+
+ * Using Flatpak and Flathub to distribute the application
+ * Using meson as build system
+ * Give option to minimize to tray when closing from the X button
+ * Quit app with Ctrl+Q and hide it with Ctrl+H
+ * Several library updates
+
 Version 0.12.1
 ==============
 Released: 2018-10-20
