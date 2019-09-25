@@ -27,12 +27,12 @@ from peewee import SqliteDatabase
 
 from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
+from gkraken.interactor import UdevInteractor
 from gkraken.model import SpeedProfile, SpeedStep, Setting, CurrentSpeedProfile, load_db_default_data
 from gkraken.presenter.main import MainPresenter
 from gkraken.util.deployment import is_flatpak
 from gkraken.util.desktop_entry import set_autostart_entry, add_application_entry
 from gkraken.util.log import LOG_DEBUG_FORMAT
-from gkraken.util.udev import add_udev_rule, remove_udev_rule
 from gkraken.util.view import build_glib_option
 from gkraken.view.main import MainView
 
@@ -46,6 +46,7 @@ class Application(Gtk.Application):
                  view: MainView,
                  presenter: MainPresenter,
                  builder: MainBuilder,
+                 udev_interactor: UdevInteractor,
                  *args: Any,
                  **kwargs: Any) -> None:
         LOG.debug("init Application")
@@ -66,6 +67,7 @@ class Application(Gtk.Application):
         self._presenter.application_quit = self.quit
         self._window: Optional[Gtk.ApplicationWindow] = None
         self._builder: Gtk.Builder = builder
+        self._udev_interactor = udev_interactor
         self._start_hidden: bool = False
 
     def do_activate(self) -> None:
@@ -106,11 +108,6 @@ class Application(Gtk.Application):
             LOG.debug("Option %s selected", _Options.HIDE_WINDOW.value)
             self._start_hidden = True
 
-        if _Options.APPLICATION_ENTRY.value in options:
-            LOG.debug("Option %s selected", _Options.APPLICATION_ENTRY.value)
-            add_application_entry()
-            start_app = False
-
         if _Options.AUTOSTART_ON.value in options:
             LOG.debug("Option %s selected", _Options.AUTOSTART_ON.value)
             set_autostart_entry(True)
@@ -123,12 +120,12 @@ class Application(Gtk.Application):
 
         if _Options.UDEV_ADD_RULE.value in options:
             LOG.debug("Option %s selected", _Options.UDEV_ADD_RULE.value)
-            exit_value += add_udev_rule()
+            exit_value += self._udev_interactor.add_udev_rule()
             start_app = False
 
         if _Options.UDEV_REMOVE_RULE.value in options:
             LOG.debug("Option %s selected", _Options.UDEV_REMOVE_RULE.value)
-            exit_value += remove_udev_rule()
+            exit_value += self._udev_interactor.remove_udev_rule()
             start_app = False
 
         if start_app:
@@ -145,18 +142,16 @@ class Application(Gtk.Application):
                               description="Show debug messages"),
             build_glib_option(_Options.HIDE_WINDOW.value,
                               description="Start with the main window hidden"),
+            build_glib_option(_Options.UDEV_ADD_RULE.value,
+                              description="Add udev rule to allow execution without root permission"),
+            build_glib_option(_Options.UDEV_REMOVE_RULE.value,
+                              description="Remove udev rule that allow execution without root permission"),
         ]
         if not is_flatpak():
-            options.append(build_glib_option(_Options.APPLICATION_ENTRY.value,
-                                             description="Add a desktop entry for the application"))
             options.append(build_glib_option(_Options.AUTOSTART_ON.value,
                                              description="Enable automatic start of the app on login"))
             options.append(build_glib_option(_Options.AUTOSTART_OFF.value,
                                              description="Disable automatic start of the app on login"))
-            options.append(build_glib_option(_Options.UDEV_ADD_RULE.value,
-                                             description="Add udev rule to allow execution without root permission"))
-            options.append(build_glib_option(_Options.UDEV_REMOVE_RULE.value,
-                                             description="Remove udev rule that allow execution without root permission"))
         return options
 
 
@@ -164,7 +159,6 @@ class _Options(Enum):
     VERSION = 'version'
     DEBUG = 'debug'
     HIDE_WINDOW = 'hide-window'
-    APPLICATION_ENTRY = 'application-entry'
     AUTOSTART_ON = 'autostart-on'
     AUTOSTART_OFF = 'autostart-off'
     UDEV_ADD_RULE = 'udev-add-rule'

@@ -16,7 +16,9 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 import json
 import logging
+import subprocess
 from distutils.version import LooseVersion
+from pprint import pprint
 from typing import List, Tuple, Optional
 
 import requests
@@ -27,8 +29,15 @@ from rx import Observable
 from gkraken.conf import SETTINGS_DEFAULTS, APP_PACKAGE_NAME, APP_VERSION
 from gkraken.model import Setting
 from gkraken.repository import KrakenRepository
+from gkraken.util.deployment import is_flatpak
 
 LOG = logging.getLogger(__name__)
+
+_FLATPAK_COMMAND_PREFIX = ['flatpak-spawn', '--host']
+_UDEV_RULE = 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"'
+_UDEV_RULE_FILE_PATH = '/lib/udev/rules.d/60-gkraken.rules'
+_UDEV_RULE_RELOAD_COMMANDS = 'udevadm control --reload-rules ' \
+                             '&& udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=add'
 
 
 @singleton
@@ -55,6 +64,35 @@ class SetSpeedProfileInteractor:
     def execute(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> Observable:
         LOG.debug("SetSpeedProfileInteractor.execute()")
         return rx.defer(lambda _: rx.just(self._kraken_repository.set_speed_profile(channel_value, profile_data)))
+
+
+@singleton
+class UdevInteractor:
+    @inject
+    def __init__(self) -> None:
+        pass
+
+    @staticmethod
+    def add_udev_rule() -> int:
+        cmd = ['pkexec',
+               'sh',
+               '-c',
+               f'echo \'{_UDEV_RULE}\' > {_UDEV_RULE_FILE_PATH} && {_UDEV_RULE_RELOAD_COMMANDS}']
+        result = _run_and_get_stdout(cmd)
+        if result[0] != 0:
+            LOG.warning(f"Error while creating rule file. Exit code: {result[0]}. {result[1]}")
+        return result[0]
+
+    @staticmethod
+    def remove_udev_rule() -> int:
+        cmd = ['pkexec',
+               'sh',
+               '-c',
+               f'rm {_UDEV_RULE_FILE_PATH} && {_UDEV_RULE_RELOAD_COMMANDS}']
+        result = _run_and_get_stdout(cmd)
+        if result[0] != 0:
+            LOG.warning(f"Error while removing rule file. Exit code: {result[0]}. {result[1]}")
+        return result[0]
 
 
 @singleton
@@ -140,3 +178,22 @@ class CheckNewVersionInteractor:
                 ver = LooseVersion(release)
                 version = max(version, ver)
         return version if version > LooseVersion(APP_VERSION) else None
+
+
+def _run_and_get_stdout(command: List[str], pipe_command: List[str] = None) -> Tuple[int, str]:
+    if pipe_command is None:
+        if is_flatpak():
+            command = _FLATPAK_COMMAND_PREFIX + command
+        process1 = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        output = process1.communicate()[0]
+        output = output.decode(encoding='UTF-8')
+        return process1.returncode, output
+    if is_flatpak():
+        command = _FLATPAK_COMMAND_PREFIX + command
+        pipe_command = _FLATPAK_COMMAND_PREFIX + pipe_command
+    process1 = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    process2 = subprocess.Popen(pipe_command, stdin=process1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process1.stdout.close()
+    output = process2.communicate()[0]
+    output = output.decode(encoding='UTF-8')
+    return process2.returncode, output
