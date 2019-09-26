@@ -1,23 +1,23 @@
 # This file is part of gkraken.
 #
-# Copyright (c) 2018 Roberto Leinardi
+# Copyright (c) 2019 Roberto Leinardi
 #
-# gsi is free software: you can redistribute it and/or modify
+# gkraken is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# gsi is distributed in the hope that it will be useful,
+# gkraken is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with gsi.  If not, see <http://www.gnu.org/licenses/>.
+# along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 from typing import Optional, Any, Dict
 
-from gi.repository import GLib, Gtk
+from gi.repository import GLib, Gtk, Gdk
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 from matplotlib.figure import Figure
@@ -79,3 +79,7 @@ def get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
                 data[MIN_TEMP] = data[min(data.keys())]
             data.update({MAX_TEMP: MAX_DUTY})
     return data
+
+
+def open_uri(uri: str, parent: Gtk.Window = None, timestamp: int = Gdk.CURRENT_TIME) -> None:
+    Gtk.show_uri_on_window(parent, uri, timestamp)

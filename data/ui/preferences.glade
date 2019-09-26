@@ -3,26 +3,26 @@
 
 Copyright (C) 
 
-This file is part of GSI.
+This file is part of GKraken.
 
-GSI is free software: you can redistribute it and/or modify
+GKraken is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-GSI is distributed in the hope that it will be useful,
+GKraken is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GSI.  If not, see <http://www.gnu.org/licenses/>.
+along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <!-- interface-license-type gplv3 -->
-  <!-- interface-name GSI -->
+  <!-- interface-name GKraken -->
   <object class="GtkAdjustment" id="settings_refresh_interval_adjustment">
     <property name="lower">1</property>
     <property name="upper">3600</property>
@@ -136,7 +136,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <child>
-                                          <object class="GtkGrid">
+                                          <object class="GtkGrid" id="settings_launch_on_login_grid">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="valign">center</property>
@@ -161,7 +161,7 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel">
+                                              <object class="GtkLabel" id="settings_launch_on_login_description_label">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="label" translatable="yes">Automatically start the app hidden on login</property>
@@ -255,6 +255,74 @@ along with GSI.  If not, see <http://www.gnu.org/licenses/>.
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                                 <signal name="state-set" handler="on_setting_changed" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">0</property>
+                                                <property name="height">2</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkListBoxRow">
+                                        <property name="height_request">52</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="activatable">False</property>
+                                        <property name="selectable">False</property>
+                                        <child>
+                                          <object class="GtkGrid">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_left">20</property>
+                                            <property name="margin_right">20</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                            <property name="row_spacing">2</property>
+                                            <property name="column_spacing">24</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="hexpand">True</property>
+                                                <property name="label" translatable="yes" comments="Translators: This switch reverses the scrolling direction for mices. The term used comes from OS X so use the same translation if possible.">Minimize to tray on close</property>
+                                                <property name="use_underline">True</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">The app will be minimized to the tray and it will keep running on background</property>
+                                                <property name="xalign">0</property>
+                                                <attributes>
+                                                  <attribute name="scale" value="0.90000000000000002"/>
+                                                </attributes>
+                                                <style>
+                                                  <class name="dim-label"/>
+                                                </style>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkSwitch" id="settings_minimize_to_tray_switch">
+                                                <property name="name">settings_minimize_to_tray_switch</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
                                               </object>
                                               <packing>
                                                 <property name="left_attach">1</property>

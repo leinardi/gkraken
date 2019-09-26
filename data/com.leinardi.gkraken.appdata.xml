@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2019 Roberto Leianrdi -->
+<component type="desktop-application">
+    <id>com.leinardi.gkraken.desktop</id>
+
+    <!-- <translation type="gettext">trg</translation> -->
+    <name>GKraken</name>
+    <developer_name>Roberto Leinardi</developer_name>
+    <summary>Allows you to control the cooling of a NZXT Kraken X pump from Linux.
+    </summary>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>GPL-3.0-or-later</project_license>
+    <description>
+        <p>GKraken is a GTK application that allows you to control the cooling (and soon also the lighting) of a NZXT
+            Kraken X (X42, X52, X62 or X72) pump from Linux.
+        </p>
+    </description>
+    <launchable type="desktop-id">com.leinardi.gkraken.desktop</launchable>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://gitlab.com/leinardi/gkraken/raw/master/art/screenshot-01.png</image>
+        </screenshot>
+    </screenshots>
+    <categories>
+        <category>Utility</category>
+    </categories>
+    <url type="homepage">https://gitlab.com/leinardi/gkraken</url>
+    <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
+    <update_contact>roberto@leinardi.com</update_contact>
+    <releases>
+         <release date="2019-09-01" version="0.13.0">
+            <description>
+                <ul>
+                    <li>Using Flatpak and Flathub to distribute the application</li>
+                    <li>Using meson as build system</li>
+                    <li>Give option to minimize to tray when closing from the X button</li>
+                    <li>Quit app with Ctrl+Q and hide it with Ctrl+H</li>
+                    <li>Renamed parameters `udev-add-rule` and `udev-remove-rule` to `add-udev-rule` and `remove-udev-rule`</li>
+                    <li>Several library updates</li>
+                </ul>
+            </description>
+        </release>
+        <release date="2018-10-20" version="0.12.1">
+            <description>
+                <ul>
+                    <li>Set dialogs "transient for" property</li>
+                </ul>
+            </description>
+        </release>
+        <release date="2018-10-20" version="0.12.0">
+            <description>
+                <ul>
+                    <li>Added option to launch the app hidden on login</li>
+                    <li>Added command line option to add desktop entry</li>
+                    <li>Synced app and indicator menus</li>
+                    <li>Added missing dependencies to PyPI</li>
+                    <li>Some code refactoring</li>
+                </ul>
+            </description>
+        </release>
+        <release date="2018-10-14" version="0.11.0">
+            <description>
+                <ul>
+                    <li>Added check for new versions</li>
+                    <li>Added Add/Edit/Delete of multi speed profiles</li>
+                    <li>Small icon change</li>
+                </ul>
+            </description>
+        </release>
+        <release date="2018-10-12" version="0.10.0">
+            <description>
+                <ul>
+                    <li>Added about dialog</li>
+                    <li>Added better app and app indicator icons</li>
+                </ul>
+            </description>
+        </release>
+        <release date="2018-10-12" version="0.9.0">
+            <description>
+                <ul>
+                    <li>Added ability to edit Fixed speed profile</li>
+                    <li>Added command line options (run `gkraken -h` for more info)</li>
+                    <li>Added command line option to start the app hidden</li>
+                    <li>Added command line option to add/remove udev rule</li>
+                    <li>Load last applied profile enabled by default</li>
+                </ul>
+            </description>
+        </release>
+        <release date="2018-10-09" version="0.8.0">
+            <description>
+                <ul>
+                    <li>Improved fan and pump charts</li>
+                    <li>Better driver error handling</li>
+                </ul>
+            </description>
+        </release>
+        <release date="2018-10-09" version="0.7.0">
+            <description>
+                <ul>
+                    <li>Added ability to load last applied profile on app start</li>
+                    <li>Added app indicator with water temp</li>
+                </ul>
+            </description>
+        </release>
+    </releases>
+    <content_rating type="oars-1.1"/>
+</component>

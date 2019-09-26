@@ -1,6 +1,6 @@
 # This file is part of gkraken.
 #
-# Copyright (c) 2018 Roberto Leinardi
+# Copyright (c) 2019 Roberto Leinardi
 #
 # gkraken is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@ from typing import Dict, Any
 APP_PACKAGE_NAME = "gkraken"
 APP_NAME = "GKraken"
 APP_ID = "com.leinardi.gkraken"
-APP_VERSION = "0.12.1"
-APP_ICON_NAME = APP_PACKAGE_NAME + ".svg"
+APP_VERSION = "0.13.0"
+APP_ICON_NAME = APP_ID
+APP_ICON_NAME_SYMBOLIC = APP_ID + "-symbolic"
 APP_DB_NAME = APP_PACKAGE_NAME + ".db"
 APP_MAIN_UI_NAME = "main.glade"
 APP_EDIT_SPEED_PROFILE_UI_NAME = "edit_speed_profile.glade"
@@ -40,6 +41,7 @@ MAX_DUTY = 100
 SETTINGS_DEFAULTS: Dict[str, Any] = {
     'settings_launch_on_login': False,
     'settings_load_last_profile': True,
+    'settings_minimize_to_tray': True,
     'settings_refresh_interval': 3,
     'settings_show_app_indicator': True,
     'settings_app_indicator_show_water_temp': True,
