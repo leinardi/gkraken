@@ -35,6 +35,7 @@
                     <li>Using meson as build system</li>
                     <li>Give option to minimize to tray when closing from the X button</li>
                     <li>Quit app with Ctrl+Q and hide it with Ctrl+H</li>
+                    <li>Renamed parameters `udev-add-rule` and `udev-remove-rule` to `add-udev-rule` and `remove-udev-rule`</li>
                     <li>Several library updates</li>
                 </ul>
             </description>

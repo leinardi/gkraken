@@ -78,10 +78,10 @@ If you have not installed GKraken yet:
 git clone --recurse-submodules -j4 https://gitlab.com/leinardi/gkraken.git
 cd gkraken
 git checkout release
-pip3 install -r requirements.txt
+sudo -H pip3 install -r requirements.txt
 meson . build --prefix /usr
 ninja -v -C build
-ninja -v -C build install
+sudo ninja -v -C build install
 ```
 
 #### Update old installation
@@ -93,10 +93,10 @@ git checkout release
 git reset --hard origin/release
 git submodule init
 git submodule update
-pip3 install -r requirements.txt
+sudo -H pip3 install -r requirements.txt
 meson . build --prefix /usr
 ninja -v -C build
-ninja -v -C build install
+sudo ninja -v -C build install
 ```
 
 #### Run
@@ -112,8 +112,16 @@ is not available to unprivileged users.
 To allow normal users to access the Kraken's USB interface you can 
 create a custom udev rule
 
-### Udev rule
-Simply create a new file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
+### Adding Udev rule
+#### Using GKraken
+Simply run:
+```bash
+gkraken --add-udev-rule
+```
+It will automatically refresh also the udev rules.
+
+#### Manually
+Create a new file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
 ```bash
 SUBSYSTEM=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
 ```
@@ -124,9 +132,6 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=add
 ```
 
-If you don't want to create this custom rule you can run gkraken as root 
-(using sudo) but we advise against this solution.
-
 ## Command line options
 
   | Parameter                 | Description                                                 | Source | Flatpak |
@@ -134,12 +139,10 @@ If you don't want to create this custom rule you can run gkraken as root
   |-v, --version              |Show the app version                                         |    x   |    x    |
   |--debug                    |Show debug messages                                          |    x   |    x    |
   |--hide-window              |Start with the main window hidden                            |    x   |    x    |
-  |--application-entry        |Add a desktop entry for the application                      |    x   |         |
+  |--add-udev-rule            |Add udev rule to allow execution without root permission     |    x   |    x    |
+  |--remove-udev-rule         |Remove udev rule that allow execution without root permission|    x   |    x    |
   |--autostart-on             |Enable automatic start of the app on login                   |    x   |         |
   |--autostart-off            |Disable automatic start of the app on login                  |    x   |         |
-  |--udev-add-rule            |Add udev rule to allow execution without root permission     |    x   |         |
-  |--udev-remove-rule         |Remove udev rule that allow execution without root permission|    x   |         |
-
 
 ## 🖥️ Build, install and run with Flatpak
 If you don't have Flatpak installed you can find step by step instructions [here](https://flatpak.org/setup/).
@@ -214,12 +217,6 @@ flatpak install flathub org.gtk.Gtk3theme.Yaru
 | Source code       | `$XDG_CONFIG_HOME` (usually `$HOME/.config/gkraken`) |
 
 ## 💚 How to help the project
-
-### Discord server
-If you want to help testing or developing it would be easier to get in touch using the discord server of the project: https://discord.gg/YjPdNff  
-Just write a message on the general channel saying how you want to help (test, dev, etc) and quoting @leinardi. If you don't use discor but still want to help just open a new issue here.
-
-
 ### Can I support this project some other way?
 
 Something simple that everyone can do is to star it on both [GitLab](https://gitlab.com/leinardi/gkraken) and [GitHub](https://github.com/leinardi/gkraken).
@@ -227,13 +224,10 @@ Feedback is always welcome: if you found a bug or would like to suggest a featur
 feel free to open an issue on the [issue tracker](https://gitlab.com/leinardi/gkraken/issues).
 
 ## ⚠ Dropped PyPI support
-Development builds were previously distributed using PyPI. This way of distributing the software is simple
+Production builds were previously distributed using PyPI. This way of distributing the software is simple
 but requires the user to manually install all the non Python dependencies like cairo, glib, appindicator3, etc.  
-The current implementation of the historical data uses a new library, Dazzle, that requires Gnome 3.30 which is
-available, using Python Object introspection, only starting from Ubuntu 18.10 making the latest Ubuntu LTS, 18.04,
-unsupported.    
 A solution for all this problems is distributing the app via Flatpak, since with it all the dependencies
-will be bundled and provided automatically, making possible to use Gnome 3.30 features also on distributions
+will be bundled and provided automatically, making possible to use new GTK features also on distributions
 using an older version of Gnome.
 
 **No new build will be published on PyPI**.

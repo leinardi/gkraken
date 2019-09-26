@@ -16,7 +16,6 @@
 # along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import sys
 from enum import Enum
 from gettext import gettext as _
 from typing import Any, Optional, List
@@ -118,13 +117,13 @@ class Application(Gtk.Application):
             set_autostart_entry(True)
             start_app = False
 
-        if _Options.UDEV_ADD_RULE.value in options:
-            LOG.debug("Option %s selected", _Options.UDEV_ADD_RULE.value)
+        if _Options.ADD_UDEV_RULE.value in options:
+            LOG.debug("Option %s selected", _Options.ADD_UDEV_RULE.value)
             exit_value += self._udev_interactor.add_udev_rule()
             start_app = False
 
-        if _Options.UDEV_REMOVE_RULE.value in options:
-            LOG.debug("Option %s selected", _Options.UDEV_REMOVE_RULE.value)
+        if _Options.REMOVE_UDEV_RULE.value in options:
+            LOG.debug("Option %s selected", _Options.REMOVE_UDEV_RULE.value)
             exit_value += self._udev_interactor.remove_udev_rule()
             start_app = False
 
@@ -142,9 +141,9 @@ class Application(Gtk.Application):
                               description="Show debug messages"),
             build_glib_option(_Options.HIDE_WINDOW.value,
                               description="Start with the main window hidden"),
-            build_glib_option(_Options.UDEV_ADD_RULE.value,
+            build_glib_option(_Options.ADD_UDEV_RULE.value,
                               description="Add udev rule to allow execution without root permission"),
-            build_glib_option(_Options.UDEV_REMOVE_RULE.value,
+            build_glib_option(_Options.REMOVE_UDEV_RULE.value,
                               description="Remove udev rule that allow execution without root permission"),
         ]
         if not is_flatpak():
@@ -161,5 +160,5 @@ class _Options(Enum):
     HIDE_WINDOW = 'hide-window'
     AUTOSTART_ON = 'autostart-on'
     AUTOSTART_OFF = 'autostart-off'
-    UDEV_ADD_RULE = 'udev-add-rule'
-    UDEV_REMOVE_RULE = 'udev-remove-rule'
+    ADD_UDEV_RULE = 'add-udev-rule'
+    REMOVE_UDEV_RULE = 'remove-udev-rule'
