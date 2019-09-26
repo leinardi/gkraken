@@ -1,3 +1,6 @@
+**[0.12.2] 2018-10-26**
+ - WARNING: PyPI support dropped! Please check here how to get the new version of GKraken: https://gitlab.com/leinardi/gkraken
+
 **[0.12.1] 2018-10-20**
  - Set dialogs "transient for" property
 
