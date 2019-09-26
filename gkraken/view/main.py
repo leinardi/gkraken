@@ -25,7 +25,7 @@ from gkraken.util.path import get_data_path
 from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
 from injector import inject, singleton
 import gi
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
@@ -113,6 +113,18 @@ class MainView(MainViewInterface):
     def show(self) -> None:
         self._presenter.on_start()
         self._init_app_indicator()
+        dialog = Gtk.MessageDialog(self._window, 0, Gtk.MessageType.WARNING,
+                                   Gtk.ButtonsType.OK, "PyPI support dropped!")
+        dialog.format_secondary_text(
+            "GKraken will not be released anymore on PyPI.\n\n"
+            "The preferred way to distribute GKranen is now using Flatpak. "
+            "A new version of the app, 0.13.0, is already available on Flathub.\n\n"
+            "For more info go to https://gitlab.com/leinardi/gkraken")
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            Gtk.show_uri_on_window(None, "https://gitlab.com/leinardi/gkraken#-dropped-pypi-support", Gdk.CURRENT_TIME)
+
+        dialog.destroy()
 
     def _init_app_indicator(self) -> None:
         if AppIndicator3:
