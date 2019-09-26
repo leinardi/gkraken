@@ -31,7 +31,7 @@ from gkraken.interactor import UdevInteractor
 from gkraken.model import SpeedProfile, SpeedStep, Setting, CurrentSpeedProfile, load_db_default_data
 from gkraken.presenter.main import MainPresenter
 from gkraken.util.deployment import is_flatpak
-from gkraken.util.desktop_entry import set_autostart_entry, add_application_entry
+from gkraken.util.desktop_entry import set_autostart_entry
 from gkraken.util.log import LOG_DEBUG_FORMAT
 from gkraken.util.view import build_glib_option
 from gkraken.view.main import MainView

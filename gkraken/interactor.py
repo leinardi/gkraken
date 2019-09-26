@@ -18,7 +18,6 @@ import json
 import logging
 import subprocess
 from distutils.version import LooseVersion
-from pprint import pprint
 from typing import List, Tuple, Optional
 
 import requests
@@ -26,7 +25,7 @@ import rx
 from injector import singleton, inject
 from rx import Observable
 
-from gkraken.conf import SETTINGS_DEFAULTS, APP_PACKAGE_NAME, APP_VERSION
+from gkraken.conf import SETTINGS_DEFAULTS, APP_VERSION, APP_ID
 from gkraken.model import Setting
 from gkraken.repository import KrakenRepository
 from gkraken.util.deployment import is_flatpak
@@ -158,25 +157,23 @@ class SettingsInteractor:
 
 @singleton
 class CheckNewVersionInteractor:
-    URL_PATTERN = 'https://pypi.python.org/pypi/{package}/json'
+    URL_PATTERN = 'https://flathub.org/api/v1/apps/{package}'
 
     @inject
     def __init__(self) -> None:
         pass
 
     def execute(self) -> Observable:
-        LOG.debug("SetSpeedProfileInteractor.execute()")
-        return rx.defer(lambda _: rx.just(self.__check_new_version()))
+        LOG.debug("CheckNewVersionInteractor.execute()")
+        return rx.defer(lambda _: rx.just(self._check_new_version()))
 
-    def __check_new_version(self) -> Optional[LooseVersion]:
-        req = requests.get(self.URL_PATTERN.format(package=APP_PACKAGE_NAME))
+    def _check_new_version(self) -> Optional[LooseVersion]:
+        req = requests.get(self.URL_PATTERN.format(package=APP_ID))
         version = LooseVersion("0")
         if req.status_code == requests.codes.ok:
             j = json.loads(req.text)
-            releases = j.get('releases', [])
-            for release in releases:
-                ver = LooseVersion(release)
-                version = max(version, ver)
+            current_release_version = j.get('currentReleaseVersion', "0.0.0")
+            version = LooseVersion(current_release_version)
         return version if version > LooseVersion(APP_VERSION) else None
 
 
