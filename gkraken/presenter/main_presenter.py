@@ -28,10 +28,11 @@ from rx.disposable import CompositeDisposable
 from rx.scheduler import ThreadPoolScheduler
 from rx.scheduler.mainloop import GtkScheduler
 
-from gkraken.conf import APP_NAME, APP_SOURCE_URL, APP_VERSION
+from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
 from gkraken.interactor.get_status_interactor import GetStatusInteractor
+from gkraken.interactor.has_supported_kraken_interactor import HasSupportedKrakenInteractor
 from gkraken.interactor.set_speed_profile_interactor import SetSpeedProfileInteractor
 from gkraken.interactor.settings_interactor import SettingsInteractor
 from gkraken.model.status import Status
@@ -42,7 +43,7 @@ from gkraken.model.speed_step import SpeedStep
 from gkraken.model.db_change import DbChange
 from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfilePresenter
 from gkraken.presenter.preferences_presenter import PreferencesPresenter
-from gkraken.util.view import open_uri
+from gkraken.util.view import open_uri, get_default_application
 
 _LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
@@ -89,6 +90,9 @@ class MainViewInterface:
     def show_legacy_firmware_dialog(self) -> None:
         raise NotImplementedError()
 
+    def show_error_message_dialog(self, title: str, message: str) -> None:
+        raise NotImplementedError()
+
 
 @singleton
 class MainPresenter:
@@ -96,6 +100,7 @@ class MainPresenter:
     def __init__(self,
                  edit_speed_profile_presenter: EditSpeedProfilePresenter,
                  preferences_presenter: PreferencesPresenter,
+                 has_supported_kraken_interactor: HasSupportedKrakenInteractor,
                  get_status_interactor: GetStatusInteractor,
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
                  settings_interactor: SettingsInteractor,
@@ -109,6 +114,7 @@ class MainPresenter:
         self._edit_speed_profile_presenter = edit_speed_profile_presenter
         self._preferences_presenter = preferences_presenter
         self._scheduler = ThreadPoolScheduler(multiprocessing.cpu_count())
+        self._has_supported_kraken_interactor = has_supported_kraken_interactor
         self._get_status_interactor: GetStatusInteractor = get_status_interactor
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
         self._settings_interactor = settings_interactor
@@ -124,7 +130,7 @@ class MainPresenter:
     def on_start(self) -> None:
         self._refresh_speed_profiles(True)
         self._register_db_listeners()
-        self._start_refresh()
+        self._check_supported_kraken()
         self._check_new_version()
 
     def on_application_window_delete_event(self, *_: Any) -> bool:
@@ -151,6 +157,26 @@ class MainPresenter:
         profile = db_change.entry.profile
         if profile.channel in self._profile_selected and self._profile_selected[profile.channel].id == profile.id:
             self.main_view.refresh_chart(profile)
+
+    def _check_supported_kraken(self) -> None:
+        self._composite_disposable.add(self._has_supported_kraken_interactor.execute().pipe(
+            operators.subscribe_on(self._scheduler),
+            operators.observe_on(GtkScheduler(GLib)),
+        ).subscribe(on_next=self._has_supported_kraken_result))
+
+    def _has_supported_kraken_result(self, has_supported_kraken: bool) -> None:
+        if has_supported_kraken:
+            self._start_refresh()
+        else:
+            _LOG.error("Unable to find supported Kraken device!")
+            self.main_view.show_error_message_dialog(
+                "Unable to find supported NZXT Kraken devices",
+                "It was not possible to connect to any of the supported NZXT Kraken devices.\n\n"
+                f"{APP_NAME} currently supports only NZXT Kraken X42, X52, X62 or X72.\n\n"
+                "If one of the supported devices is connected, try to run:\n\n"
+                f"{APP_PACKAGE_NAME} --add-udev-rule"
+            )
+            get_default_application().quit()
 
     def _start_refresh(self) -> None:
         _LOG.debug("start refresh")

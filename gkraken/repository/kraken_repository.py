@@ -36,6 +36,9 @@ class KrakenRepository:
         self.lock = threading.RLock()
         self._driver: Optional[KrakenTwoDriver] = None
 
+    def has_supported_kraken(self) -> bool:
+        return self._driver is not None or INJECTOR.get(Optional[KrakenTwoDriver]) is not None
+
     def cleanup(self) -> None:
         _LOG.debug("KrakenRepository cleanup")
         if self._driver:

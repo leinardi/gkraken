@@ -4,7 +4,7 @@ Released: 2019-09-29
 
  * Added support for 50% pump duty on latest firmware versions
  * Added warning dialog for legacy firmware 2.x
- * Updated several dependencies
+ * Updated several dependencies, including liquidctl 1.3.3
 
 Version 0.13.0
 ==============

@@ -167,11 +167,17 @@ class MainView(MainViewInterface):
         self._cooling_fixed_speed_popover.hide()
         return self._cooling_fixed_speed_scale.get_value(), self._cooling_fixed_speed_scale.get_name()
 
+    def show_about_dialog(self) -> None:
+        self._about_dialog.show()
+
     def show_legacy_firmware_dialog(self) -> None:
         self._legacy_firmware_dialog.show()
 
-    def show_about_dialog(self) -> None:
-        self._about_dialog.show()
+    def show_error_message_dialog(self, title: str, message: str) -> None:
+        dialog = Gtk.MessageDialog(self._window, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, title)
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
 
     def set_statusbar_text(self, text: str) -> None:
         self._statusbar.remove_all(self._context)

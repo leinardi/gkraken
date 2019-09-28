@@ -60,17 +60,29 @@ flatpak --user install flathub com.leinardi.gkraken
 flatpak run com.leinardi.gkraken
 ```
 
-### Distro specific packages
 ### Install from source code
-#### Dependencies for (K/X)Ubuntu 18.10 or newer
-```bash
-sudo apt install git meson python3-pip libcairo2-dev libgirepository1.0-dev libglib2.0-dev libdazzle-1.0-dev gir1.2-gtksource-3.0 gir1.2-appindicator3-0.1 python3-gi-cairo appstream-util
-```
+#### Build time dependencies
+| Dependency            | Arch Linux            | Fedora                      | Ubuntu                 |
+| --------------------- | --------------------- | --------------------------- | ---------------------- |
+| pkg-config            | pkg-config            | pkgconf-pkg-config          | pkg-config             |
+| Python 3.6+           | python                | python3                     | python3                |
+| gobject-introspection | gobject-introspection | gobject-introspection-devel | libgirepository1.0-dev |
+| meson                 | meson                 | meson                       | meson                  |
+| ninja-build           | ninja                 | ninja-build                 | ninja-build            |
+| appstream-util        | appstream-glib        | appstream-util              | appstream-util         |
+| libusb-1.0-0          | libusb                | libusbx-devel               | libusb-1.0-0-dev       |
+| libudev               | libudev0              | libudev-devel               | libudev-dev            |
 
-#### Dependencies for Fedora 28 or newer
-```bash
-dnf install desktop-file-utils git gobject-introspection-devel gtk3-devel libappstream-glib libdazzle libnotify meson python3-cairocffi python3-devel python3-pip redhat-rpm-config
-```
+#### Run time dependencies
+| Dependency                         | Arch Linux                         | Fedora                             | Ubuntu                             |
+| ---------------------------------- | ---------------------------------- | -----------------------------------| ---------------------------------- |
+| Python 3.6+                        | python                             | python3                            | python3                            |
+| pip                                | python-pip                         | python3-pip                        | python3-pip                        |
+| gobject-introspection              | gobject-introspection              | gobject-introspection-devel        | libgirepository1.0-dev             |
+| libappindicator                    | libappindicator3                   | libappindicator-gtk3               | gir1.2-appindicator3-0.1           |
+| gnome-shell-extension-appindicator | gnome-shell-extension-appindicator | gnome-shell-extension-appindicator | gnome-shell-extension-appindicator |
+
+plus all the Python dependencies listed in [requirements.txt](requirements.txt)
 
 #### Clone project and install
 If you have not installed GKraken yet:
@@ -171,35 +183,10 @@ It is possible to build the local source or the remote one (the same that Flathu
 flatpak run com.leinardi.gkraken --debug
 ```
 
-## 🖥️ How to build and run the source code
-If you want to clone the project and run directly from the source you need to manually install all the needed
-dependencies.
- 
-### (K/X)Ubuntu 18.04 or newer
-See [Install from source](https://gitlab.com/leinardi/gkraken#kxubuntu-1810-or-newer-dependencies)
-
-### Fedora 28+ (outdated, please let me know if new dependencies are needed)
-Install [(K)StatusNotifierItem/AppIndicator Support](https://extensions.gnome.org/extension/615/appindicator-support/)
-
-### Python dependencies
-```bash
-git clone --recurse-submodules -j4 https://gitlab.com/leinardi/gkraken.git
-cd gkraken
-pip3 install -r requirements.txt
-```
-
-### Build and Run
-```bash
-./run.sh
-```
-
 ## ❓ FAQ
 ### The Flatpak version of GKraken is not using my theme, how can I fix it?
-Due to sandboxing, Flatpak applications use the default Gnome theme (Adwaita), 
-and not whatever Gtk theme you're currently using.  
-The fix for this issue is to install your current Gtk theme from Flathub. 
-This way, Flatpak applications will automatically pick the installed Gtk theme 
-and use that instead of Adwaita.
+To fix this issue install a Gtk theme from Flathub. This way, Flatpak applications will automatically pick the 
+installed Gtk theme and use that instead of Adwaita.
 
 Use this command to get a list of all the available Gtk themes on Flathub:
 ```bash
@@ -208,7 +195,7 @@ flatpak --user remote-ls flathub | grep org.gtk.Gtk3theme
 And then just install your preferred theme. For example, to install Yaru:
 ```
 flatpak install flathub org.gtk.Gtk3theme.Yaru
-```
+``````
 
 ### Where are the settings and profiles stored on the filesystem?
 | Installation type |                     Location                     |

@@ -33,7 +33,7 @@
                 <ul>
                     <li>Added support for 50% pump duty on latest firmware versions</li>
                     <li>Added warning dialog for legacy firmware 2.x</li>
-                    <li>Updated several dependencies</li>
+                    <li>Updated several dependencies, including liquidctl 1.3.3</li>
                 </ul>
             </description>
         </release>
