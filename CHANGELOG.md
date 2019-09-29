@@ -1,3 +1,10 @@
+Version 0.13.1
+==============
+Released: 2019-09-29
+
+ * Added support for 50% pump duty on latest firmware versions
+ * Added warning dialog for legacy firmware 2.x
+
 Version 0.13.0
 ==============
 Released: 2019-09-26

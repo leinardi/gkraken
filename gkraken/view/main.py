@@ -102,6 +102,8 @@ class MainView(MainViewInterface):
         self._cooling_fixed_speed_scale: Gtk.Scale = self._builder.get_object('cooling_fixed_speed_scale')
         self._about_dialog: Gtk.AboutDialog = self._builder.get_object("about_dialog")
         self._init_about_dialog()
+        self._legacy_firmware_dialog: Gtk.MessageDialog = self._builder.get_object("legacy_firmware_dialog")
+        self._legacy_firmware_dialog.connect('response', lambda dialog, _: dialog.hide())
         self._init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
 
     def _init_about_dialog(self) -> None:
@@ -163,6 +165,9 @@ class MainView(MainViewInterface):
     def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
         self._cooling_fixed_speed_popover.hide()
         return self._cooling_fixed_speed_scale.get_value(), self._cooling_fixed_speed_scale.get_name()
+
+    def show_legacy_firmware_dialog(self) -> None:
+        self._legacy_firmware_dialog.show()
 
     def show_about_dialog(self) -> None:
         self._about_dialog.show()

@@ -73,14 +73,13 @@ class MainViewInterface:
     def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
         raise NotImplementedError()
 
-    def show_edit_speed_profile_dialog(self, profile: Optional[SpeedProfile] = None,
-                                       channel: Optional[ChannelType] = None) -> None:
-        raise NotImplementedError()
-
     def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
         raise NotImplementedError()
 
     def show_about_dialog(self) -> None:
+        raise NotImplementedError()
+
+    def show_legacy_firmware_dialog(self) -> None:
         raise NotImplementedError()
 
 
@@ -112,6 +111,7 @@ class MainPresenter:
         self._composite_disposable: CompositeDisposable = composite_disposable
         self._profile_selected: Dict[str, SpeedProfile] = {}
         self._should_update_fan_speed: bool = False
+        self._legacy_firmware_dialog_shown: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
 
     def on_start(self) -> None:
@@ -162,8 +162,10 @@ class MainPresenter:
                 last_applied: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=ChannelType.FAN.value)
                 if last_applied is not None:
                     status.fan_duty = self._get_fan_duty(last_applied.profile, status.liquid_temperature)
-
             self.main_view.refresh_status(status)
+            if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
+                self._legacy_firmware_dialog_shown = True
+                self.main_view.show_legacy_firmware_dialog()
 
     @staticmethod
     def _get_fan_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
