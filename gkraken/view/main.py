@@ -20,8 +20,8 @@ from collections import OrderedDict
 from typing import Optional, Dict, Any, List, Tuple
 
 from gkraken.di import MainBuilder
+from gkraken.interactor.settings_interactor import SettingsInteractor
 from gkraken.view.edit_speed_profile import EditSpeedProfileView
-from gkraken.util.path import get_data_path
 from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
 from injector import inject, singleton
 import gi
@@ -30,7 +30,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
 # AppIndicator3 may not be installed
-from gkraken.interactor import SettingsInteractor
 from gkraken.view.preferences import PreferencesView
 
 try:

@@ -30,8 +30,10 @@ from rx.scheduler.mainloop import GtkScheduler
 
 from gkraken.conf import APP_NAME, APP_SOURCE_URL, APP_VERSION
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
-from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor, \
-    CheckNewVersionInteractor
+from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
+from gkraken.interactor.get_status_interactor import GetStatusInteractor
+from gkraken.interactor.set_speed_profile_interactor import SetSpeedProfileInteractor
+from gkraken.interactor.settings_interactor import SettingsInteractor
 from gkraken.model.status import Status
 from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.channel_type import ChannelType

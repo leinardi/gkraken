@@ -26,7 +26,7 @@ from peewee import SqliteDatabase
 
 from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
-from gkraken.interactor import UdevInteractor
+from gkraken.interactor.udev_interactor import UdevInteractor
 from gkraken.model import load_db_default_data
 from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.speed_step import SpeedStep
