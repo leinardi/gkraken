@@ -32,7 +32,12 @@ from gkraken.conf import APP_NAME, APP_SOURCE_URL, APP_VERSION
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor, \
     CheckNewVersionInteractor
-from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep, DbChange
+from gkraken.model.status import Status
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.channel_type import ChannelType
+from gkraken.model.current_speed_profile import CurrentSpeedProfile
+from gkraken.model.speed_step import SpeedStep
+from gkraken.model.db_change import DbChange
 from gkraken.presenter.edit_speed_profile import EditSpeedProfilePresenter
 from gkraken.presenter.preferences import PreferencesPresenter
 from gkraken.util.view import open_uri

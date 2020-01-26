@@ -41,7 +41,9 @@ except (ImportError, ValueError):
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, MAX_DUTY, PUMP_MIN_DUTY, APP_NAME, \
     APP_VERSION, APP_SOURCE_URL, APP_ICON_NAME_SYMBOLIC
-from gkraken.model import Status, SpeedProfile, ChannelType
+from gkraken.model.status import Status
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.channel_type import ChannelType
 from gkraken.presenter.main import MainPresenter, MainViewInterface
 
 LOG = logging.getLogger(__name__)

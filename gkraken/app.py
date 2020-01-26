@@ -27,7 +27,11 @@ from peewee import SqliteDatabase
 from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
 from gkraken.interactor import UdevInteractor
-from gkraken.model import SpeedProfile, SpeedStep, Setting, CurrentSpeedProfile, load_db_default_data
+from gkraken.model import load_db_default_data
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.speed_step import SpeedStep
+from gkraken.model.current_speed_profile import CurrentSpeedProfile
+from gkraken.model.setting import Setting
 from gkraken.presenter.main import MainPresenter
 from gkraken.util.deployment import is_flatpak
 from gkraken.util.desktop_entry import set_autostart_entry

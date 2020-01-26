@@ -28,7 +28,7 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
-        <release date="2019-09-29" version="0.13.1">
+        <release date="2019-09-29" version="next">
             <description>
                 <ul>
                     <li>Added support for 50% pump duty on latest firmware versions</li>

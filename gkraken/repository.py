@@ -23,8 +23,8 @@ from typing import Optional, List, Tuple
 from injector import singleton, inject
 from liquidctl.driver.kraken_two import KrakenTwoDriver
 
-from gkraken.model import Status
 from gkraken.di import INJECTOR
+from gkraken.model.status import Status
 from gkraken.util.concurrency import synchronized_with_attr
 
 LOG = logging.getLogger(__name__)

@@ -26,7 +26,7 @@ from injector import singleton, inject
 from rx import Observable
 
 from gkraken.conf import SETTINGS_DEFAULTS, APP_VERSION, APP_ID
-from gkraken.model import Setting
+from gkraken.model.setting import Setting
 from gkraken.repository import KrakenRepository
 from gkraken.util.deployment import is_flatpak
 
