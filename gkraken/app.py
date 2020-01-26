@@ -32,12 +32,12 @@ from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.speed_step import SpeedStep
 from gkraken.model.current_speed_profile import CurrentSpeedProfile
 from gkraken.model.setting import Setting
-from gkraken.presenter.main import MainPresenter
+from gkraken.presenter.main_presenter import MainPresenter
 from gkraken.util.deployment import is_flatpak
 from gkraken.util.desktop_entry import set_autostart_entry
 from gkraken.util.log import LOG_DEBUG_FORMAT
 from gkraken.util.view import build_glib_option
-from gkraken.view.main import MainView
+from gkraken.view.main_view import MainView
 
 _LOG = logging.getLogger(__name__)
 

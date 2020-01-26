@@ -21,7 +21,7 @@ from gi.repository import Gtk
 from injector import singleton, inject
 
 from gkraken.di import PreferencesBuilder
-from gkraken.presenter.preferences import PreferencesViewInterface, PreferencesPresenter
+from gkraken.presenter.preferences_presenter import PreferencesViewInterface, PreferencesPresenter
 from gkraken.util.deployment import is_flatpak
 from gkraken.util.view import hide_on_delete
 

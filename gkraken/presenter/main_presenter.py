@@ -40,8 +40,8 @@ from gkraken.model.channel_type import ChannelType
 from gkraken.model.current_speed_profile import CurrentSpeedProfile
 from gkraken.model.speed_step import SpeedStep
 from gkraken.model.db_change import DbChange
-from gkraken.presenter.edit_speed_profile import EditSpeedProfilePresenter
-from gkraken.presenter.preferences import PreferencesPresenter
+from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfilePresenter
+from gkraken.presenter.preferences_presenter import PreferencesPresenter
 from gkraken.util.view import open_uri
 
 _LOG = logging.getLogger(__name__)

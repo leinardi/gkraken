@@ -21,7 +21,7 @@ from typing import Optional, Dict, Any, List, Tuple
 
 from gkraken.di import MainBuilder
 from gkraken.interactor.settings_interactor import SettingsInteractor
-from gkraken.view.edit_speed_profile import EditSpeedProfileView
+from gkraken.view.edit_speed_profile_view import EditSpeedProfileView
 from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
 from injector import inject, singleton
 import gi
@@ -30,7 +30,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
 # AppIndicator3 may not be installed
-from gkraken.view.preferences import PreferencesView
+from gkraken.view.preferences_view import PreferencesView
 
 try:
     gi.require_version('AppIndicator3', '0.1')
@@ -43,7 +43,7 @@ from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, MAX_DUTY, PUMP_
 from gkraken.model.status import Status
 from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.channel_type import ChannelType
-from gkraken.presenter.main import MainPresenter, MainViewInterface
+from gkraken.presenter.main_presenter import MainPresenter, MainViewInterface
 
 _LOG = logging.getLogger(__name__)
 if AppIndicator3 is None:

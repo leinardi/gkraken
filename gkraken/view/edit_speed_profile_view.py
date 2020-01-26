@@ -26,7 +26,7 @@ from matplotlib.figure import Figure
 from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DUTY
 from gkraken.di import EditSpeedProfileBuilder
 from gkraken.model import SpeedProfile, SpeedStep, ChannelType
-from gkraken.presenter.edit_speed_profile import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
+from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
 from gkraken.util.view import init_plot_chart, get_speed_profile_data
 
 _LOG = logging.getLogger(__name__)

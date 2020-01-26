@@ -22,6 +22,6 @@ class DbChange:
     DELETE = 1
     UPDATE = 2
 
-    def __init__(self, entry: Any, cahnge_type: int) -> None:
+    def __init__(self, entry: Any, change_type: int) -> None:
         self.entry: Any = entry
-        self.type: int = cahnge_type
+        self.type: int = change_type
