@@ -40,7 +40,7 @@ class KrakenRepository:
     def cleanup(self) -> None:
         LOG.debug("KrakenRepository cleanup")
         if self._driver:
-            self._driver.finalize()
+            self._driver.disconnect()
             self._driver = None
 
     @synchronized_with_attr("lock")
@@ -81,7 +81,7 @@ class KrakenRepository:
             self._driver = INJECTOR.get(Optional[KrakenTwoDriver])
 
             if self._driver:
-                self._driver.initialize()
+                self._driver.connect()
             else:
                 raise ValueError("Kraken USB interface error (check USB cable connection)")
 

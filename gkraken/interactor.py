@@ -33,7 +33,7 @@ from gkraken.util.deployment import is_flatpak
 LOG = logging.getLogger(__name__)
 
 _FLATPAK_COMMAND_PREFIX = ['flatpak-spawn', '--host']
-_UDEV_RULE = 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"'
+_UDEV_RULE = 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"'
 _UDEV_RULE_FILE_PATH = '/lib/udev/rules.d/60-gkraken.rules'
 _UDEV_RULE_RELOAD_COMMANDS = 'udevadm control --reload-rules ' \
                              '&& udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=add'

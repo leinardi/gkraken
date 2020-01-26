@@ -1,7 +1,7 @@
-injector==0.17.0
-liquidctl==1.1.0
+injector==0.18.2
+liquidctl==1.2.0
 matplotlib==3.1.1
-peewee==3.9.6
+peewee==3.13.1
 pygobject
 pyxdg==0.26
 requests

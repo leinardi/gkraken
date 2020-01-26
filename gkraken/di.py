@@ -19,7 +19,7 @@ import logging
 
 from typing import Optional, NewType
 from gi.repository import Gtk
-from injector import Module, provider, singleton, Injector, Key
+from injector import Module, provider, singleton, Injector
 from liquidctl.cli import find_all_supported_devices
 from liquidctl.driver.kraken_two import KrakenTwoDriver
 from peewee import SqliteDatabase
