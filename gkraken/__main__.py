@@ -33,7 +33,7 @@ from gkraken.conf import APP_PACKAGE_NAME
 gi.require_version('Gtk', '3.0')
 from gi.repository import GLib
 from gkraken.util.log import set_log_level
-from gkraken.repository import KrakenRepository
+from gkraken.repository.kraken_repository import KrakenRepository
 from gkraken.di import INJECTOR
 from gkraken.app import Application
 

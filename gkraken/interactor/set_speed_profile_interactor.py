@@ -21,7 +21,7 @@ import rx
 from injector import singleton, inject
 from rx import Observable
 
-from gkraken.repository import KrakenRepository
+from gkraken.repository.kraken_repository import KrakenRepository
 
 LOG = logging.getLogger(__name__)
 
