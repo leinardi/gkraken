@@ -25,7 +25,7 @@ from gkraken.presenter.preferences import PreferencesViewInterface, PreferencesP
 from gkraken.util.deployment import is_flatpak
 from gkraken.util.view import hide_on_delete
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 @singleton
@@ -35,7 +35,7 @@ class PreferencesView(PreferencesViewInterface):
                  presenter: PreferencesPresenter,
                  builder: PreferencesBuilder,
                  ) -> None:
-        LOG.debug('init PreferencesView')
+        _LOG.debug('init PreferencesView')
         self._presenter: PreferencesPresenter = presenter
         self._presenter.view = self
         self._builder: Gtk.Builder = builder

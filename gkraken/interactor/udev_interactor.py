@@ -20,7 +20,7 @@ from injector import singleton, inject
 
 from gkraken.interactor import _run_and_get_stdout
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 _UDEV_RULE = 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"'
 _UDEV_RULE_FILE_PATH = '/lib/udev/rules.d/60-gkraken.rules'
 _UDEV_RULE_RELOAD_COMMANDS = 'udevadm control --reload-rules ' \
@@ -41,7 +41,7 @@ class UdevInteractor:
                f'echo \'{_UDEV_RULE}\' > {_UDEV_RULE_FILE_PATH} && {_UDEV_RULE_RELOAD_COMMANDS}']
         result = _run_and_get_stdout(cmd)
         if result[0] != 0:
-            LOG.warning(f"Error while creating rule file. Exit code: {result[0]}. {result[1]}")
+            _LOG.warning(f"Error while creating rule file. Exit code: {result[0]}. {result[1]}")
         return result[0]
 
     @staticmethod
@@ -52,5 +52,5 @@ class UdevInteractor:
                f'rm {_UDEV_RULE_FILE_PATH} && {_UDEV_RULE_RELOAD_COMMANDS}']
         result = _run_and_get_stdout(cmd)
         if result[0] != 0:
-            LOG.warning(f"Error while removing rule file. Exit code: {result[0]}. {result[1]}")
+            _LOG.warning(f"Error while removing rule file. Exit code: {result[0]}. {result[1]}")
         return result[0]

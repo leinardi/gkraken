@@ -25,7 +25,7 @@ from gkraken.di import INJECTOR, SpeedProfileChangedSubject
 from gkraken.model.channel_type import ChannelType
 from gkraken.model.db_change import DbChange
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 SPEED_PROFILE_CHANGED_SUBJECT = INJECTOR.get(SpeedProfileChangedSubject)
 
 
@@ -45,11 +45,11 @@ class SpeedProfile(Model):
 
 @post_save(sender=SpeedProfile)
 def on_speed_profile_added(_: Any, profile: SpeedProfile, created: bool) -> None:
-    LOG.debug("Profile added")
+    _LOG.debug("Profile added")
     SPEED_PROFILE_CHANGED_SUBJECT.on_next(DbChange(profile, DbChange.INSERT if created else DbChange.UPDATE))
 
 
 @post_delete(sender=SpeedProfile)
 def on_speed_profile_deleted(_: Any, profile: SpeedProfile) -> None:
-    LOG.debug("Profile deleted")
+    _LOG.debug("Profile deleted")
     SPEED_PROFILE_CHANGED_SUBJECT.on_next(DbChange(profile, DbChange.DELETE))

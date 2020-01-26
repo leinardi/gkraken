@@ -24,7 +24,7 @@ from gkraken.di import INJECTOR, SpeedStepChangedSubject
 from gkraken.model.db_change import DbChange
 from gkraken.model.speed_profile import SpeedProfile
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 SPEED_STEP_CHANGED_SUBJECT = INJECTOR.get(SpeedStepChangedSubject)
 
 
@@ -41,11 +41,11 @@ class SpeedStep(Model):
 
 @post_save(sender=SpeedStep)
 def on_speed_step_added(_: Any, step: SpeedStep, created: bool) -> None:
-    LOG.debug("Profile added")
+    _LOG.debug("Profile added")
     SPEED_STEP_CHANGED_SUBJECT.on_next(DbChange(step, DbChange.INSERT if created else DbChange.UPDATE))
 
 
 @post_delete(sender=SpeedStep)
 def on_speed_step_deleted(_: Any, step: SpeedStep) -> None:
-    LOG.debug("Step deleted")
+    _LOG.debug("Step deleted")
     SPEED_STEP_CHANGED_SUBJECT.on_next(DbChange(step, DbChange.DELETE))

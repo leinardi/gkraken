@@ -24,7 +24,7 @@ from gkraken.conf import MIN_TEMP, PUMP_MIN_DUTY, FAN_MIN_DUTY
 from gkraken.model import SpeedProfile, ChannelType, SpeedStep
 from gkraken.util.view import hide_on_delete
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class EditSpeedProfileViewInterface:
@@ -57,7 +57,7 @@ class EditSpeedProfileViewInterface:
 class EditSpeedProfilePresenter:
     @inject
     def __init__(self) -> None:
-        LOG.debug("init EditSpeedProfilePresenter ")
+        _LOG.debug("init EditSpeedProfilePresenter ")
         self.view: EditSpeedProfileViewInterface = EditSpeedProfileViewInterface()
         self._profile = SpeedProfile()
         self._selected_step: Optional[SpeedStep] = None
@@ -89,7 +89,7 @@ class EditSpeedProfilePresenter:
         self.view.refresh_controls(step, unselect_list)
 
     def on_step_selected(self, tree_selection: Gtk.TreeSelection) -> None:
-        LOG.debug("selected")
+        _LOG.debug("selected")
         list_store, tree_iter = tree_selection.get_selected()
         step = None if tree_iter is None else SpeedStep.get_or_none(id=list_store.get_value(tree_iter, 0))
         self.refresh_controls(step)

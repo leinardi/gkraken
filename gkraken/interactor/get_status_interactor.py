@@ -22,7 +22,7 @@ from rx import Observable
 
 from gkraken.repository.kraken_repository import KrakenRepository
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 @singleton
@@ -34,5 +34,5 @@ class GetStatusInteractor:
         self._kraken_repository = kraken_repository
 
     def execute(self) -> Observable:
-        LOG.debug("GetStatusInteractor.execute()")
+        _LOG.debug("GetStatusInteractor.execute()")
         return rx.defer(lambda _: rx.just(self._kraken_repository.get_status()))

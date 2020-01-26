@@ -42,7 +42,7 @@ LOCALE_DIR = join(WHERE_AM_I, 'mo')
 
 set_log_level(logging.INFO)
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 # POSIX locale settings
 locale.setlocale(locale.LC_ALL, locale.getlocale())
@@ -53,7 +53,7 @@ gettext.textdomain(APP_PACKAGE_NAME)
 
 
 def _cleanup() -> None:
-    LOG.debug("cleanup")
+    _LOG.debug("cleanup")
     composite_disposable = INJECTOR.get(CompositeDisposable)
     composite_disposable.dispose()
     database = INJECTOR.get(SqliteDatabase)
@@ -68,7 +68,7 @@ def handle_exception(exc_type: Type[BaseException], exc_value: BaseException, ex
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
 
-    LOG.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+    _LOG.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
     _cleanup()
     sys.exit(1)
 
@@ -77,7 +77,7 @@ sys.excepthook = handle_exception
 
 
 def main() -> int:
-    LOG.debug("main")
+    _LOG.debug("main")
     application: Application = INJECTOR.get(Application)
     GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, application.quit)
     exit_status = application.run(sys.argv)

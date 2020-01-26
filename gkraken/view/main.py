@@ -45,9 +45,9 @@ from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.channel_type import ChannelType
 from gkraken.presenter.main import MainPresenter, MainViewInterface
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 if AppIndicator3 is None:
-    LOG.warning("AppIndicator3 is not installed. The app indicator will not be shown.")
+    _LOG.warning("AppIndicator3 is not installed. The app indicator will not be shown.")
 
 
 @singleton
@@ -61,7 +61,7 @@ class MainView(MainViewInterface):
                  builder: MainBuilder,
                  settings_interactor: SettingsInteractor,
                  ) -> None:
-        LOG.debug('init MainView')
+        _LOG.debug('init MainView')
         self._presenter: MainPresenter = presenter
         self._edit_speed_profile_view = edit_speed_profile_view
         self._preferences_view = preferences_view
@@ -146,7 +146,7 @@ class MainView(MainViewInterface):
             self._window.show()
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
-        LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
+        _LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
 
     def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
         if profile.channel == ChannelType.FAN.value:
@@ -178,7 +178,7 @@ class MainView(MainViewInterface):
         self._statusbar.push(self._context, text)
 
     def refresh_status(self, status: Optional[Status]) -> None:
-        LOG.debug('view status')
+        _LOG.debug('view status')
         if status:
             self._cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
             self._cooling_fan_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %

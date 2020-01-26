@@ -26,7 +26,7 @@ from gkraken.di import INJECTOR
 from gkraken.model.status import Status
 from gkraken.util.concurrency import synchronized_with_attr
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 @singleton
@@ -37,7 +37,7 @@ class KrakenRepository:
         self._driver: Optional[KrakenTwoDriver] = None
 
     def cleanup(self) -> None:
-        LOG.debug("KrakenRepository cleanup")
+        _LOG.debug("KrakenRepository cleanup")
         if self._driver:
             self._driver.disconnect()
             self._driver = None
@@ -57,7 +57,7 @@ class KrakenRepository:
                 return status if status.fan_rpm < 3500 else None
             # pylint: disable=bare-except
             except:
-                LOG.exception("Error getting the status")
+                _LOG.exception("Error getting the status")
                 self.cleanup()
         return None
 
@@ -72,7 +72,7 @@ class KrakenRepository:
                     self._driver.set_speed_profile(channel_value, profile_data)
             # pylint: disable=bare-except
             except:
-                LOG.exception("Error getting the status")
+                _LOG.exception("Error getting the status")
                 self.cleanup()
 
     def _load_driver(self) -> None:

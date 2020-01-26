@@ -39,7 +39,7 @@ from gkraken.util.log import LOG_DEBUG_FORMAT
 from gkraken.util.view import build_glib_option
 from gkraken.view.main import MainView
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class Application(Gtk.Application):
@@ -52,7 +52,7 @@ class Application(Gtk.Application):
                  udev_interactor: UdevInteractor,
                  *args: Any,
                  **kwargs: Any) -> None:
-        LOG.debug("init Application")
+        _LOG.debug("init Application")
         GLib.set_application_name(_(APP_NAME))
         super().__init__(*args, application_id=APP_ID,
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
@@ -97,7 +97,7 @@ class Application(Gtk.Application):
         exit_value = 0
 
         if _Options.VERSION.value in options:
-            LOG.debug("Option %s selected", _Options.VERSION.value)
+            _LOG.debug("Option %s selected", _Options.VERSION.value)
             print(APP_VERSION)
             start_app = False
 
@@ -105,29 +105,29 @@ class Application(Gtk.Application):
             logging.getLogger().setLevel(logging.DEBUG)
             for handler in logging.getLogger().handlers:
                 handler.formatter = logging.Formatter(LOG_DEBUG_FORMAT)
-            LOG.debug("Option %s selected", _Options.DEBUG.value)
+            _LOG.debug("Option %s selected", _Options.DEBUG.value)
 
         if _Options.HIDE_WINDOW.value in options:
-            LOG.debug("Option %s selected", _Options.HIDE_WINDOW.value)
+            _LOG.debug("Option %s selected", _Options.HIDE_WINDOW.value)
             self._start_hidden = True
 
         if _Options.AUTOSTART_ON.value in options:
-            LOG.debug("Option %s selected", _Options.AUTOSTART_ON.value)
+            _LOG.debug("Option %s selected", _Options.AUTOSTART_ON.value)
             set_autostart_entry(True)
             start_app = False
 
         if _Options.AUTOSTART_OFF.value in options:
-            LOG.debug("Option %s selected", _Options.AUTOSTART_OFF.value)
+            _LOG.debug("Option %s selected", _Options.AUTOSTART_OFF.value)
             set_autostart_entry(True)
             start_app = False
 
         if _Options.ADD_UDEV_RULE.value in options:
-            LOG.debug("Option %s selected", _Options.ADD_UDEV_RULE.value)
+            _LOG.debug("Option %s selected", _Options.ADD_UDEV_RULE.value)
             exit_value += self._udev_interactor.add_udev_rule()
             start_app = False
 
         if _Options.REMOVE_UDEV_RULE.value in options:
-            LOG.debug("Option %s selected", _Options.REMOVE_UDEV_RULE.value)
+            _LOG.debug("Option %s selected", _Options.REMOVE_UDEV_RULE.value)
             exit_value += self._udev_interactor.remove_udev_rule()
             start_app = False
 

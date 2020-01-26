@@ -44,7 +44,7 @@ from gkraken.presenter.edit_speed_profile import EditSpeedProfilePresenter
 from gkraken.presenter.preferences import PreferencesPresenter
 from gkraken.util.view import open_uri
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
 
 
@@ -104,7 +104,7 @@ class MainPresenter:
                  speed_step_changed_subject: SpeedStepChangedSubject,
                  composite_disposable: CompositeDisposable,
                  ) -> None:
-        LOG.debug("init MainPresenter ")
+        _LOG.debug("init MainPresenter ")
         self.main_view: MainViewInterface = MainViewInterface()
         self._edit_speed_profile_presenter = edit_speed_profile_presenter
         self._preferences_presenter = preferences_presenter
@@ -135,9 +135,9 @@ class MainPresenter:
 
     def _register_db_listeners(self) -> None:
         self._speed_profile_changed_subject.subscribe(on_next=self._on_speed_profile_list_changed,
-                                                      on_error=lambda e: LOG.exception("Db signal error: %s", str(e)))
+                                                      on_error=lambda e: _LOG.exception("Db signal error: %s", str(e)))
         self._speed_step_changed_subject.subscribe(on_next=self._on_speed_step_list_changed,
-                                                   on_error=lambda e: LOG.exception("Db signal error: %s", str(e)))
+                                                   on_error=lambda e: _LOG.exception("Db signal error: %s", str(e)))
 
     def _on_speed_profile_list_changed(self, db_change: DbChange) -> None:
         profile = db_change.entry
@@ -153,7 +153,7 @@ class MainPresenter:
             self.main_view.refresh_chart(profile)
 
     def _start_refresh(self) -> None:
-        LOG.debug("start refresh")
+        _LOG.debug("start refresh")
         refresh_interval = self._settings_interactor.get_int('settings_refresh_interval')
         self._composite_disposable.add(rx.interval(refresh_interval, scheduler=self._scheduler).pipe(
             operators.start_with(0),
@@ -161,7 +161,7 @@ class MainPresenter:
             operators.flat_map(lambda _: self._get_status()),
             operators.observe_on(GtkScheduler(GLib)),
         ).subscribe(on_next=self._update_status,
-                    on_error=lambda e: LOG.exception("Refresh error: %s", str(e))))
+                    on_error=lambda e: _LOG.exception("Refresh error: %s", str(e))))
 
     def _update_status(self, status: Optional[Status]) -> None:
         if status is not None:
@@ -301,7 +301,7 @@ class MainPresenter:
             operators.subscribe_on(self._scheduler),
             operators.observe_on(GtkScheduler(GLib)),
         ).subscribe(on_next=lambda _: self._update_current_speed_profile(profile),
-                    on_error=lambda e: (LOG.exception("Set cooling error: %s", str(e)),
+                    on_error=lambda e: (_LOG.exception("Set cooling error: %s", str(e)),
                                         self.main_view.set_statusbar_text('Error applying %s speed profile!'
                                                                           % profile.channel))))
 
@@ -315,7 +315,7 @@ class MainPresenter:
         self.main_view.set_statusbar_text('%s cooling profile applied' % profile.channel.capitalize())
 
     def _log_exception_return_empty_observable(self, ex: Exception, _: Observable) -> Observable:
-        LOG.exception("Err = %s", ex)
+        _LOG.exception("Err = %s", ex)
         self.main_view.set_statusbar_text(str(ex))
         observable = rx.just(None)
         assert isinstance(operators, Observable)
@@ -333,7 +333,7 @@ class MainPresenter:
             operators.subscribe_on(self._scheduler),
             operators.observe_on(GtkScheduler(GLib)),
         ).subscribe(on_next=self._handle_new_version_response,
-                    on_error=lambda e: LOG.exception("Check new version error: %s", str(e))))
+                    on_error=lambda e: _LOG.exception("Check new version error: %s", str(e))))
 
     def _handle_new_version_response(self, version: Optional[str]) -> None:
         if version is not None:
