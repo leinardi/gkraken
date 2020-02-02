@@ -217,6 +217,10 @@ flatpak install flathub org.gtk.Gtk3theme.Yaru
 | Source code       | `$XDG_CONFIG_HOME` (usually `$HOME/.config/gkraken`) |
 
 ## 💚 How to help the project
+### Discord server
+If you want to help testing or developing it would be easier to get in touch using the discord server of the project: https://discord.gg/Q33n3UC  
+Just write a message on the general channel saying how you want to help (test, dev, etc) and quoting @leinardi. If you don't use discor but still want to help just open a new issue here.
+
 ### Can I support this project some other way?
 
 Something simple that everyone can do is to star it on both [GitLab](https://gitlab.com/leinardi/gkraken) and [GitHub](https://github.com/leinardi/gkraken).
