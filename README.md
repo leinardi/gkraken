@@ -123,7 +123,7 @@ It will automatically refresh also the udev rules.
 #### Manually
 Create a new file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
 ```bash
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
 ```
 
 After that, run the following commands
