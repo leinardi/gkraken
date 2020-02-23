@@ -81,5 +81,9 @@ def get_speed_profile_data(profile: SpeedProfile) -> Dict[int, int]:
     return data
 
 
+def get_default_application() -> Gtk.Application:
+    return Gtk.Application.get_default()
+
+
 def open_uri(uri: str, parent: Gtk.Window = None, timestamp: int = Gdk.CURRENT_TIME) -> None:
     Gtk.show_uri_on_window(parent, uri, timestamp)

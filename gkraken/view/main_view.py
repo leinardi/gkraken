@@ -20,8 +20,8 @@ from collections import OrderedDict
 from typing import Optional, Dict, Any, List, Tuple
 
 from gkraken.di import MainBuilder
-from gkraken.view.edit_speed_profile import EditSpeedProfileView
-from gkraken.util.path import get_data_path
+from gkraken.interactor.settings_interactor import SettingsInteractor
+from gkraken.view.edit_speed_profile_view import EditSpeedProfileView
 from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
 from injector import inject, singleton
 import gi
@@ -30,8 +30,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
 # AppIndicator3 may not be installed
-from gkraken.interactor import SettingsInteractor
-from gkraken.view.preferences import PreferencesView
+from gkraken.view.preferences_view import PreferencesView
 
 try:
     gi.require_version('AppIndicator3', '0.1')
@@ -41,12 +40,14 @@ except (ImportError, ValueError):
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, MAX_DUTY, PUMP_MIN_DUTY, APP_NAME, \
     APP_VERSION, APP_SOURCE_URL, APP_ICON_NAME_SYMBOLIC
-from gkraken.model import Status, SpeedProfile, ChannelType
-from gkraken.presenter.main import MainPresenter, MainViewInterface
+from gkraken.model.status import Status
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.channel_type import ChannelType
+from gkraken.presenter.main_presenter import MainPresenter, MainViewInterface
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 if AppIndicator3 is None:
-    LOG.warning("AppIndicator3 is not installed. The app indicator will not be shown.")
+    _LOG.warning("AppIndicator3 is not installed. The app indicator will not be shown.")
 
 
 @singleton
@@ -60,7 +61,7 @@ class MainView(MainViewInterface):
                  builder: MainBuilder,
                  settings_interactor: SettingsInteractor,
                  ) -> None:
-        LOG.debug('init MainView')
+        _LOG.debug('init MainView')
         self._presenter: MainPresenter = presenter
         self._edit_speed_profile_view = edit_speed_profile_view
         self._preferences_view = preferences_view
@@ -102,6 +103,8 @@ class MainView(MainViewInterface):
         self._cooling_fixed_speed_scale: Gtk.Scale = self._builder.get_object('cooling_fixed_speed_scale')
         self._about_dialog: Gtk.AboutDialog = self._builder.get_object("about_dialog")
         self._init_about_dialog()
+        self._legacy_firmware_dialog: Gtk.MessageDialog = self._builder.get_object("legacy_firmware_dialog")
+        self._legacy_firmware_dialog.connect('response', lambda dialog, _: dialog.hide())
         self._init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
 
     def _init_about_dialog(self) -> None:
@@ -143,7 +146,7 @@ class MainView(MainViewInterface):
             self._window.show()
 
     def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
-        LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
+        _LOG.debug("view show_add_speed_profile_dialog %s", channel.name)
 
     def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
         if profile.channel == ChannelType.FAN.value:
@@ -167,12 +170,21 @@ class MainView(MainViewInterface):
     def show_about_dialog(self) -> None:
         self._about_dialog.show()
 
+    def show_legacy_firmware_dialog(self) -> None:
+        self._legacy_firmware_dialog.show()
+
+    def show_error_message_dialog(self, title: str, message: str) -> None:
+        dialog = Gtk.MessageDialog(self._window, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, title)
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
+
     def set_statusbar_text(self, text: str) -> None:
         self._statusbar.remove_all(self._context)
         self._statusbar.push(self._context, text)
 
     def refresh_status(self, status: Optional[Status]) -> None:
-        LOG.debug('view status')
+        _LOG.debug('view status')
         if status:
             self._cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
             self._cooling_fan_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %

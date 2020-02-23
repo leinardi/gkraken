@@ -26,16 +26,20 @@ from peewee import SqliteDatabase
 
 from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
-from gkraken.interactor import UdevInteractor
-from gkraken.model import SpeedProfile, SpeedStep, Setting, CurrentSpeedProfile, load_db_default_data
-from gkraken.presenter.main import MainPresenter
+from gkraken.interactor.udev_interactor import UdevInteractor
+from gkraken.model import load_db_default_data
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.speed_step import SpeedStep
+from gkraken.model.current_speed_profile import CurrentSpeedProfile
+from gkraken.model.setting import Setting
+from gkraken.presenter.main_presenter import MainPresenter
 from gkraken.util.deployment import is_flatpak
 from gkraken.util.desktop_entry import set_autostart_entry
 from gkraken.util.log import LOG_DEBUG_FORMAT
 from gkraken.util.view import build_glib_option
-from gkraken.view.main import MainView
+from gkraken.view.main_view import MainView
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class Application(Gtk.Application):
@@ -48,7 +52,7 @@ class Application(Gtk.Application):
                  udev_interactor: UdevInteractor,
                  *args: Any,
                  **kwargs: Any) -> None:
-        LOG.debug("init Application")
+        _LOG.debug("init Application")
         GLib.set_application_name(_(APP_NAME))
         super().__init__(*args, application_id=APP_ID,
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
@@ -93,7 +97,7 @@ class Application(Gtk.Application):
         exit_value = 0
 
         if _Options.VERSION.value in options:
-            LOG.debug("Option %s selected", _Options.VERSION.value)
+            _LOG.debug("Option %s selected", _Options.VERSION.value)
             print(APP_VERSION)
             start_app = False
 
@@ -101,29 +105,29 @@ class Application(Gtk.Application):
             logging.getLogger().setLevel(logging.DEBUG)
             for handler in logging.getLogger().handlers:
                 handler.formatter = logging.Formatter(LOG_DEBUG_FORMAT)
-            LOG.debug("Option %s selected", _Options.DEBUG.value)
+            _LOG.debug("Option %s selected", _Options.DEBUG.value)
 
         if _Options.HIDE_WINDOW.value in options:
-            LOG.debug("Option %s selected", _Options.HIDE_WINDOW.value)
+            _LOG.debug("Option %s selected", _Options.HIDE_WINDOW.value)
             self._start_hidden = True
 
         if _Options.AUTOSTART_ON.value in options:
-            LOG.debug("Option %s selected", _Options.AUTOSTART_ON.value)
+            _LOG.debug("Option %s selected", _Options.AUTOSTART_ON.value)
             set_autostart_entry(True)
             start_app = False
 
         if _Options.AUTOSTART_OFF.value in options:
-            LOG.debug("Option %s selected", _Options.AUTOSTART_OFF.value)
+            _LOG.debug("Option %s selected", _Options.AUTOSTART_OFF.value)
             set_autostart_entry(True)
             start_app = False
 
         if _Options.ADD_UDEV_RULE.value in options:
-            LOG.debug("Option %s selected", _Options.ADD_UDEV_RULE.value)
+            _LOG.debug("Option %s selected", _Options.ADD_UDEV_RULE.value)
             exit_value += self._udev_interactor.add_udev_rule()
             start_app = False
 
         if _Options.REMOVE_UDEV_RULE.value in options:
-            LOG.debug("Option %s selected", _Options.REMOVE_UDEV_RULE.value)
+            _LOG.debug("Option %s selected", _Options.REMOVE_UDEV_RULE.value)
             exit_value += self._udev_interactor.remove_udev_rule()
             start_app = False
 

@@ -28,16 +28,24 @@ from rx.disposable import CompositeDisposable
 from rx.scheduler import ThreadPoolScheduler
 from rx.scheduler.mainloop import GtkScheduler
 
-from gkraken.conf import APP_NAME, APP_SOURCE_URL, APP_VERSION
+from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
-from gkraken.interactor import GetStatusInteractor, SetSpeedProfileInteractor, SettingsInteractor, \
-    CheckNewVersionInteractor
-from gkraken.model import Status, SpeedProfile, ChannelType, CurrentSpeedProfile, SpeedStep, DbChange
-from gkraken.presenter.edit_speed_profile import EditSpeedProfilePresenter
-from gkraken.presenter.preferences import PreferencesPresenter
-from gkraken.util.view import open_uri
+from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
+from gkraken.interactor.get_status_interactor import GetStatusInteractor
+from gkraken.interactor.has_supported_kraken_interactor import HasSupportedKrakenInteractor
+from gkraken.interactor.set_speed_profile_interactor import SetSpeedProfileInteractor
+from gkraken.interactor.settings_interactor import SettingsInteractor
+from gkraken.model.status import Status
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.channel_type import ChannelType
+from gkraken.model.current_speed_profile import CurrentSpeedProfile
+from gkraken.model.speed_step import SpeedStep
+from gkraken.model.db_change import DbChange
+from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfilePresenter
+from gkraken.presenter.preferences_presenter import PreferencesPresenter
+from gkraken.util.view import open_uri, get_default_application
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
 
 
@@ -73,14 +81,16 @@ class MainViewInterface:
     def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
         raise NotImplementedError()
 
-    def show_edit_speed_profile_dialog(self, profile: Optional[SpeedProfile] = None,
-                                       channel: Optional[ChannelType] = None) -> None:
-        raise NotImplementedError()
-
     def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
         raise NotImplementedError()
 
     def show_about_dialog(self) -> None:
+        raise NotImplementedError()
+
+    def show_legacy_firmware_dialog(self) -> None:
+        raise NotImplementedError()
+
+    def show_error_message_dialog(self, title: str, message: str) -> None:
         raise NotImplementedError()
 
 
@@ -90,6 +100,7 @@ class MainPresenter:
     def __init__(self,
                  edit_speed_profile_presenter: EditSpeedProfilePresenter,
                  preferences_presenter: PreferencesPresenter,
+                 has_supported_kraken_interactor: HasSupportedKrakenInteractor,
                  get_status_interactor: GetStatusInteractor,
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
                  settings_interactor: SettingsInteractor,
@@ -98,11 +109,12 @@ class MainPresenter:
                  speed_step_changed_subject: SpeedStepChangedSubject,
                  composite_disposable: CompositeDisposable,
                  ) -> None:
-        LOG.debug("init MainPresenter ")
+        _LOG.debug("init MainPresenter ")
         self.main_view: MainViewInterface = MainViewInterface()
         self._edit_speed_profile_presenter = edit_speed_profile_presenter
         self._preferences_presenter = preferences_presenter
         self._scheduler = ThreadPoolScheduler(multiprocessing.cpu_count())
+        self._has_supported_kraken_interactor = has_supported_kraken_interactor
         self._get_status_interactor: GetStatusInteractor = get_status_interactor
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
         self._settings_interactor = settings_interactor
@@ -112,12 +124,13 @@ class MainPresenter:
         self._composite_disposable: CompositeDisposable = composite_disposable
         self._profile_selected: Dict[str, SpeedProfile] = {}
         self._should_update_fan_speed: bool = False
+        self._legacy_firmware_dialog_shown: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
 
     def on_start(self) -> None:
         self._refresh_speed_profiles(True)
         self._register_db_listeners()
-        self._start_refresh()
+        self._check_supported_kraken()
         self._check_new_version()
 
     def on_application_window_delete_event(self, *_: Any) -> bool:
@@ -128,9 +141,9 @@ class MainPresenter:
 
     def _register_db_listeners(self) -> None:
         self._speed_profile_changed_subject.subscribe(on_next=self._on_speed_profile_list_changed,
-                                                      on_error=lambda e: LOG.exception("Db signal error: %s", str(e)))
+                                                      on_error=lambda e: _LOG.exception("Db signal error: %s", str(e)))
         self._speed_step_changed_subject.subscribe(on_next=self._on_speed_step_list_changed,
-                                                   on_error=lambda e: LOG.exception("Db signal error: %s", str(e)))
+                                                   on_error=lambda e: _LOG.exception("Db signal error: %s", str(e)))
 
     def _on_speed_profile_list_changed(self, db_change: DbChange) -> None:
         profile = db_change.entry
@@ -145,8 +158,28 @@ class MainPresenter:
         if profile.channel in self._profile_selected and self._profile_selected[profile.channel].id == profile.id:
             self.main_view.refresh_chart(profile)
 
+    def _check_supported_kraken(self) -> None:
+        self._composite_disposable.add(self._has_supported_kraken_interactor.execute().pipe(
+            operators.subscribe_on(self._scheduler),
+            operators.observe_on(GtkScheduler(GLib)),
+        ).subscribe(on_next=self._has_supported_kraken_result))
+
+    def _has_supported_kraken_result(self, has_supported_kraken: bool) -> None:
+        if has_supported_kraken:
+            self._start_refresh()
+        else:
+            _LOG.error("Unable to find supported Kraken device!")
+            self.main_view.show_error_message_dialog(
+                "Unable to find supported NZXT Kraken devices",
+                "It was not possible to connect to any of the supported NZXT Kraken devices.\n\n"
+                f"{APP_NAME} currently supports only NZXT Kraken X42, X52, X62 or X72.\n\n"
+                "If one of the supported devices is connected, try to run:\n\n"
+                f"{APP_PACKAGE_NAME} --add-udev-rule"
+            )
+            get_default_application().quit()
+
     def _start_refresh(self) -> None:
-        LOG.debug("start refresh")
+        _LOG.debug("start refresh")
         refresh_interval = self._settings_interactor.get_int('settings_refresh_interval')
         self._composite_disposable.add(rx.interval(refresh_interval, scheduler=self._scheduler).pipe(
             operators.start_with(0),
@@ -154,7 +187,7 @@ class MainPresenter:
             operators.flat_map(lambda _: self._get_status()),
             operators.observe_on(GtkScheduler(GLib)),
         ).subscribe(on_next=self._update_status,
-                    on_error=lambda e: LOG.exception("Refresh error: %s", str(e))))
+                    on_error=lambda e: _LOG.exception("Refresh error: %s", str(e))))
 
     def _update_status(self, status: Optional[Status]) -> None:
         if status is not None:
@@ -162,8 +195,10 @@ class MainPresenter:
                 last_applied: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=ChannelType.FAN.value)
                 if last_applied is not None:
                     status.fan_duty = self._get_fan_duty(last_applied.profile, status.liquid_temperature)
-
             self.main_view.refresh_status(status)
+            if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
+                self._legacy_firmware_dialog_shown = True
+                self.main_view.show_legacy_firmware_dialog()
 
     @staticmethod
     def _get_fan_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
@@ -292,7 +327,7 @@ class MainPresenter:
             operators.subscribe_on(self._scheduler),
             operators.observe_on(GtkScheduler(GLib)),
         ).subscribe(on_next=lambda _: self._update_current_speed_profile(profile),
-                    on_error=lambda e: (LOG.exception("Set cooling error: %s", str(e)),
+                    on_error=lambda e: (_LOG.exception("Set cooling error: %s", str(e)),
                                         self.main_view.set_statusbar_text('Error applying %s speed profile!'
                                                                           % profile.channel))))
 
@@ -306,7 +341,7 @@ class MainPresenter:
         self.main_view.set_statusbar_text('%s cooling profile applied' % profile.channel.capitalize())
 
     def _log_exception_return_empty_observable(self, ex: Exception, _: Observable) -> Observable:
-        LOG.exception("Err = %s", ex)
+        _LOG.exception("Err = %s", ex)
         self.main_view.set_statusbar_text(str(ex))
         observable = rx.just(None)
         assert isinstance(operators, Observable)
@@ -324,7 +359,7 @@ class MainPresenter:
             operators.subscribe_on(self._scheduler),
             operators.observe_on(GtkScheduler(GLib)),
         ).subscribe(on_next=self._handle_new_version_response,
-                    on_error=lambda e: LOG.exception("Check new version error: %s", str(e))))
+                    on_error=lambda e: _LOG.exception("Check new version error: %s", str(e))))
 
     def _handle_new_version_response(self, version: Optional[str]) -> None:
         if version is not None:

@@ -26,10 +26,10 @@ from matplotlib.figure import Figure
 from gkraken.conf import MIN_TEMP, FAN_MIN_DUTY, PUMP_MIN_DUTY, MAX_TEMP, MAX_DUTY
 from gkraken.di import EditSpeedProfileBuilder
 from gkraken.model import SpeedProfile, SpeedStep, ChannelType
-from gkraken.presenter.edit_speed_profile import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
+from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfileViewInterface, EditSpeedProfilePresenter
 from gkraken.util.view import init_plot_chart, get_speed_profile_data
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 @singleton
@@ -39,7 +39,7 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
                  presenter: EditSpeedProfilePresenter,
                  builder: EditSpeedProfileBuilder,
                  ) -> None:
-        LOG.debug('init EditSpeedProfileView')
+        _LOG.debug('init EditSpeedProfileView')
         self._presenter: EditSpeedProfilePresenter = presenter
         self._presenter.view = self
         self._builder: Gtk.Builder = builder
@@ -156,7 +156,7 @@ class EditSpeedProfileView(EditSpeedProfileViewInterface):
                 else:
                     raise ValueError("Unknown channel: %s" % step.profile.channel)
             else:
-                LOG.debug("prev = %s", prev_steps[0].temperature)
+                _LOG.debug("prev = %s", prev_steps[0].temperature)
                 self._temperature_adjustment.set_lower(prev_steps[0].temperature + 1)
                 self._duty_adjustment.set_lower(prev_steps[0].duty)
 

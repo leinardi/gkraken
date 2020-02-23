@@ -1,8 +1,10 @@
-injector==0.17.0
-liquidctl==1.1.0
-matplotlib==3.1.1
-peewee==3.9.6
+Cython==0.29.15
+injector==0.18.3
+hidapi==0.9.0.post2
+liquidctl==1.3.3
+matplotlib==3.1.3
+peewee==3.13.1
 pygobject
 pyxdg==0.26
-requests
+requests==2.23.0
 Rx==3.0.1

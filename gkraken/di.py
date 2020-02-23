@@ -19,8 +19,8 @@ import logging
 
 from typing import Optional, NewType
 from gi.repository import Gtk
-from injector import Module, provider, singleton, Injector, Key
-from liquidctl.cli import find_all_supported_devices
+from injector import Module, provider, singleton, Injector
+from liquidctl.driver import find_liquidctl_devices
 from liquidctl.driver.kraken_two import KrakenTwoDriver
 from peewee import SqliteDatabase
 from rx.disposable import CompositeDisposable
@@ -30,7 +30,7 @@ from gkraken.conf import APP_PACKAGE_NAME, APP_MAIN_UI_NAME, APP_DB_NAME, APP_ED
     APP_PREFERENCES_UI_NAME
 from gkraken.util.path import get_config_path
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 SpeedProfileChangedSubject = NewType("SpeedProfileChangedSubject", Subject)
 SpeedStepChangedSubject = NewType("SpeedStepChangedSubject", Subject)
@@ -46,7 +46,7 @@ class ProviderModule(Module):
     @singleton
     @provider
     def provide_main_builder(self) -> MainBuilder:
-        LOG.debug("provide Gtk.Builder")
+        _LOG.debug("provide Gtk.Builder")
         builder = MainBuilder(Gtk.Builder())
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_MAIN_UI_NAME))
@@ -55,7 +55,7 @@ class ProviderModule(Module):
     @singleton
     @provider
     def provide_edit_speed_profile_builder(self) -> EditSpeedProfileBuilder:
-        LOG.debug("provide Gtk.Builder")
+        _LOG.debug("provide Gtk.Builder")
         builder = EditSpeedProfileBuilder(Gtk.Builder())
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_EDIT_SPEED_PROFILE_UI_NAME))
@@ -64,7 +64,7 @@ class ProviderModule(Module):
     @singleton
     @provider
     def provide_preferences_builder(self) -> PreferencesBuilder:
-        LOG.debug("provide Gtk.Builder")
+        _LOG.debug("provide Gtk.Builder")
         builder = PreferencesBuilder(Gtk.Builder())
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_PREFERENCES_UI_NAME))
@@ -73,19 +73,19 @@ class ProviderModule(Module):
     @singleton
     @provider
     def provide_thread_pool_scheduler(self) -> CompositeDisposable:
-        LOG.debug("provide CompositeDisposable")
+        _LOG.debug("provide CompositeDisposable")
         return CompositeDisposable()
 
     @singleton
     @provider
     def provide_database(self) -> SqliteDatabase:
-        LOG.debug("provide CompositeDisposable")
+        _LOG.debug("provide CompositeDisposable")
         return SqliteDatabase(get_config_path(APP_DB_NAME))
 
     @provider
     def provide_kraken_two_driver(self) -> Optional[KrakenTwoDriver]:
-        LOG.debug("provide KrakenTwoDriver")
-        return next((dev for dev in find_all_supported_devices() if isinstance(dev, KrakenTwoDriver)), None)
+        _LOG.debug("provide KrakenTwoDriver")
+        return next((dev for dev in find_liquidctl_devices() if isinstance(dev, KrakenTwoDriver)), None)
 
     @singleton
     @provider
