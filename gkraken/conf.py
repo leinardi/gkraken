@@ -19,7 +19,7 @@ from typing import Dict, Any
 APP_PACKAGE_NAME = "gkraken"
 APP_NAME = "GKraken"
 APP_ID = "com.leinardi.gkraken"
-APP_VERSION = "0.14.0"
+APP_VERSION = "0.14.1"
 APP_ICON_NAME = APP_ID
 APP_ICON_NAME_SYMBOLIC = APP_ID + "-symbolic"
 APP_DB_NAME = APP_PACKAGE_NAME + ".db"
