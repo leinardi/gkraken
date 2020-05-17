@@ -1,3 +1,9 @@
+Version 0.14.2
+==============
+Released: 2020-05-17
+
+ * Added dialog suggesting possible fix for UDEV rules
+
 Version 0.14.1
 ==============
 Released: 2020-04-09

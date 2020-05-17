@@ -28,7 +28,7 @@ from rx.disposable import CompositeDisposable
 from rx.scheduler import ThreadPoolScheduler
 from rx.scheduler.mainloop import GtkScheduler
 
-from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION
+from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
 from gkraken.interactor.get_status_interactor import GetStatusInteractor
@@ -43,6 +43,7 @@ from gkraken.model.speed_step import SpeedStep
 from gkraken.model.db_change import DbChange
 from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfilePresenter
 from gkraken.presenter.preferences_presenter import PreferencesPresenter
+from gkraken.util.deployment import is_flatpak
 from gkraken.util.view import open_uri, get_default_application
 
 _LOG = logging.getLogger(__name__)
@@ -187,7 +188,22 @@ class MainPresenter:
             operators.flat_map(lambda _: self._get_status()),
             operators.observe_on(GtkScheduler(GLib)),
         ).subscribe(on_next=self._update_status,
-                    on_error=lambda e: _LOG.exception("Refresh error: %s", str(e))))
+                    on_error=self._handle_refresh_error))
+
+    def _handle_refresh_error(self, ex: Exception) -> None:
+        if isinstance(ex, OSError):
+            command = APP_PACKAGE_NAME
+            if is_flatpak():
+                command = f"flatpak run {APP_ID}"
+            command += " --add-udev-rule"
+            self.main_view.show_error_message_dialog(
+                "Unable to communicate with the Kraken",
+                "It was not possible to communicate with the Kranen.\n\n"
+                "Most probably the current user does not have the permission to access it.\n\n"
+                f"You can try to fix the issue running \"{command}\" and then rebooting.\n\n"
+                "For more info check the section \"Adding Udev rule\" of the project's README.md.")
+            get_default_application().quit()
+        _LOG.exception("Refresh error: %s", str(ex))
 
     def _update_status(self, status: Optional[Status]) -> None:
         if status is not None:
@@ -343,6 +359,8 @@ class MainPresenter:
     def _log_exception_return_empty_observable(self, ex: Exception, _: Observable) -> Observable:
         _LOG.exception("Err = %s", ex)
         self.main_view.set_statusbar_text(str(ex))
+        if isinstance(ex, OSError):
+            raise ex
         observable = rx.just(None)
         assert isinstance(operators, Observable)
         return observable
