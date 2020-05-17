@@ -28,6 +28,13 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
+        <release date="2020-05-17" version="0.14.3">
+            <description>
+                <ul>
+                    <li>Improved text of UDEV rules dialog</li>
+                </ul>
+            </description>
+        </release>
         <release date="2020-05-17" version="0.14.2">
             <description>
                 <ul>

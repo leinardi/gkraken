@@ -1,3 +1,9 @@
+Version 0.14.3
+==============
+Released: 2020-05-17
+
+ * Improved text of UDEV rules dialog
+
 Version 0.14.2
 ==============
 Released: 2020-05-17

@@ -174,8 +174,8 @@ class MainPresenter:
                 "Unable to find supported NZXT Kraken devices",
                 "It was not possible to connect to any of the supported NZXT Kraken devices.\n\n"
                 f"{APP_NAME} currently supports only NZXT Kraken X42, X52, X62 or X72.\n\n"
-                "If one of the supported devices is connected, try to run:\n\n"
-                f"{APP_PACKAGE_NAME} --add-udev-rule"
+                "If one of the supported devices is connected, try to run the following command and then reboot:\n\n"
+                f"{self._get_udev_command()}"
             )
             get_default_application().quit()
 
@@ -192,18 +192,23 @@ class MainPresenter:
 
     def _handle_refresh_error(self, ex: Exception) -> None:
         if isinstance(ex, OSError):
-            command = APP_PACKAGE_NAME
-            if is_flatpak():
-                command = f"flatpak run {APP_ID}"
-            command += " --add-udev-rule"
             self.main_view.show_error_message_dialog(
-                "Unable to communicate with the Kraken",
-                "It was not possible to communicate with the Kranen.\n\n"
+                "Unable to communicate with the NZXT Kraken",
+                "It was not possible to communicate with the NZXT Kranen.\n\n"
                 "Most probably the current user does not have the permission to access it.\n\n"
-                f"You can try to fix the issue running \"{command}\" and then rebooting.\n\n"
+                "You can try to fix the issue running the following command and then rebooting:\n\n"
+                f"{self._get_udev_command()}\n\n"
                 "For more info check the section \"Adding Udev rule\" of the project's README.md.")
             get_default_application().quit()
         _LOG.exception("Refresh error: %s", str(ex))
+
+    @staticmethod
+    def _get_udev_command() -> str:
+        command = APP_PACKAGE_NAME
+        if is_flatpak():
+            command = f"flatpak run {APP_ID}"
+        command += " --add-udev-rule"
+        return command
 
     def _update_status(self, status: Optional[Status]) -> None:
         if status is not None:
