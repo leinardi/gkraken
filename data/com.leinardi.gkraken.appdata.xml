@@ -31,7 +31,7 @@
         <release date="2020-05-17" version="0.14.3">
             <description>
                 <ul>
-                    <li>Improved text of UDEV rules dialog</li>
+                    <li>Improved text of UDEV rules dialogs</li>
                 </ul>
             </description>
         </release>
