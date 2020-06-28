@@ -1,6 +1,6 @@
-Version next
-============
-Released: 2020-06-22
+Version 0.14.4
+==============
+Released: 2020-06-28
 
  * Disabled check for new App version on launch (it's now opt-in)
  * Updated dependencies

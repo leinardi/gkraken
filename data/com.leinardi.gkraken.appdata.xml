@@ -28,7 +28,7 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
-        <release date="2020-06-22" version="next">
+        <release date="2020-06-28" version="0.14.4">
             <description>
                 <ul>
                     <li>Disabled check for new App version on launch (it's now opt-in)</li>
