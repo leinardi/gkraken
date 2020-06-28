@@ -62,25 +62,18 @@ flatpak run com.leinardi.gkraken
 
 ### Install from source code
 #### Build time dependencies
-| Dependency            | Arch Linux            | Fedora                      | Ubuntu                 |
-| --------------------- | --------------------- | --------------------------- | ---------------------- |
-| pkg-config            | pkg-config            | pkgconf-pkg-config          | pkg-config             |
-| Python 3.6+           | python                | python3                     | python3                |
-| gobject-introspection | gobject-introspection | gobject-introspection-devel | libgirepository1.0-dev |
-| meson                 | meson                 | meson                       | meson                  |
-| ninja-build           | ninja                 | ninja-build                 | ninja-build            |
-| appstream-util        | appstream-glib        | appstream-util              | appstream-util         |
-| libusb-1.0-0          | libusb                | libusbx-devel               | libusb-1.0-0-dev       |
-| libudev               | libudev0              | libudev-devel               | libudev-dev            |
+| Distro                | pkg-config         | Python 3.6+ | gobject-introspection       | meson | ninja-build | appstream-util | libusb-1.0-0     | libudev       |
+| --------------------- | ------------------ | ----------- | --------------------------- | ----- | ----------- | -------------- | ---------------- | ------------- |
+| Arch Linux            | pkg-config         | python      | gobject-introspection       | meson | ninja       | appstream-glib | libusb           | libudev0      |
+| Fedora                | pkgconf-pkg-config | python3     | gobject-introspection-devel | meson | ninja-build | appstream-util | libusbx-devel    | libudev-devel |
+| Ubuntu                | pkg-config         | python3     | libgirepository1.0-dev      | meson | ninja-build | appstream-util | libusb-1.0-0-dev | libudev-dev   |
 
 #### Run time dependencies
-| Dependency                         | Arch Linux                         | Fedora                             | Ubuntu                             |
-| ---------------------------------- | ---------------------------------- | -----------------------------------| ---------------------------------- |
-| Python 3.6+                        | python                             | python3                            | python3                            |
-| pip                                | python-pip                         | python3-pip                        | python3-pip                        |
-| gobject-introspection              | gobject-introspection              | gobject-introspection-devel        | libgirepository1.0-dev             |
-| libappindicator                    | libappindicator3                   | libappindicator-gtk3               | gir1.2-appindicator3-0.1           |
-| gnome-shell-extension-appindicator | gnome-shell-extension-appindicator | gnome-shell-extension-appindicator | gnome-shell-extension-appindicator |
+| Distro                | Python 3.6+ | pip         | gobject-introspection       | libappindicator          | gnome-shell-extension-appindicator |
+| --------------------- | ----------- | ----------- | --------------------------- | ------------------------ | ---------------------------------- |
+| Arch Linux            | python      | python-pip  | gobject-introspection       | libappindicator3         | gnome-shell-extension-appindicator |
+| Fedora                | python3     | python3-pip | gobject-introspection-devel | libappindicator-gtk3     | gnome-shell-extension-appindicator |
+| Ubuntu                | python3     | python3-pip | libgirepository1.0-dev      | gir1.2-appindicator3-0.1 | gnome-shell-extension-appindicator |
 
 plus all the Python dependencies listed in [requirements.txt](requirements.txt)
 
