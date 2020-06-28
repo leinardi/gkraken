@@ -31,7 +31,7 @@
         <release date="2020-06-22" version="next">
             <description>
                 <ul>
-                    <li>Disabled check for new app version on launch (it's now opt-in)</li>
+                    <li>Disabled check for new App version on launch (it's now opt-in)</li>
                     <li>Updated dependencies</li>
                 </ul>
             </description>
@@ -72,7 +72,7 @@
                     <li>Using Flatpak and Flathub to distribute the application</li>
                     <li>Using meson as build system</li>
                     <li>Give option to minimize to tray when closing from the X button</li>
-                    <li>Quit app with Ctrl+Q and hide it with Ctrl+H</li>
+                    <li>Quit App with Ctrl+Q and hide it with Ctrl+H</li>
                     <li>Renamed parameters `udev-add-rule` and `udev-remove-rule` to `add-udev-rule` and
                         `remove-udev-rule`
                     </li>
@@ -90,9 +90,9 @@
         <release date="2018-10-20" version="0.12.0">
             <description>
                 <ul>
-                    <li>Added option to launch the app hidden on login</li>
+                    <li>Added option to launch the App hidden on login</li>
                     <li>Added command line option to add desktop entry</li>
-                    <li>Synced app and indicator menus</li>
+                    <li>Synced App and indicator menus</li>
                     <li>Added missing dependencies to PyPI</li>
                     <li>Some code refactoring</li>
                 </ul>
@@ -111,7 +111,7 @@
             <description>
                 <ul>
                     <li>Added about dialog</li>
-                    <li>Added better app and app indicator icons</li>
+                    <li>Added better App and App indicator icons</li>
                 </ul>
             </description>
         </release>
@@ -120,7 +120,7 @@
                 <ul>
                     <li>Added ability to edit Fixed speed profile</li>
                     <li>Added command line options (run `gkraken -h` for more info)</li>
-                    <li>Added command line option to start the app hidden</li>
+                    <li>Added command line option to start the App hidden</li>
                     <li>Added command line option to add/remove udev rule</li>
                     <li>Load last applied profile enabled by default</li>
                 </ul>
@@ -137,8 +137,8 @@
         <release date="2018-10-09" version="0.7.0">
             <description>
                 <ul>
-                    <li>Added ability to load last applied profile on app start</li>
-                    <li>Added app indicator with water temp</li>
+                    <li>Added ability to load last applied profile on App start</li>
+                    <li>Added App indicator with water temp</li>
                 </ul>
             </description>
         </release>
