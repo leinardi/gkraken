@@ -31,6 +31,7 @@
         <release date="2020-06-22" version="next">
             <description>
                 <ul>
+                    <li>Disabled check for new app version on launch (it's now opt-in)</li>
                     <li>Updated dependencies</li>
                 </ul>
             </description>
