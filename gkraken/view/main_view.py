@@ -47,7 +47,7 @@ from gkraken.presenter.main_presenter import MainPresenter, MainViewInterface
 
 _LOG = logging.getLogger(__name__)
 if AppIndicator3 is None:
-    _LOG.warning("AppIndicator3 is not installed. The app indicator will not be shown.")
+    _LOG.warning("AppIndicator3 is not installed. The App indicator will not be shown.")
 
 
 @singleton
@@ -122,7 +122,7 @@ class MainView(MainViewInterface):
             # Setting icon name in new() as '', because new() wants an icon path
             self._app_indicator = AppIndicator3.Indicator \
                 .new(APP_ID, '', AppIndicator3.IndicatorCategory.HARDWARE)
-            # Set the actual icon by name. If the app is not installed system-wide, the icon won't show up,
+            # Set the actual icon by name. If the App is not installed system-wide, the icon won't show up,
             # otherwise it will show up correctly. The set_icon_full() function needs a description for accessibility
             # purposes. I gave it the APP_NAME.
             self._app_indicator.set_icon_full(APP_ICON_NAME_SYMBOLIC, APP_NAME)

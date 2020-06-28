@@ -1,3 +1,10 @@
+Version 0.14.4
+==============
+Released: 2020-06-28
+
+ * Disabled check for new App version on launch (it's now opt-in)
+ * Updated dependencies
+
 Version 0.14.3
 ==============
 Released: 2020-05-17
@@ -31,7 +38,7 @@ Released: 2019-09-26
  * Using Flatpak and Flathub to distribute the application
  * Using meson as build system
  * Give option to minimize to tray when closing from the X button
- * Quit app with Ctrl+Q and hide it with Ctrl+H
+ * Quit App with Ctrl+Q and hide it with Ctrl+H
  * Renamed parameters `udev-add-rule` and `udev-remove-rule` to `add-udev-rule`
    and `remove-udev-rule`
  * Several library updates
@@ -46,9 +53,9 @@ Version 0.12.0
 ==============
 Released: 2018-10-20
 
- * Added option to launch the app hidden on login
+ * Added option to launch the App hidden on login
  * Added command line option to add desktop entry
- * Synced app and indicator menus
+ * Synced App and indicator menus
  * Added missing dependencies to PyPI
  * Some code refactoring
 
@@ -65,7 +72,7 @@ Version 0.10.0
 Released: 2018-10-12
 
  * Added about dialog
- * Added better app and app indicator icons
+ * Added better App and App indicator icons
 
 Version 0.9.0
 =============
@@ -73,7 +80,7 @@ Released: 2018-10-12
 
  * Added ability to edit Fixed speed profile
  * Added command line options (run `gkraken -h` for more info)
- * Added command line option to start the app hidden
+ * Added command line option to start the App hidden
  * Added command line option to add/remove udev rule
  * Load last applied profile enabled by default
 
@@ -88,5 +95,5 @@ Version 0.7.0
 =============
 Released: 2018-10-09
 
- * Added ability to load last applied profile on app start
- * Added app indicator with water temp
+ * Added ability to load last applied profile on App start
+ * Added App indicator with water temp

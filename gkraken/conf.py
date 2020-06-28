@@ -19,7 +19,7 @@ from typing import Dict, Any
 APP_PACKAGE_NAME = "gkraken"
 APP_NAME = "GKraken"
 APP_ID = "com.leinardi.gkraken"
-APP_VERSION = "0.14.3"
+APP_VERSION = "0.14.4"
 APP_ICON_NAME = APP_ID
 APP_ICON_NAME_SYMBOLIC = APP_ID + "-symbolic"
 APP_DB_NAME = APP_PACKAGE_NAME + ".db"
@@ -41,6 +41,7 @@ MAX_DUTY = 100
 SETTINGS_DEFAULTS: Dict[str, Any] = {
     'settings_launch_on_login': False,
     'settings_load_last_profile': True,
+    'settings_check_new_version': False,
     'settings_minimize_to_tray': True,
     'settings_refresh_interval': 3,
     'settings_show_app_indicator': True,
