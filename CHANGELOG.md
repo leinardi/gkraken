@@ -1,3 +1,11 @@
+Version 0.14.5
+==============
+Released: 2020-12-09
+
+ * Project in maintenance mode!
+ * Gracefully handle locale.{bind,}textdomain not being available (thanks
+   @Cogitri)
+
 Version 0.14.4
 ==============
 Released: 2020-06-28
