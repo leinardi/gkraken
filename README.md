@@ -3,30 +3,12 @@ GKraken is a GTK application that allows you to control the cooling
 (and soon also the lighting) of a NZXT Kraken X (X42, X52, X62 or X72) 
 pump from Linux.
 
-## TODO
+## Project in Maintenance mode
 <img src="/art/gkraken.png" width="256" align="right" hspace="0" />
 
-- [x] Show fan and pump rpm
-- [x] Show liquid temp in both app and app indicator
-- [x] Show chart of selected profile
-- [x] Show pump firmware version
-- [x] Allow to select and apply a profile
-- [x] Publish on PIP
-- [x] Add option to restore last applied profile on startup
-- [x] Allow to hide main app window
-- [x] Add command line option to start the app hidden
-- [x] Add command line option to add/remove udev rule
-- [x] Add Refresh timeout to settings 
-- [x] Add command line option to add desktop entry
-- [x] Edit Fixed speed profile
-- [ ] Allow to select profiles from app indicator
-- [x] Add/Delete/Edit multi speed profiles
-- [x] About dialog
-- [x] Find better icons for app and app indicator
-- [ ] Disable unsupported preferences
-- [ ] Lighting
-- [ ] Provide Ubuntu PPA
-- [ ] Add support for i18n (internationalization and localization)
+This project is now in maintenance mode. I am not planning to develop any new feature nor to support
+any new Kraken device. I also don't own a NZXT Kraken anymore so I am unable to test GKraken myself.
+If you want to help with the testing, please join the discord server of the project: https://discord.gg/Q33n3UC.
 
 ## Screenshots
 <img src="/art/screenshot-09.png" width="844"/>
@@ -198,7 +180,7 @@ flatpak install flathub org.gtk.Gtk3theme.Yaru
 
 ## 💚 How to help the project
 ### Discord server
-If you want to help testing or developing it would be easier to get in touch using the discord server of the project: https://discord.gg/Q33n3UC  
+If you want to help testing or developing it would be easier to get in touch using the Discord server of the project: https://discord.gg/Q33n3UC  
 Just write a message on the general channel saying how you want to help (test, dev, etc) and quoting @leinardi. If you don't use discor but still want to help just open a new issue here.
 
 ### Can I support this project some other way?
