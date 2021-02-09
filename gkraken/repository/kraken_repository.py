@@ -20,7 +20,7 @@ from typing import Optional, List, Tuple
 
 from injector import singleton, inject
 from liquidctl.driver.usb import BaseDriver
-from liquidctl.driver.kraken2 import KrakenTwoDriver
+from liquidctl.driver.kraken2 import Kraken2
 from liquidctl.driver.kraken3 import KrakenX3
 from liquidctl.driver.kraken3 import KrakenZ3
 
@@ -57,7 +57,7 @@ class KrakenRepository:
                     return Status.get_z3(status_list)
                 elif isinstance(self._driver, KrakenX3):
                     return Status.get_x3(status_list)
-                elif isinstance(self._driver, KrakenTwoDriver):
+                elif isinstance(self._driver, Kraken2):
                     return Status.get_x2(status_list)
             # pylint: disable=bare-except
             except:
