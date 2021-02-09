@@ -86,7 +86,6 @@ class ProviderModule(Module):
     @provider
     def provide_kraken_driver(self) -> Optional[BaseDriver]:
         _LOG.debug("provide Kraken Driver")
-        # return next((dev for dev in find_liquidctl_devices() if isinstance(dev, BaseDriver)), None)
         return next((dev for dev in (
                 KrakenZ3.find_supported_devices()
                 or KrakenX3.find_supported_devices()
