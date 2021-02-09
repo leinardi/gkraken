@@ -28,7 +28,7 @@ from rx.disposable import CompositeDisposable
 from rx.scheduler import ThreadPoolScheduler
 from rx.scheduler.mainloop import GtkScheduler
 
-from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID
+from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID, APP_SUPPORTED_MODELS
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
 from gkraken.interactor.get_status_interactor import GetStatusInteractor
@@ -174,7 +174,7 @@ class MainPresenter:
             self.main_view.show_error_message_dialog(
                 "Unable to find supported NZXT Kraken devices",
                 "It was not possible to connect to any of the supported NZXT Kraken devices.\n\n"
-                f"{APP_NAME} currently supports only NZXT Kraken X42, X52, X62 or X72.\n\n"
+                f"{APP_NAME} currently supports only {APP_SUPPORTED_MODELS}.\n\n"
                 "If one of the supported devices is connected, try to run the following command and then reboot:\n\n"
                 f"{self._get_udev_command()}"
             )
