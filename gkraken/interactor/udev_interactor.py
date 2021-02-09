@@ -21,7 +21,15 @@ from injector import singleton, inject
 from gkraken.interactor import _run_and_get_stdout
 
 _LOG = logging.getLogger(__name__)
-_UDEV_RULE = 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"'
+_UDEV_RULE = '''# Kraken X2 products
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
+
+# Kraken X3 products
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="2007", MODE="0666"
+
+# Kraken Z3 products
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="3008", MODE="0666"
+'''
 _UDEV_RULE_FILE_PATH = '/lib/udev/rules.d/60-gkraken.rules'
 _UDEV_RULE_RELOAD_COMMANDS = 'udevadm control --reload-rules ' \
                              '&& udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=add'
