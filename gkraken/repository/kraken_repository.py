@@ -16,11 +16,13 @@
 # along with gsi.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 import threading
-from enum import Enum
 from typing import Optional, List, Tuple
 
 from injector import singleton, inject
-from liquidctl.driver.kraken_two import KrakenTwoDriver
+from liquidctl.driver.usb import BaseDriver
+from liquidctl.driver.kraken2 import Kraken2
+from liquidctl.driver.kraken3 import KrakenX3
+from liquidctl.driver.kraken3 import KrakenZ3
 
 from gkraken.di import INJECTOR
 from gkraken.model.status import Status
@@ -34,10 +36,10 @@ class KrakenRepository:
     @inject
     def __init__(self) -> None:
         self.lock = threading.RLock()
-        self._driver: Optional[KrakenTwoDriver] = None
+        self._driver: Optional[BaseDriver] = None
 
     def has_supported_kraken(self) -> bool:
-        return self._driver is not None or INJECTOR.get(Optional[KrakenTwoDriver]) is not None
+        return self._driver is not None or INJECTOR.get(Optional[BaseDriver]) is not None
 
     def cleanup(self) -> None:
         _LOG.debug("KrakenRepository cleanup")
@@ -51,13 +53,12 @@ class KrakenRepository:
         if self._driver:
             try:
                 status_list = [v for k, v, u in self._driver.get_status()]
-                status = Status(
-                    status_list[_StatusType.LIQUID_TEMPERATURE.value],
-                    status_list[_StatusType.FAN_RPM.value],
-                    status_list[_StatusType.PUMP_RPM.value],
-                    status_list[_StatusType.FIRMWARE_VERSION.value]
-                )
-                return status if status.fan_rpm < 3500 else None
+                if isinstance(self._driver, KrakenZ3):
+                    return Status.get_z3(status_list)
+                elif isinstance(self._driver, KrakenX3):
+                    return Status.get_x3(status_list)
+                elif isinstance(self._driver, Kraken2):
+                    return Status.get_x2(status_list)
             # pylint: disable=bare-except
             except:
                 _LOG.exception("Error getting the status")
@@ -80,16 +81,9 @@ class KrakenRepository:
 
     def _load_driver(self) -> None:
         if not self._driver:
-            self._driver = INJECTOR.get(Optional[KrakenTwoDriver])
+            self._driver = INJECTOR.get(Optional[BaseDriver])
 
             if self._driver:
                 self._driver.connect()
             else:
                 raise ValueError("Kraken USB interface error (check USB cable connection)")
-
-
-class _StatusType(Enum):
-    LIQUID_TEMPERATURE = 0
-    FAN_RPM = 1
-    PUMP_RPM = 2
-    FIRMWARE_VERSION = 3

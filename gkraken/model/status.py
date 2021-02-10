@@ -15,17 +15,70 @@
 # You should have received a copy of the GNU General Public License
 # along with gsi.  If not, see <http://www.gnu.org/licenses/>.
 from typing import Optional
+from enum import Enum
 
 
 class Status:
     def __init__(self,
                  liquid_temperature: float,
-                 fan_rpm: int,
-                 pump_rpm: int,
-                 firmware_version: str
+                 fan_rpm: int = 0,
+                 pump_rpm: int = 0,
+                 firmware_version: str = '',
+                 pump_duty: int = None,
+                 fan_duty: float = None
                  ) -> None:
         self.liquid_temperature: float = liquid_temperature
         self.fan_rpm: int = fan_rpm
-        self.fan_duty: Optional[float] = None
+        self.fan_duty: Optional[float] = fan_duty
         self.pump_rpm: int = pump_rpm
         self.firmware_version: str = firmware_version
+        self.pump_duty: Optional[float] = pump_duty
+
+    @staticmethod
+    def get_x2(status_list: list):
+        status = Status(
+            status_list[_StatusTypeX2.LIQUID_TEMPERATURE.value],
+            status_list[_StatusTypeX2.FAN_RPM.value],
+            status_list[_StatusTypeX2.PUMP_RPM.value],
+            status_list[_StatusTypeX2.FIRMWARE_VERSION.value],
+        )
+        return status if status.fan_rpm < 3500 else None
+
+    @staticmethod
+    def get_x3(status_list: list):
+        return Status(
+            status_list[_StatusTypeX3.LIQUID_TEMPERATURE.value],
+            pump_rpm=status_list[_StatusTypeX3.PUMP_RPM.value],
+            pump_duty=status_list[_StatusTypeX3.PUMP_DUTY.value]
+        )
+
+    @staticmethod
+    def get_z3(status_list: list):
+        return Status(
+            status_list[_StatusTypeZ3.LIQUID_TEMPERATURE.value],
+            fan_rpm=status_list[_StatusTypeZ3.FAN_RPM.value],
+            pump_rpm=status_list[_StatusTypeZ3.PUMP_RPM.value],
+            pump_duty=status_list[_StatusTypeZ3.PUMP_DUTY.value],
+            fan_duty=status_list[_StatusTypeZ3.FAN_DUTY.value]
+        )
+
+
+class _StatusTypeX2(Enum):
+    LIQUID_TEMPERATURE = 0
+    FAN_RPM = 1
+    PUMP_RPM = 2
+    FIRMWARE_VERSION = 3
+
+
+class _StatusTypeX3(Enum):
+    LIQUID_TEMPERATURE = 0
+    PUMP_RPM = 1
+    PUMP_DUTY = 2
+
+
+class _StatusTypeZ3(Enum):
+    LIQUID_TEMPERATURE = 0
+    PUMP_RPM = 1
+    PUMP_DUTY = 2
+    FAN_RPM = 3
+    FAN_DUTY = 4

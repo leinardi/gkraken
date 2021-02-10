@@ -393,7 +393,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">PUMP RPM</property>
+                                <property name="label" translatable="yes">PUMP DUTY</property>
                                 <property name="single_line_mode">True</property>
                                 <attributes>
                                   <attribute name="weight" value="light"/>
@@ -401,6 +401,35 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="cooling_pump_duty">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; %</property>
+                                <property name="use_markup">True</property>
+                                <property name="justify">center</property>
+                                <property name="single_line_mode">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">PUMP RPM</property>
+                                <property name="single_line_mode">True</property>
+                                <attributes>
+                                  <attribute name="weight" value="light"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
@@ -414,7 +443,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="single_line_mode">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
