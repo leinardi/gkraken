@@ -1,3 +1,10 @@
+Version 1.0.0
+=============
+Released: 2021-02-10
+
+ * Added 4th gen device support! Huge thanks to @codifryed for this code
+   contribution
+
 Version 0.14.5
 ==============
 Released: 2020-12-09
