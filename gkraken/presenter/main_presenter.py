@@ -130,9 +130,9 @@ class MainPresenter:
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
 
     def on_start(self) -> None:
-        self._refresh_speed_profiles(True)
         self._register_db_listeners()
         self._check_supported_kraken()
+        self._refresh_speed_profiles(True)
         if self._settings_interactor.get_int('settings_check_new_version'):
             self._check_new_version()
 
@@ -252,8 +252,23 @@ class MainPresenter:
         return [(p.id, p.name) for p in SpeedProfile.select().where(SpeedProfile.channel == channel.value)]
 
     def _refresh_speed_profiles(self, init: bool = False, selecter_profile_id: Optional[int] = None) -> None:
-        for channel in ChannelType:
-            self._refresh_speed_profile(channel, init, selecter_profile_id)
+        self._get_status().pipe(
+            operators.flat_map(lambda status: rx.from_list(
+                [channel for channel in ChannelType]
+            ).pipe(
+                operators.filter(lambda channel: self._is_channel_supported(channel, status))
+            ))
+        ).subscribe(
+            on_next=lambda channel: self._refresh_speed_profile(channel, init, selecter_profile_id),
+            on_error=self._handle_refresh_error
+        )
+
+    @staticmethod
+    def _is_channel_supported(channel: ChannelType, status: Status) -> bool:
+        return {
+            ChannelType.FAN: status.fan_rpm != 0,
+            ChannelType.PUMP: status.pump_rpm != 0
+        }.get(channel, True)
 
     def _refresh_speed_profile(self, channel: ChannelType, init: bool = False,
                                profile_id: Optional[int] = None) -> None:
