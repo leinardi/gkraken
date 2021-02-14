@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.38.2 
 
 Copyright (C) 
 
@@ -20,13 +20,13 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <interface>
-  <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk+" version="3.24"/>
   <!-- interface-license-type gplv3 -->
   <!-- interface-name GKraken -->
   <object class="GtkImage" id="cooling_fan_edit_image">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-edit</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">edit-symbolic</property>
   </object>
   <object class="GtkListStore" id="cooling_fan_profile_liststore">
     <columns>
@@ -40,13 +40,63 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
     <property name="lower">20</property>
     <property name="upper">50</property>
     <property name="value">20</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkPopover" id="cooling_fixed_speed_popover">
+    <property name="can-focus">False</property>
+    <property name="relative-to">cooling_fan_edit_button</property>
+    <property name="position">bottom</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkScale" id="cooling_fixed_speed_scale">
+            <property name="height-request">200</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="orientation">vertical</property>
+            <property name="adjustment">cooling_fixed_speed_adjustment</property>
+            <property name="inverted">True</property>
+            <property name="round-digits">1</property>
+            <property name="digits">0</property>
+            <property name="value-pos">bottom</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label">Save</property>
+            <property name="width-request">-1</property>
+            <property name="height-request">-1</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_fixed_speed_apply_button_clicked" swapped="no"/>
+            <style>
+              <class name="suggested-action"/>
+            </style>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkImage" id="cooling_pump_edit_image">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-edit</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">edit-symbolic</property>
   </object>
   <object class="GtkListStore" id="cooling_pump_profile_liststore">
     <columns>
@@ -58,13 +108,13 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
   </object>
   <object class="GtkMenu" id="main_menu">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <child>
       <object class="GtkMenuItem">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">Show/Hide App window</property>
-        <property name="use_underline">True</property>
+        <property name="use-underline">True</property>
         <signal name="activate" handler="on_toggle_app_window_clicked" swapped="no"/>
         <accelerator key="h" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
@@ -72,105 +122,68 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
     <child>
       <object class="GtkMenuItem">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">Preferences</property>
-        <property name="use_underline">True</property>
+        <property name="use-underline">True</property>
         <signal name="activate" handler="on_menu_settings_clicked" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">Changelog</property>
-        <property name="use_underline">True</property>
+        <property name="use-underline">True</property>
         <signal name="activate" handler="on_menu_changelog_clicked" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">About</property>
-        <property name="use_underline">True</property>
+        <property name="use-underline">True</property>
         <signal name="activate" handler="on_menu_about_clicked" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkSeparatorMenuItem">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">Quit</property>
-        <property name="use_underline">True</property>
+        <property name="use-underline">True</property>
         <signal name="activate" handler="on_quit_clicked" swapped="no"/>
         <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
   </object>
   <object class="GtkApplicationWindow" id="application_window">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="icon">gkraken.svg</property>
     <property name="gravity">north</property>
     <signal name="delete-event" handler="on_application_window_delete_event" swapped="no"/>
-    <child type="titlebar">
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkHeaderBar" id="content_header_bar">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="title" translatable="yes">GKraken</property>
-            <property name="show_close_button">True</property>
-            <child>
-              <object class="GtkMenuButton" id="main_menu_button">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="popup">main_menu</property>
-                <property name="use_popover">False</property>
-                <child>
-                  <object class="GtkImage" id="menu_button_image">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">open-menu-symbolic</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="pack_type">end</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkInfoBar" id="main_infobar">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="show_close_button">True</property>
+            <property name="can-focus">False</property>
+            <property name="show-close-button">True</property>
+            <property name="revealed">False</property>
             <child internal-child="action_area">
               <object class="GtkButtonBox">
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="spacing">6</property>
-                <property name="layout_style">end</property>
+                <property name="layout-style">end</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -189,12 +202,12 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
             </child>
             <child internal-child="content_area">
               <object class="GtkBox">
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="spacing">16</property>
                 <child>
                   <object class="GtkLabel" id="main_infobar_label">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -228,322 +241,261 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
         <child>
           <object class="GtkStack" id="content_stack">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_bottom">3</property>
+            <property name="can-focus">False</property>
+            <property name="margin-bottom">3</property>
             <property name="vexpand">True</property>
-            <property name="transition_type">crossfade</property>
+            <property name="transition-type">crossfade</property>
             <signal name="notify::visible-child-name" handler="on_stack_visible_child_changed" swapped="no"/>
             <child>
+              <!-- n-columns=2 n-rows=3 -->
               <object class="GtkGrid">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_left">6</property>
-                <property name="margin_right">6</property>
-                <property name="margin_top">2</property>
-                <property name="row_spacing">6</property>
-                <property name="column_spacing">6</property>
-                <property name="column_homogeneous">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">2</property>
+                <property name="row-spacing">6</property>
+                <property name="column-spacing">6</property>
+                <property name="column-homogeneous">True</property>
                 <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0.5</property>
-                    <property name="shadow_type">in</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0.5</property>
+                    <property name="shadow-type">in</property>
                     <child>
-                      <object class="GtkAlignment">
+                      <!-- n-columns=2 n-rows=2 -->
+                      <object class="GtkGrid">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">8</property>
+                        <property name="margin-end">8</property>
+                        <property name="margin-top">2</property>
+                        <property name="margin-bottom">4</property>
+                        <property name="row-spacing">2</property>
+                        <property name="column-spacing">8</property>
+                        <property name="column-homogeneous">True</property>
                         <child>
-                          <object class="GtkGrid">
+                          <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">8</property>
-                            <property name="margin_right">8</property>
-                            <property name="margin_top">2</property>
-                            <property name="margin_bottom">4</property>
-                            <property name="row_spacing">2</property>
-                            <property name="column_spacing">8</property>
-                            <property name="column_homogeneous">True</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">FAN DUTY</property>
-                                <property name="single_line_mode">True</property>
-                                <attributes>
-                                  <attribute name="weight" value="light"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="cooling_fan_duty">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; %</property>
-                                <property name="use_markup">True</property>
-                                <property name="justify">center</property>
-                                <property name="single_line_mode">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">FAN RPM</property>
-                                <property name="single_line_mode">True</property>
-                                <attributes>
-                                  <attribute name="weight" value="light"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="cooling_fan_rpm">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; RPM</property>
-                                <property name="use_markup">True</property>
-                                <property name="justify">center</property>
-                                <property name="single_line_mode">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">FAN DUTY</property>
+                            <property name="single-line-mode">True</property>
+                            <attributes>
+                              <attribute name="weight" value="light"/>
+                            </attributes>
                           </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="cooling_fan_duty">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; %</property>
+                            <property name="use-markup">True</property>
+                            <property name="justify">center</property>
+                            <property name="single-line-mode">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">FAN RPM</property>
+                            <property name="single-line-mode">True</property>
+                            <attributes>
+                              <attribute name="weight" value="light"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="cooling_fan_rpm">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; RPM</property>
+                            <property name="use-markup">True</property>
+                            <property name="justify">center</property>
+                            <property name="single-line-mode">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">1</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
                     <child type="label">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Fan</property>
                       </object>
                     </child>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0.5</property>
-                    <property name="shadow_type">in</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0.5</property>
+                    <property name="shadow-type">in</property>
                     <child>
-                      <object class="GtkAlignment">
+                      <!-- n-columns=3 n-rows=2 -->
+                      <object class="GtkGrid">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">8</property>
+                        <property name="margin-end">8</property>
+                        <property name="margin-top">2</property>
+                        <property name="margin-bottom">4</property>
+                        <property name="row-spacing">2</property>
+                        <property name="column-spacing">8</property>
+                        <property name="column-homogeneous">True</property>
                         <child>
-                          <object class="GtkGrid">
+                          <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">8</property>
-                            <property name="margin_right">8</property>
-                            <property name="margin_top">2</property>
-                            <property name="margin_bottom">4</property>
-                            <property name="row_spacing">2</property>
-                            <property name="column_spacing">8</property>
-                            <property name="column_homogeneous">True</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">LIQUID TEMP</property>
-                                <property name="single_line_mode">True</property>
-                                <attributes>
-                                  <attribute name="weight" value="light"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="cooling_liquid_temp">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; °C</property>
-                                <property name="use_markup">True</property>
-                                <property name="justify">center</property>
-                                <property name="single_line_mode">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">PUMP DUTY</property>
-                                <property name="single_line_mode">True</property>
-                                <attributes>
-                                  <attribute name="weight" value="light"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="cooling_pump_duty">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; %</property>
-                                <property name="use_markup">True</property>
-                                <property name="justify">center</property>
-                                <property name="single_line_mode">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">PUMP RPM</property>
-                                <property name="single_line_mode">True</property>
-                                <attributes>
-                                  <attribute name="weight" value="light"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="cooling_pump_rpm">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; RPM</property>
-                                <property name="use_markup">True</property>
-                                <property name="justify">center</property>
-                                <property name="single_line_mode">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">LIQUID TEMP</property>
+                            <property name="single-line-mode">True</property>
+                            <attributes>
+                              <attribute name="weight" value="light"/>
+                            </attributes>
                           </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="cooling_liquid_temp">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; °C</property>
+                            <property name="use-markup">True</property>
+                            <property name="justify">center</property>
+                            <property name="single-line-mode">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">PUMP DUTY</property>
+                            <property name="single-line-mode">True</property>
+                            <attributes>
+                              <attribute name="weight" value="light"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="cooling_pump_duty">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; %</property>
+                            <property name="use-markup">True</property>
+                            <property name="justify">center</property>
+                            <property name="single-line-mode">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">PUMP RPM</property>
+                            <property name="single-line-mode">True</property>
+                            <attributes>
+                              <attribute name="weight" value="light"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="cooling_pump_rpm">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">&lt;span size="xx-large"&gt;-&lt;/span&gt; RPM</property>
+                            <property name="use-markup">True</property>
+                            <property name="justify">center</property>
+                            <property name="single-line-mode">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">1</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
                     <child type="label">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Pump</property>
                       </object>
                     </child>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">0</property>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
-                    <property name="shadow_type">in</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0</property>
+                    <property name="shadow-type">in</property>
                     <child>
-                      <object class="GtkAlignment">
+                      <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">6</property>
+                            <property name="can-focus">False</property>
+                            <property name="spacing">4</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_left">8</property>
-                                <property name="margin_right">40</property>
-                                <property name="spacing">4</property>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_right">4</property>
-                                    <property name="label" translatable="yes">PROFILE</property>
-                                    <attributes>
-                                      <attribute name="weight" value="light"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="cooling_fan_profile_combobox">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="model">cooling_fan_profile_liststore</property>
-                                    <property name="id_column">0</property>
-                                    <signal name="changed" handler="on_fan_profile_selected" swapped="no"/>
-                                    <child>
-                                      <object class="GtkCellRendererText" id="cooling_fan_profile_renderer"/>
-                                      <attributes>
-                                        <attribute name="markup">1</attribute>
-                                      </attributes>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="cooling_fan_edit_button">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="image">cooling_fan_edit_image</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="on_fan_edit_button_clicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
+                                <property name="can-focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">PROFILE</property>
+                                <attributes>
+                                  <attribute name="weight" value="light"/>
+                                </attributes>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -552,15 +504,19 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="cooling_fan_scrolled_window">
-                                <property name="width_request">400</property>
-                                <property name="height_request">300</property>
+                              <object class="GtkComboBox" id="cooling_fan_profile_combobox">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="propagate_natural_width">True</property>
-                                <property name="propagate_natural_height">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="model">cooling_fan_profile_liststore</property>
+                                <property name="id-column">0</property>
+                                <signal name="changed" handler="on_fan_profile_selected" swapped="no"/>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCellRendererText" id="cooling_fan_profile_renderer"/>
+                                  <attributes>
+                                    <attribute name="markup">1</attribute>
+                                  </attributes>
                                 </child>
                               </object>
                               <packing>
@@ -569,7 +525,46 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="position">1</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkButton" id="cooling_fan_edit_button">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="image">cooling_fan_edit_image</property>
+                                <property name="always-show-image">True</property>
+                                <signal name="clicked" handler="on_fan_edit_button_clicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow" id="cooling_fan_scrolled_window">
+                            <property name="width-request">400</property>
+                            <property name="height-request">300</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="propagate-natural-width">True</property>
+                            <property name="propagate-natural-height">True</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
@@ -578,90 +573,38 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     </child>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
-                    <property name="shadow_type">in</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0</property>
+                    <property name="shadow-type">in</property>
                     <child>
-                      <object class="GtkAlignment">
+                      <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">6</property>
+                            <property name="can-focus">False</property>
+                            <property name="spacing">4</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_left">8</property>
-                                <property name="margin_right">40</property>
-                                <property name="spacing">4</property>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_right">4</property>
-                                    <property name="label" translatable="yes">PROFILE</property>
-                                    <attributes>
-                                      <attribute name="weight" value="light"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="cooling_pump_profile_combobox">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="model">cooling_pump_profile_liststore</property>
-                                    <property name="id_column">0</property>
-                                    <signal name="changed" handler="on_pump_profile_selected" swapped="no"/>
-                                    <child>
-                                      <object class="GtkCellRendererText" id="cooling_fan_profile_renderer1"/>
-                                      <attributes>
-                                        <attribute name="markup">1</attribute>
-                                      </attributes>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="cooling_pump_edit_button">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="image">cooling_pump_edit_image</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="on_pump_edit_button_clicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
+                                <property name="can-focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">PROFILE</property>
+                                <attributes>
+                                  <attribute name="weight" value="light"/>
+                                </attributes>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -670,15 +613,19 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="cooling_pump_scrolled_window">
+                              <object class="GtkComboBox" id="cooling_pump_profile_combobox">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="min_content_width">400</property>
-                                <property name="min_content_height">300</property>
-                                <property name="propagate_natural_width">True</property>
-                                <property name="propagate_natural_height">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="model">cooling_pump_profile_liststore</property>
+                                <property name="id-column">0</property>
+                                <signal name="changed" handler="on_pump_profile_selected" swapped="no"/>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCellRendererText" id="cooling_fan_profile_renderer1"/>
+                                  <attributes>
+                                    <attribute name="markup">1</attribute>
+                                  </attributes>
                                 </child>
                               </object>
                               <packing>
@@ -687,7 +634,46 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="position">1</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkButton" id="cooling_pump_edit_button">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="image">cooling_pump_edit_image</property>
+                                <property name="always-show-image">True</property>
+                                <signal name="clicked" handler="on_pump_edit_button_clicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow" id="cooling_pump_scrolled_window">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="min-content-width">400</property>
+                            <property name="min-content-height">300</property>
+                            <property name="propagate-natural-width">True</property>
+                            <property name="propagate-natural-height">True</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
@@ -696,38 +682,36 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     </child>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="cooling_fan_apply_button">
-                    <property name="label">gtk-apply</property>
+                    <property name="label">Apply</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
                     <signal name="clicked" handler="on_fan_apply_button_clicked" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">2</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="cooling_pump_apply_button">
-                    <property name="label">gtk-apply</property>
+                    <property name="label">Apply</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
                     <signal name="clicked" handler="on_pump_apply_button_clicked" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">2</property>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">2</property>
                   </packing>
                 </child>
               </object>
@@ -746,11 +730,11 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
         <child>
           <object class="GtkStatusbar" id="statusbar">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="GtkLabel" id="firmware_version">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <style>
                   <class name="dim-label"/>
                 </style>
@@ -770,27 +754,63 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
         </child>
       </object>
     </child>
+    <child type="titlebar">
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkHeaderBar" id="content_header_bar">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="title" translatable="yes">GKraken</property>
+            <property name="show-close-button">True</property>
+            <child>
+              <object class="GtkMenuButton" id="main_menu_button">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="popup">main_menu</property>
+                <property name="use-popover">False</property>
+                <child>
+                  <object class="GtkImage" id="menu_button_image">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="icon-name">open-menu-symbolic</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="pack-type">end</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkAboutDialog" id="about_dialog">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">application_window</property>
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="transient-for">application_window</property>
     <property name="website">https://gitlab.com/leinardi/gkraken</property>
-    <property name="authors">Roberto Leinardi &lt;roberto@leinardi.com&gt;</property>
-    <property name="logo_icon_name">com.leinardi.gkraken</property>
-    <property name="license_type">gpl-3-0</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
+    <property name="authors">Roberto Leinardi &lt;roberto@leinardi.com&gt;
+Guy Boldon &lt;gb@guyboldon.com&gt;</property>
+    <property name="logo-icon-name">com.leinardi.gkraken</property>
+    <property name="license-type">gpl-3-0</property>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <placeholder/>
             </child>
@@ -810,77 +830,26 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
       </object>
     </child>
   </object>
-  <object class="GtkPopover" id="cooling_fixed_speed_popover">
-    <property name="can_focus">False</property>
-    <property name="relative_to">cooling_fan_edit_button</property>
-    <property name="position">bottom</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">6</property>
-        <child>
-          <object class="GtkScale" id="cooling_fixed_speed_scale">
-            <property name="height_request">200</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="orientation">vertical</property>
-            <property name="adjustment">cooling_fixed_speed_adjustment</property>
-            <property name="inverted">True</property>
-            <property name="round_digits">1</property>
-            <property name="digits">0</property>
-            <property name="value_pos">bottom</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton">
-            <property name="label">gtk-save</property>
-            <property name="width_request">-1</property>
-            <property name="height_request">-1</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="use_stock">True</property>
-            <signal name="clicked" handler="on_fixed_speed_apply_button_clicked" swapped="no"/>
-            <style>
-              <class name="suggested-action"/>
-            </style>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkMessageDialog" id="legacy_firmware_dialog">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">application_window</property>
-    <property name="message_type">warning</property>
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="transient-for">application_window</property>
+    <property name="message-type">warning</property>
     <property name="buttons">close</property>
     <property name="text" translatable="yes">Firmware upgrade needed!</property>
-    <property name="secondary_text" translatable="yes">Older units still running firmware 2.x do not support variable speed profiles.
+    <property name="secondary-text" translatable="yes">Older units still running firmware 2.x do not support variable speed profiles.
 
 Please upgrade your firmware to at least version 5.x using the latest official NZXT CAM software for Windows.</property>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="homogeneous">True</property>
-            <property name="layout_style">end</property>
+            <property name="layout-style">end</property>
             <child>
               <placeholder/>
             </child>

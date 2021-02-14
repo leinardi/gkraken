@@ -28,10 +28,11 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
-        <release date="2021-02-10" version="1.0.0">
+        <release date="2021-02-14" version="1.0.0">
             <description>
                 <ul>
-                    <li>Added 4th gen device support! Huge thanks to @codifryed for this code contribution</li>
+                    <li>Fixed #21 and #31: Added 4th gen device support! Huge thanks to @codifryed for this code contribution</li>
+                    <li>Updated dependencies</li>
                 </ul>
             </description>
         </release>
