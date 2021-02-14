@@ -86,6 +86,7 @@ class MainView(MainViewInterface):
         self._cooling_fan_rpm: Gtk.Label = self._builder.get_object('cooling_fan_rpm')
         self._cooling_liquid_temp: Gtk.Label = self._builder.get_object('cooling_liquid_temp')
         self._cooling_pump_rpm: Gtk.Label = self._builder.get_object('cooling_pump_rpm')
+        self._cooling_pump_duty: Gtk.Label = self._builder.get_object('cooling_pump_duty')
         self._firmware_version: Gtk.Label = self._builder.get_object('firmware_version')
         self._cooling_fan_combobox: Gtk.ComboBox = self._builder.get_object('cooling_fan_profile_combobox')
         self._cooling_fan_liststore: Gtk.ListStore = self._builder.get_object('cooling_fan_profile_liststore')
@@ -191,6 +192,8 @@ class MainView(MainViewInterface):
                                               ('-' if status.fan_duty is None else "%.0f" % status.fan_duty))
             self._cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
             self._cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
+            self._cooling_pump_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %
+                                               ('-' if status.pump_duty is None else "%.0f" % status.pump_duty))
             self._firmware_version.set_label("firmware %s - %s %s"
                                              % (status.firmware_version, APP_NAME, APP_VERSION))
             if self._app_indicator:

@@ -20,8 +20,9 @@ import logging
 from typing import Optional, NewType
 from gi.repository import Gtk
 from injector import Module, provider, singleton, Injector
-from liquidctl.driver import find_liquidctl_devices
-from liquidctl.driver.kraken_two import KrakenTwoDriver
+from liquidctl.driver.kraken2 import Kraken2
+from liquidctl.driver.kraken3 import KrakenX3, KrakenZ3
+from liquidctl.driver.usb import BaseDriver
 from peewee import SqliteDatabase
 from rx.disposable import CompositeDisposable
 from rx.subject import Subject
@@ -83,9 +84,13 @@ class ProviderModule(Module):
         return SqliteDatabase(get_config_path(APP_DB_NAME))
 
     @provider
-    def provide_kraken_two_driver(self) -> Optional[KrakenTwoDriver]:
-        _LOG.debug("provide KrakenTwoDriver")
-        return next((dev for dev in find_liquidctl_devices() if isinstance(dev, KrakenTwoDriver)), None)
+    def provide_kraken_driver(self) -> Optional[BaseDriver]:
+        _LOG.debug("provide Kraken Driver")
+        return next((dev for dev in (
+                KrakenZ3.find_supported_devices()
+                or KrakenX3.find_supported_devices()
+                or Kraken2.find_supported_devices()
+        )), None)
 
     @singleton
     @provider

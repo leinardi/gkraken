@@ -28,7 +28,7 @@ from rx.disposable import CompositeDisposable
 from rx.scheduler import ThreadPoolScheduler
 from rx.scheduler.mainloop import GtkScheduler
 
-from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID
+from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID, APP_SUPPORTED_MODELS
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
 from gkraken.interactor.get_status_interactor import GetStatusInteractor
@@ -125,13 +125,14 @@ class MainPresenter:
         self._composite_disposable: CompositeDisposable = composite_disposable
         self._profile_selected: Dict[str, SpeedProfile] = {}
         self._should_update_fan_speed: bool = False
+        self._should_update_pump_speed: bool = False
         self._legacy_firmware_dialog_shown: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
 
     def on_start(self) -> None:
-        self._refresh_speed_profiles(True)
         self._register_db_listeners()
         self._check_supported_kraken()
+        self._refresh_speed_profiles(True)
         if self._settings_interactor.get_int('settings_check_new_version'):
             self._check_new_version()
 
@@ -174,7 +175,7 @@ class MainPresenter:
             self.main_view.show_error_message_dialog(
                 "Unable to find supported NZXT Kraken devices",
                 "It was not possible to connect to any of the supported NZXT Kraken devices.\n\n"
-                f"{APP_NAME} currently supports only NZXT Kraken X42, X52, X62 or X72.\n\n"
+                f"{APP_NAME} currently supports only {APP_SUPPORTED_MODELS}.\n\n"
                 "If one of the supported devices is connected, try to run the following command and then reboot:\n\n"
                 f"{self._get_udev_command()}"
             )
@@ -214,16 +215,24 @@ class MainPresenter:
     def _update_status(self, status: Optional[Status]) -> None:
         if status is not None:
             if self._should_update_fan_speed:
-                last_applied: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=ChannelType.FAN.value)
-                if last_applied is not None:
-                    status.fan_duty = self._get_fan_duty(last_applied.profile, status.liquid_temperature)
+                last_applied_fan_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
+                    channel=ChannelType.FAN.value)
+                if last_applied_fan_profile is not None and status.fan_duty is None and status.fan_rpm != 0:
+                    _LOG.debug("No Fan Duty reported from device, calculating based on speed profile")
+                    status.fan_duty = self._calculate_duty(last_applied_fan_profile.profile, status.liquid_temperature)
+            if self._should_update_pump_speed:
+                last_applied_pump_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
+                    channel=ChannelType.PUMP.value)
+                if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm != 0:
+                    _LOG.debug("No Pump Duty reported from device, calculating based on speed profile")
+                    status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile, status.liquid_temperature)
             self.main_view.refresh_status(status)
             if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
                 self._legacy_firmware_dialog_shown = True
                 self.main_view.show_legacy_firmware_dialog()
 
     @staticmethod
-    def _get_fan_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
+    def _calculate_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
         p_1 = ([(i.temperature, i.duty) for i in profile.steps if i.temperature <= liquid_temperature] or [None])[-1]
         p_2 = next(((i.temperature, i.duty) for i in profile.steps if i.temperature > liquid_temperature), None)
         duty = 0.0
@@ -243,8 +252,23 @@ class MainPresenter:
         return [(p.id, p.name) for p in SpeedProfile.select().where(SpeedProfile.channel == channel.value)]
 
     def _refresh_speed_profiles(self, init: bool = False, selecter_profile_id: Optional[int] = None) -> None:
-        for channel in ChannelType:
-            self._refresh_speed_profile(channel, init, selecter_profile_id)
+        self._get_status().pipe(
+            operators.flat_map(lambda status: rx.from_list(
+                [channel for channel in ChannelType]
+            ).pipe(
+                operators.filter(lambda channel: self._is_channel_supported(channel, status))
+            ))
+        ).subscribe(
+            on_next=lambda channel: self._refresh_speed_profile(channel, init, selecter_profile_id),
+            on_error=self._handle_refresh_error
+        )
+
+    @staticmethod
+    def _is_channel_supported(channel: ChannelType, status: Status) -> bool:
+        return {
+            ChannelType.FAN: status.fan_rpm != 0,
+            ChannelType.PUMP: status.pump_rpm != 0
+        }.get(channel, True)
 
     def _refresh_speed_profile(self, channel: ChannelType, init: bool = False,
                                profile_id: Optional[int] = None) -> None:
@@ -254,6 +278,7 @@ class MainPresenter:
             active = next(i for i, item in enumerate(data) if item[0] == profile_id)
         elif init and self._settings_interactor.get_bool('settings_load_last_profile'):
             self._should_update_fan_speed = True
+            self._should_update_pump_speed = True
             current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
             if current is not None:
                 active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
@@ -333,6 +358,8 @@ class MainPresenter:
         speed_step.save()
         if channel == ChannelType.FAN.value:
             self._should_update_fan_speed = False
+        elif channel == ChannelType.PUMP.value:
+            self._should_update_pump_speed = False
         self.main_view.refresh_chart(profile)
 
     def on_fan_apply_button_clicked(self, *_: Any) -> None:
@@ -341,6 +368,7 @@ class MainPresenter:
 
     def on_pump_apply_button_clicked(self, *_: Any) -> None:
         self._set_speed_profile(self._profile_selected[ChannelType.PUMP.value])
+        self._should_update_pump_speed = True
 
     def _set_speed_profile(self, profile: SpeedProfile) -> None:
         observable = self._set_speed_profile_interactor \

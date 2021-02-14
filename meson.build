@@ -4,7 +4,7 @@ project('gkraken',
     'APP_VERSION',
     files('gkraken/conf.py')
   ).stdout().split(' = ')[1].strip().strip('"'),
-  meson_version: '>= 0.45.1'
+  meson_version: '>= 0.50.0'
 )
 # project version is defined in gkraken/conf.py
 
