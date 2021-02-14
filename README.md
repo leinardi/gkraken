@@ -209,6 +209,7 @@ rm -rf ~/.config/gkraken
 Thanks to:
 
  - Jonas Malaco for the [`liquidctl`](https://github.com/jonasmalacofilho/liquidctl) CLI library
+ - @codifryed for adding support of many new Kraken devices!
 
 ## License
 ```
