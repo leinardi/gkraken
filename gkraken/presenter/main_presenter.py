@@ -219,8 +219,10 @@ class MainPresenter:
                 last_applied_pump_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
                     channel=ChannelType.PUMP.value)
                 if last_applied_fan_profile is not None and status.fan_duty is None and status.fan_rpm != 0:
+                    _LOG.debug("No Fan Duty reported from device, calculating based on speed profile")
                     status.fan_duty = self._calculate_duty(last_applied_fan_profile.profile, status.liquid_temperature)
                 if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm != 0:
+                    _LOG.debug("No Pump Duty reported from device, calculating based on speed profile")
                     status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile, status.liquid_temperature)
             self.main_view.refresh_status(status)
             if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
