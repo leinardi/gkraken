@@ -4,7 +4,7 @@ GKraken is a GTK application that allows you to control the cooling
 pump from Linux.
 
 ## Project in Maintenance mode
-<img src="/art/gkraken.png" width="256" align="right" hspace="0" />
+<img src="/art/gkraken.png" width="128" align="right" hspace="0" />
 
 This project is now in maintenance mode. I am not planning to develop any new feature nor to support
 any new Kraken device. I also don't own a NZXT Kraken anymore so I am unable to test GKraken myself.
