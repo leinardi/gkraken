@@ -214,16 +214,21 @@ class MainPresenter:
     def _update_status(self, status: Optional[Status]) -> None:
         if status is not None:
             if self._should_update_fan_speed:
-                last_applied: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=ChannelType.FAN.value)
-                if last_applied is not None:
-                    status.fan_duty = self._get_fan_duty(last_applied.profile, status.liquid_temperature)
+                last_applied_fan_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
+                    channel=ChannelType.FAN.value)
+                last_applied_pump_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
+                    channel=ChannelType.PUMP.value)
+                if last_applied_fan_profile is not None and status.fan_duty is None and status.fan_rpm != 0:
+                    status.fan_duty = self._calculate_duty(last_applied_fan_profile.profile, status.liquid_temperature)
+                if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm != 0:
+                    status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile, status.liquid_temperature)
             self.main_view.refresh_status(status)
             if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
                 self._legacy_firmware_dialog_shown = True
                 self.main_view.show_legacy_firmware_dialog()
 
     @staticmethod
-    def _get_fan_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
+    def _calculate_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
         p_1 = ([(i.temperature, i.duty) for i in profile.steps if i.temperature <= liquid_temperature] or [None])[-1]
         p_2 = next(((i.temperature, i.duty) for i in profile.steps if i.temperature > liquid_temperature), None)
         duty = 0.0
