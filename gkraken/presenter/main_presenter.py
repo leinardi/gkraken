@@ -125,6 +125,7 @@ class MainPresenter:
         self._composite_disposable: CompositeDisposable = composite_disposable
         self._profile_selected: Dict[str, SpeedProfile] = {}
         self._should_update_fan_speed: bool = False
+        self._should_update_pump_speed: bool = False
         self._legacy_firmware_dialog_shown: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
 
@@ -216,11 +217,12 @@ class MainPresenter:
             if self._should_update_fan_speed:
                 last_applied_fan_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
                     channel=ChannelType.FAN.value)
-                last_applied_pump_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
-                    channel=ChannelType.PUMP.value)
                 if last_applied_fan_profile is not None and status.fan_duty is None and status.fan_rpm != 0:
                     _LOG.debug("No Fan Duty reported from device, calculating based on speed profile")
                     status.fan_duty = self._calculate_duty(last_applied_fan_profile.profile, status.liquid_temperature)
+            if self._should_update_pump_speed:
+                last_applied_pump_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
+                    channel=ChannelType.PUMP.value)
                 if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm != 0:
                     _LOG.debug("No Pump Duty reported from device, calculating based on speed profile")
                     status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile, status.liquid_temperature)
@@ -261,6 +263,7 @@ class MainPresenter:
             active = next(i for i, item in enumerate(data) if item[0] == profile_id)
         elif init and self._settings_interactor.get_bool('settings_load_last_profile'):
             self._should_update_fan_speed = True
+            self._should_update_pump_speed = True
             current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
             if current is not None:
                 active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
@@ -340,6 +343,8 @@ class MainPresenter:
         speed_step.save()
         if channel == ChannelType.FAN.value:
             self._should_update_fan_speed = False
+        elif channel == ChannelType.PUMP.value:
+            self._should_update_pump_speed = False
         self.main_view.refresh_chart(profile)
 
     def on_fan_apply_button_clicked(self, *_: Any) -> None:
@@ -348,6 +353,7 @@ class MainPresenter:
 
     def on_pump_apply_button_clicked(self, *_: Any) -> None:
         self._set_speed_profile(self._profile_selected[ChannelType.PUMP.value])
+        self._should_update_pump_speed = True
 
     def _set_speed_profile(self, profile: SpeedProfile) -> None:
         observable = self._set_speed_profile_interactor \
