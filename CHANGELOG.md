@@ -1,3 +1,9 @@
+Version 1.0.1
+=============
+Released: 2021-02-20
+
+ * Updated liquidctl version
+
 Version 1.0.0
 =============
 Released: 2021-02-14
