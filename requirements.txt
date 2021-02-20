@@ -1,6 +1,6 @@
 injector==0.18.4
 hidapi==0.10.1
-liquidctl==1.5.0
+liquidctl==1.5.1
 matplotlib==3.3.4
 peewee==3.14.1
 PyGObject==3.38.0
