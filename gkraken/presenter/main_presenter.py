@@ -128,6 +128,7 @@ class MainPresenter:
         self._should_update_pump_speed: bool = False
         self._legacy_firmware_dialog_shown: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
+        self._critical_error_occurred: bool = False  # to handle multiple startup errors
 
     def on_start(self) -> None:
         self._register_db_listeners()
@@ -194,14 +195,16 @@ class MainPresenter:
 
     def _handle_refresh_error(self, ex: Exception) -> None:
         if isinstance(ex, OSError):
-            self.main_view.show_error_message_dialog(
-                "Unable to communicate with the NZXT Kraken",
-                "It was not possible to communicate with the NZXT Kranen.\n\n"
-                "Most probably the current user does not have the permission to access it.\n\n"
-                "You can try to fix the issue running the following command and then rebooting:\n\n"
-                f"{self._get_udev_command()}\n\n"
-                "For more info check the section \"Adding Udev rule\" of the project's README.md.")
-            get_default_application().quit()
+            if not self._critical_error_occurred:
+                self._critical_error_occurred = True
+                self.main_view.show_error_message_dialog(
+                    "Unable to communicate with the NZXT Kraken",
+                    "It was not possible to communicate with the NZXT Kranen.\n\n"
+                    "Most probably the current user does not have the permission to access it.\n\n"
+                    "You can try to fix the issue running the following command and then rebooting:\n\n"
+                    f"{self._get_udev_command()}\n\n"
+                    "For more info check the section \"Adding Udev rule\" of the project's README.md.")
+                get_default_application().quit()
         _LOG.exception("Refresh error: %s", str(ex))
 
     @staticmethod
