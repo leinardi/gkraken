@@ -1,0 +1,95 @@
+name: gkraken
+adopt-info: gkraken
+#title: GKraken
+#version: git
+#summary: GKraken
+#description: |
+#  GKraken is a GTK application that allows you to control the cooling (and soon also the lighting) of a
+#  NZXT Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux.
+license: GPL-3.0+
+# says specified in the adopt-info as well, but not found:
+icon: data/icons/gkraken.svg
+base: core18
+confinement: devmode # 'devmode' for all-access-snap or 'strict' for standard interface based access
+# should help speed up startup for ex. it's a big larger snap but a bit faster, especially for desktop app that have a lot of data
+compression: lzo
+grade: devel # 'devel' or 'stable' for when publishing to the stable or release channels
+architectures:
+  - amd64
+
+apps:
+  gkraken:
+    command: usr/bin/gkraken
+    common-id: com.leinardi.gkraken.desktop
+    extensions:
+      # adds a lot of gtk dependencies for us for better desktop integration
+      - gnome-3-34
+    # WORKAROUND: Use (correct version of) PyGObject from Gnome Extension
+    # WARNING: There is another version of PyGObject in usr/lib/python3/dist-packages that crashes with SEGFAULT
+    environment:
+      PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.6/site-packages
+      # the installed libs seem to be in /lib not /usr/lib
+#      PYTHONPATH: $SNAP_DESKTOP_RUNTIME/lib/python3.6/site-packages:$SNAP_DESKTOP_RUNTIME/usr/lib/python3.6/site-packages
+    plugs:
+      - raw-usb
+    slots:
+      - dbus-daemon
+
+slots:
+  dbus-daemon:
+    interface: dbus
+    bus: session
+    name: com.leinardi.gkraken
+
+parts:
+  gkraken-python:
+    plugin: python
+    source: .
+    requirements:
+      - requirements.txt
+#    python-packages:
+#      - injector==0.18.4
+#      - hidapi==0.10.1
+#      - liquidctl==1.5.0
+#      - matplotlib==3.3.4
+#      - peewee==3.14.1
+#      - pyxdg==0.27
+#      - requests==2.25.1
+#      - Rx==3.1.1
+      #      PyGObject==3.38.0
+#    build-packages:
+      # extra needed dep for installing in the snap vm:
+#      - libcairo2-dev
+#    stage-packages:
+#       - python3-gi
+#    prime:
+#      - bin
+  gkraken:
+    after: [ gkraken-python ]
+    plugin: meson
+    # WORKAROUND: Fake installation location to find dependencies at runtime
+    meson-parameters: [ --prefix=/snap/gkraken/current/usr ]
+    source: .
+    build-packages:
+      - pkg-config
+      - libgirepository1.0-dev
+      - appstream-util
+      - libusb-1.0-0-dev
+      - libudev-dev
+    stage-packages:
+      - libgirepository1.0-dev
+      - gir1.2-appindicator3-0.1
+      - gnome-shell-extension-appindicator
+#    override-build: |
+#      snapcraftctl build
+#      # WORKAROUND: Use python from search path, the path detected by meson doesn't exist when running the Snap
+#      # sed -e '1c#!/usr/bin/env python3' -i "${SNAPCRAFT_PART_INSTALL}/usr/bin/gkraken"
+#      sed -e '1c#!/usr/bin/env python3' -i "${SNAPCRAFT_PART_INSTALL}/snap/gkraken/current/usr/bin/gkraken"
+    organize:
+      # WORKAROUND: Move files from fake installation location to actual target
+      snap/gkraken/current/usr: usr
+#    prime:
+#      - bin
+    parse-info:
+#      - data/com.leinardi.gkraken.appdata.xml
+      - usr/share/metainfo/com.leinardi.gkraken.appdata.xml

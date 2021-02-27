@@ -1,0 +1,216 @@
+name: gkraken
+# seems to not work in core20???
+adopt-info: gkraken
+#title: GKraken
+#version: git
+#summary: GKraken
+#description: |
+#  GKraken is a GTK application that allows you to control the cooling (and soon also the lighting) of a
+#  NZXT Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux.
+license: GPL-3.0+
+icon: data/icons/gkraken.svg
+base: core20
+confinement: devmode # 'devmode' for all-access-snap or 'strict' for standard interface based access
+# should help speed up startup for ex. it's a big larger snap but a bit faster, especially for desktop app that have a lot of data
+compression: lzo
+grade: devel # 'devel' or 'stable' for when publishing to the stable or release channels
+architectures:
+  - amd64
+
+apps:
+  gkraken:
+    # core20 snaps will no longer search for the executable,
+    #  instead requiring that the correct path to the executable be specified in the YAML.
+#    command: usr/local/bin/gkraken # bin/gkraken
+    command: usr/bin/gkraken
+#    command: gkraken #usr/bin/gkraken
+    common-id: com.leinardi.gkraken.desktop
+#    extensions:
+      # adds a lot of gtk dependencies for us for better desktop integration
+      # currently experimental:
+#      - gnome-3-38   #currently having issue with the python installed in this snap. Need to do this probably manually as it conficts badly.
+    # WORKAROUND: Use (correct version of) PyGObject from Gnome Extension
+    # WARNING: There is another version of PyGObject in usr/lib/python3/dist-packages that crashes with SEGFAULT
+#    environment:
+#      PYTHONPATH: $SNAP_DESKTOP_RUNTIME/lib/python3.6/site-packages:$SNAP_DESKTOP_RUNTIME/usr/lib/python3.6/site-packages
+#    plugs:
+#      - raw-usb
+    ##### desktop Helper testing:
+#    command: bin/desktop-launch gkraken
+    plugs:
+#      - desktop
+#      - desktop-legacy
+#      - wayland
+#      - x11
+#      - unity7
+#      - gsettings # For desktop theme detection under Wayland session
+#      - home
+      - raw-usb
+#  gsettings:
+#    command: bin/desktop-launch gsettings
+#    plugs:
+#      - gsettings
+    environment:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      PYTHONPATH: $SNAP/usr/lib/python3/dist-packages:$PYTHONPATH
+#      GI_TYPELIB_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/girepository-1.0
+      GI_TYPELIB_PATH: $SNAP/usr/lib/girepository-1.0:$SNAP/usr/lib/x86_64-linux-gnu/girepository-1.0
+#      GI_TYPELIB_PATH: $SNAP/usr/lib/girepository-1.0:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/girepository-1.0
+
+parts:
+  # complete custom install
+#  gkraken:
+#    plugin: nil
+#    source: .
+#    build-packages:
+#      # needed for project:
+#      - pkg-config
+#      - libgirepository1.0-dev
+#      - appstream-util
+#      - libusb-1.0-0-dev
+#      - libudev-dev
+#      # needed for snap:
+#      - meson
+#    stage-packages:
+#      # needed for snap:
+#      - libcairo-gobject2
+#      - libcairo2
+#      - libfontconfig1
+#      - libfreetype6
+#      - libgirepository-1.0-1
+#      - libpixman-1-0
+#      - libpng16-16
+#      - libx11-6
+#      - libxau6
+#      - libxcb-render0
+#      - libxcb-shm0
+#      - libxcb1
+#      - libxdmcp6
+#      - libxext6
+#      - libxrender1
+#      - python3-pip
+#      # needed for project:
+#      - gir1.2-appindicator3-0.1
+#      - gnome-shell-extension-appindicator
+#    override-build: |
+#      # python3.8 -m venv myvenv # perhaps useful for gnome-38 testing
+#      # pip3 install wheel # - says already installed from dist packages
+#      # snapcraftctl build
+#      python3 --version
+#      pip3 install -r requirements.txt
+#      meson . build --prefix /usr
+#      ninja -v -C build
+#      ninja -v -C build install
+
+  gkraken-python:
+    plugin: python
+    source: .
+    build-environment:
+      # fixes an issue where python packages aren't being imported and bdist_wheel isn't found
+      - PYTHONPATH: $SNAPCRAFT_PART_INSTALL/usr/lib/python3/dist-packages:$PYTHONPATH
+      # fixes issue where C bindings for Python.h aren't found
+      - C_INCLUDE_PATH: /usr/include/python3.8
+    requirements:
+      - requirements.txt
+    # testing for possible gnome-38 extension python fix...
+#    python-packages:
+#      - injector==0.18.4
+#      - hidapi==0.10.1
+#      - liquidctl==1.5.0
+#      - matplotlib==3.3.4
+#      - peewee==3.14.1
+#      - pyxdg==0.27
+#      - requests==2.25.1
+#      - Rx==3.1.1
+#      - PyGObject==3.38.0
+    build-packages:
+#      # recommended for core20 and classic-mode python packages
+#      - libpython3-stdlib
+#      - libpython3.8-stdlib
+#      - libpython3.8-minimal
+#      - python3-pip
+#      - python3-setuptools
+#      - python3-wheel
+#      - python3-venv
+#      - python3-minimal
+#      - python3-distutils
+#      - python3-pkg-resources
+#      - python3.8-minimal
+#      - python3-venv
+#      - python3-distutils
+       # extra needed dep for installing in the snap vm without the gnome-38 extension
+      - libcairo2-dev # this may be removed if the gtk desktop helper takes care of this
+    # Testings for manually added needed packages
+    stage-packages:
+      # recommended for core20 and classic-mode python packages
+      - libpython3-stdlib
+      - libpython3.8-stdlib
+      - libpython3.8-minimal
+      - python3-pip
+      - python3-setuptools
+      - python3-wheel
+      - python3-venv
+      - python3-minimal
+      - python3-distutils
+      - python3-pkg-resources
+      - python3.8-minimal
+      - python3-gi
+      # requred by snapcraft output
+      - libcairo-gobject2
+      - libcairo2
+      - libfontconfig1
+      - libfreetype6
+      - libgirepository-1.0-1
+      - libpixman-1-0
+      - libpng16-16
+      - libx11-6
+      - libxau6
+      - libxcb-render0
+      - libxcb-shm0
+      - libxcb1
+      - libxdmcp6
+      - libxext6
+      - libxrender1
+#    override-build: |
+#      # python3.8 -m venv myvenv # perhaps useful for gnome-38 testing
+#      # python3 -m pip3 install ensurepip
+#      # pip3 install ensurepip
+#      # python3 -m ensurepip --upgrade
+#      # pip3 install wheel # - says already installed from dist packages
+#      # python3 setup.py bdist_wheel
+#      snapcraftctl build
+    # --without-pip --system-site-packages
+#    stage:
+      # needed to resolve content conflict with meson build part
+#      - lib64/*
+  gkraken:
+    plugin: meson
+    meson-parameters: [ --prefix=/usr]
+    # WORKAROUND: Fake installation location to find dependencies at runtime
+#    meson-parameters: [ --prefix=/snap/gkraken/current/usr ]
+    source: .
+    after:
+      - gkraken-python
+    build-packages:
+      - pkg-config
+      - appstream-util
+      - libusb-1.0-0-dev
+      - libudev-dev
+      - libgirepository1.0-dev
+#      - libmozjs-68-dev #just to see if it helps, probably not needed
+    stage-packages:
+      - libgirepository1.0-dev
+      - gir1.2-appindicator3-0.1
+      - gnome-shell-extension-appindicator
+#      - libmozjs-68-0 #for strange missing library warning
+#    override-build: |
+#      snapcraftctl build
+#      # WORKAROUND: Use python from search path, the path detected by meson doesn't exist when running the Snap
+#      # sed -e '1c#!/usr/bin/env python3' -i "${SNAPCRAFT_PART_INSTALL}/usr/bin/gkraken"
+#      sed -e '1c#!/usr/bin/env python3' -i "${SNAPCRAFT_PART_INSTALL}/snap/gkraken/current/usr/bin/gkraken"
+#    organize:
+#      # WORKAROUND: Move files from fake installation location to actual target
+#      snap/gkraken/current/usr: usr
+    parse-info:
+      - usr/share/metainfo/com.leinardi.gkraken.appdata.xml
