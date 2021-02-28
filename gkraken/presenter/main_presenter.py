@@ -220,13 +220,13 @@ class MainPresenter:
             if self._should_update_fan_speed:
                 last_applied_fan_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
                     channel=ChannelType.FAN.value)
-                if last_applied_fan_profile is not None and status.fan_duty is None and status.fan_rpm != 0:
+                if last_applied_fan_profile is not None and status.fan_duty is None and status.fan_rpm is not None:
                     _LOG.debug("No Fan Duty reported from device, calculating based on speed profile")
                     status.fan_duty = self._calculate_duty(last_applied_fan_profile.profile, status.liquid_temperature)
             if self._should_update_pump_speed:
                 last_applied_pump_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
                     channel=ChannelType.PUMP.value)
-                if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm != 0:
+                if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm is not None:
                     _LOG.debug("No Pump Duty reported from device, calculating based on speed profile")
                     status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile, status.liquid_temperature)
             self.main_view.refresh_status(status)
@@ -269,8 +269,8 @@ class MainPresenter:
     @staticmethod
     def _is_channel_supported(channel: ChannelType, status: Status) -> bool:
         return {
-            ChannelType.FAN: status.fan_rpm != 0,
-            ChannelType.PUMP: status.pump_rpm != 0
+            ChannelType.FAN: status.fan_rpm is not None,
+            ChannelType.PUMP: status.pump_rpm is not None
         }.get(channel, True)
 
     def _refresh_speed_profile(self, channel: ChannelType, init: bool = False,

@@ -21,16 +21,16 @@ from enum import Enum
 class Status:
     def __init__(self,
                  liquid_temperature: float,
-                 fan_rpm: int = 0,
-                 pump_rpm: int = 0,
+                 fan_rpm: int = None,
+                 pump_rpm: int = None,
                  firmware_version: str = '',
                  pump_duty: int = None,
                  fan_duty: float = None
                  ) -> None:
         self.liquid_temperature: float = liquid_temperature
-        self.fan_rpm: int = fan_rpm
+        self.fan_rpm: Optional[int] = fan_rpm
         self.fan_duty: Optional[float] = fan_duty
-        self.pump_rpm: int = pump_rpm
+        self.pump_rpm: Optional[int] = pump_rpm
         self.firmware_version: str = firmware_version
         self.pump_duty: Optional[float] = pump_duty
 
