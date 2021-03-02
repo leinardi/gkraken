@@ -52,7 +52,9 @@ class KrakenRepository:
         self._load_driver()
         if self._driver:
             try:
-                status_list = [v for k, v, u in self._driver.get_status()]
+                driver_status = self._driver.get_status()
+                _LOG.debug(f"Reported status:\n{driver_status}")
+                status_list = [v for k, v, u in driver_status]
                 if isinstance(self._driver, KrakenZ3):
                     return Status.get_z3(status_list)
                 elif isinstance(self._driver, KrakenX3):

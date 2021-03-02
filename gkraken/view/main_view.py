@@ -187,11 +187,14 @@ class MainView(MainViewInterface):
     def refresh_status(self, status: Optional[Status]) -> None:
         _LOG.debug('view status')
         if status:
-            self._cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.fan_rpm)
+            self._cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" %
+                                             ('-' if status.fan_rpm is None else status.fan_rpm))
             self._cooling_fan_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %
                                               ('-' if status.fan_duty is None else "%.0f" % status.fan_duty))
-            self._cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" % status.liquid_temperature)
-            self._cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" % status.pump_rpm)
+            self._cooling_liquid_temp.set_markup("<span size=\"xx-large\">%s</span> °C" %
+                                                 status.liquid_temperature)
+            self._cooling_pump_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" %
+                                              ('-' if status.pump_rpm is None else status.pump_rpm))
             self._cooling_pump_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %
                                                ('-' if status.pump_duty is None else "%.0f" % status.pump_duty))
             self._firmware_version.set_label("firmware %s - %s %s"
