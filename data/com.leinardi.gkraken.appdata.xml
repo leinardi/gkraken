@@ -28,6 +28,13 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
+        <release date="2021-03-03" version="1.0.2">
+            <description>
+                <ul>
+                    <li>Fixed #32: Random Fan duty on X62 starting v.1.0.0</li>
+                </ul>
+            </description>
+        </release>
         <release date="2021-02-20" version="1.0.1">
             <description>
                 <ul>

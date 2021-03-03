@@ -1,3 +1,9 @@
+Version 1.0.2
+=============
+Released: 2021-03-03
+
+ * Fixed #32: Random Fan duty on X62 starting v.1.0.0
+
 Version 1.0.1
 =============
 Released: 2021-02-20
