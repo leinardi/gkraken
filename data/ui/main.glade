@@ -784,13 +784,21 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                         <child>
                           <object class="GtkComboBox" id="lighting_ring_mode_combobox">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Set a color mode for the Ring LEDs</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
+                            <property name="hexpand">True</property>
                             <property name="model">lighting_ring_mode_liststore</property>
                             <property name="id-column">0</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="lighting_ring_mode_renderer"/>
+                              <attributes>
+                                <attribute name="markup">1</attribute>
+                              </attributes>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -896,13 +904,21 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                         <child>
                           <object class="GtkComboBox" id="lighting_logo_mode_combobox">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Choose a color mode for the Logo LED</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
+                            <property name="hexpand">True</property>
                             <property name="model">lighting_logo_mode_liststore</property>
                             <property name="id-column">0</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="lighting_logo_mode_renderer"/>
+                              <attributes>
+                                <attribute name="markup">1</attribute>
+                              </attributes>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
