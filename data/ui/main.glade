@@ -740,7 +740,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="margin-bottom">6</property>
                             <property name="hexpand">True</property>
                             <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1025,7 +1024,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
@@ -1040,7 +1038,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
@@ -1055,7 +1052,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -1070,7 +1066,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
@@ -1085,7 +1080,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
@@ -1099,7 +1093,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
@@ -1113,7 +1106,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -1127,7 +1119,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
