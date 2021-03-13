@@ -792,6 +792,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="hexpand">True</property>
                             <property name="model">lighting_ring_mode_liststore</property>
                             <property name="id-column">0</property>
+                            <signal name="changed" handler="on_ring_mode_selected" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="lighting_ring_mode_renderer"/>
                               <attributes>
@@ -918,6 +919,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="hexpand">True</property>
                             <property name="model">lighting_logo_mode_liststore</property>
                             <property name="id-column">0</property>
+                            <signal name="changed" handler="on_logo_mode_selected" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="lighting_logo_mode_renderer"/>
                               <attributes>
