@@ -56,7 +56,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkListStore" id="logo_mode_list">
+  <object class="GtkListStore" id="lighting_logo_mode_liststore">
     <columns>
       <!-- column-name id -->
       <column type="gint"/>
@@ -64,11 +64,29 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkAdjustment" id="logo_speed_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">5</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">10</property>
+  <object class="GtkListStore" id="lighting_logo_speed_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name speed_name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="lighting_ring_mode_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name mode_name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="lighting_ring_speed_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name speed_name -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkMenu" id="main_menu">
     <property name="visible">True</property>
@@ -126,20 +144,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
         <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="ring_mode_list">
-    <columns>
-      <!-- column-name id -->
-      <column type="gint"/>
-      <!-- column-name mode_name -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkAdjustment" id="ring_speed_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">5</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">10</property>
   </object>
   <object class="GtkApplicationWindow" id="application_window">
     <property name="can-focus">False</property>
@@ -706,7 +710,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
                 <property name="margin-top">2</property>
-                <property name="row-spacing">6</property>
                 <property name="column-spacing">6</property>
                 <property name="column-homogeneous">True</property>
                 <child>
@@ -716,57 +719,49 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="label-xalign">0.5</property>
                     <property name="shadow-type">in</property>
                     <child>
-                      <object class="GtkSwitch">
+                      <object class="GtkBox">
+                        <property name="height-request">275</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="halign">center</property>
-                        <property name="valign">center</property>
-                        <property name="margin-top">2</property>
-                        <property name="margin-bottom">6</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">7</property>
+                        <child>
+                          <object class="GtkColorButton" id="lighting_logo_color">
+                            <property name="width-request">160</property>
+                            <property name="height-request">80</property>
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">center</property>
+                            <property name="valign">start</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="hexpand">True</property>
+                            <property name="title" translatable="yes">Pick a Logo Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
                       </object>
                     </child>
                     <child type="label">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Multi-Mode</property>
-                        <property name="justify">center</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkFrame">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="label-xalign">0.5</property>
-                    <property name="shadow-type">in</property>
-                    <child>
-                      <object class="GtkSwitch">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="halign">center</property>
-                        <property name="valign">center</property>
-                        <property name="margin-top">2</property>
-                        <property name="margin-bottom">6</property>
-                      </object>
-                    </child>
-                    <child type="label">
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Multi-Color</property>
+                        <property name="label" translatable="yes">Color</property>
                         <property name="justify">center</property>
                       </object>
                     </child>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -784,11 +779,18 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                         <property name="margin-top">8</property>
                         <property name="margin-bottom">5</property>
                         <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
+                        <property name="homogeneous">True</property>
                         <child>
-                          <object class="GtkComboBox">
+                          <object class="GtkComboBox" id="lighting_ring_mode_combobox">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="model">ring_mode_list</property>
+                            <property name="tooltip-text" translatable="yes">Set a color mode for the Ring LEDs</property>
+                            <property name="valign">start</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="model">lighting_ring_mode_liststore</property>
+                            <property name="id-column">0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -798,15 +800,48 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScale" id="ring_speed">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="adjustment">ring_speed_adjustment</property>
-                            <property name="draw-value">False</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="spacing">6</property>
+                            <property name="homogeneous">True</property>
+                            <child>
+                              <object class="GtkComboBox" id="lighting_ring_speed_combobox">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select speed of color mode</property>
+                                <property name="valign">start</property>
+                                <property name="model">lighting_ring_speed_liststore</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToggleButton" id="lighting_ring_direction_reverse">
+                                <property name="label" translatable="yes">Reverse Direction</property>
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Toggle to reverse direction of color mode</property>
+                                <property name="valign">start</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">False</property>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -816,14 +851,29 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">General / Ring</property>
+                        <property name="label" translatable="yes">Ring</property>
                         <property name="justify">center</property>
                       </object>
                     </child>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">1</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="lighting_apply_button">
+                    <property name="label" translatable="yes">Apply</property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="margin-top">6</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">2</property>
+                    <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
@@ -841,11 +891,18 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                         <property name="margin-top">8</property>
                         <property name="margin-bottom">6</property>
                         <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
+                        <property name="homogeneous">True</property>
                         <child>
-                          <object class="GtkComboBox">
+                          <object class="GtkComboBox" id="lighting_logo_mode_combobox">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="model">logo_mode_list</property>
+                            <property name="tooltip-text" translatable="yes">Choose a color mode for the Logo LED</property>
+                            <property name="valign">start</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="model">lighting_logo_mode_liststore</property>
+                            <property name="id-column">0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -855,15 +912,48 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScale" id="logo_speed">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="adjustment">logo_speed_adjustment</property>
-                            <property name="draw-value">False</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="spacing">6</property>
+                            <property name="homogeneous">True</property>
+                            <child>
+                              <object class="GtkComboBox" id="lighting_logo_speed_combobox">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select speed of color mode</property>
+                                <property name="valign">start</property>
+                                <property name="model">lighting_logo_speed_liststore</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToggleButton" id="lighting_logo_direction_reverse">
+                                <property name="label" translatable="yes">Reverse Direction</property>
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Toggle to reverse direction of color mode</property>
+                                <property name="valign">start</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">False</property>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -879,8 +969,8 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     </child>
                   </object>
                   <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">2</property>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
@@ -890,496 +980,131 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="label-xalign">0.5</property>
                     <property name="shadow-type">in</property>
                     <child>
-                      <!-- n-columns=17 n-rows=15 -->
+                      <!-- n-columns=4 n-rows=2 -->
                       <object class="GtkGrid">
+                        <property name="height-request">275</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-start">12</property>
-                        <property name="margin-end">12</property>
-                        <property name="margin-top">52</property>
-                        <property name="margin-bottom">52</property>
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
-                        <property name="row-spacing">2</property>
-                        <property name="column-spacing">2</property>
-                        <property name="row-homogeneous">True</property>
-                        <property name="column-homogeneous">True</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="margin-top">8</property>
                         <child>
-                          <object class="GtkColorButton">
+                          <object class="GtkColorButton" id="lighting_ring_color_1">
+                            <property name="width-request">80</property>
+                            <property name="height-request">80</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
+                            <property name="title" translatable="yes">Pick a Ring Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
-                            <property name="top-attach">4</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
+                            <property name="top-attach">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkColorButton">
+                          <object class="GtkColorButton" id="lighting_ring_color_2">
+                            <property name="width-request">80</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
+                            <property name="title" translatable="yes">Pick a Ring Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
-                            <property name="left-attach">6</property>
-                            <property name="top-attach">6</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkColorButton">
+                          <object class="GtkColorButton" id="lighting_ring_color_3">
+                            <property name="width-request">80</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
+                            <property name="title" translatable="yes">Pick a Ring Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkColorButton" id="lighting_ring_color_4">
+                            <property name="width-request">80</property>
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="title" translatable="yes">Pick a Ring Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
                             <property name="top-attach">0</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkColorButton">
+                          <object class="GtkColorButton" id="lighting_ring_color_5">
+                            <property name="height-request">80</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">9</property>
-                            <property name="top-attach">0</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton">
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">12</property>
-                            <property name="top-attach">4</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton">
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
+                            <property name="title" translatable="yes">Pick a Ring Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
-                            <property name="top-attach">8</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkColorButton">
+                          <object class="GtkColorButton" id="lighting_ring_color_6">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
+                            <property name="title" translatable="yes">Pick a Ring Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
-                            <property name="left-attach">12</property>
-                            <property name="top-attach">8</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkColorButton">
+                          <object class="GtkColorButton" id="lighting_ring_color_7">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
+                            <property name="title" translatable="yes">Pick a Ring Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkColorButton" id="lighting_ring_color_8">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="title" translatable="yes">Pick a Ring Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">12</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
+                            <property name="top-attach">1</property>
                           </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton">
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">9</property>
-                            <property name="top-attach">12</property>
-                            <property name="width">5</property>
-                            <property name="height">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                     </child>
@@ -1387,15 +1112,14 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">LEDs</property>
+                        <property name="label" translatable="yes">Colors</property>
                         <property name="justify">center</property>
                       </object>
                     </child>
                   </object>
                   <packing>
-                    <property name="left-attach">1</property>
+                    <property name="left-attach">0</property>
                     <property name="top-attach">1</property>
-                    <property name="height">2</property>
                   </packing>
                 </child>
               </object>
