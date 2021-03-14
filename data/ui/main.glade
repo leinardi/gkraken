@@ -720,10 +720,10 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="shadow-type">in</property>
                     <child>
                       <object class="GtkBox">
-                        <property name="height-request">275</property>
+                        <property name="height-request">273</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-top">7</property>
+                        <property name="margin-top">10</property>
                         <child>
                           <object class="GtkColorButton" id="lighting_logo_color">
                             <property name="width-request">160</property>
@@ -734,10 +734,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="receives-default">True</property>
                             <property name="halign">center</property>
                             <property name="valign">start</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
                             <property name="hexpand">True</property>
                             <property name="title" translatable="yes">Pick a Logo Color</property>
                           </object>
@@ -1012,12 +1008,12 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     <child>
                       <!-- n-columns=4 n-rows=2 -->
                       <object class="GtkGrid">
-                        <property name="height-request">275</property>
+                        <property name="height-request">273</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">center</property>
                         <property name="valign">center</property>
-                        <property name="margin-top">8</property>
+                        <property name="margin-top">10</property>
                         <child>
                           <object class="GtkColorButton" id="lighting_ring_color_1">
                             <property name="width-request">80</property>
