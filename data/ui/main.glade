@@ -72,6 +72,11 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkAdjustment" id="lighting_ring_colors_spinbutton_adjustment">
+    <property name="upper">40</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
   <object class="GtkListStore" id="lighting_ring_mode_liststore">
     <columns>
       <!-- column-name id -->
@@ -1007,7 +1012,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="label-xalign">0.5</property>
                     <property name="shadow-type">in</property>
                     <child>
-                      <!-- n-columns=4 n-rows=2 -->
+                      <!-- n-columns=4 n-rows=3 -->
                       <object class="GtkGrid">
                         <property name="height-request">273</property>
                         <property name="visible">True</property>
@@ -1132,6 +1137,33 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="left-attach">3</property>
                             <property name="top-attach">1</property>
                           </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="lighting_ring_colors_spinbutton">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Select the number of Colors to apply</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="vexpand">True</property>
+                            <property name="caps-lock-warning">False</property>
+                            <property name="input-purpose">number</property>
+                            <property name="adjustment">lighting_ring_colors_spinbutton_adjustment</property>
+                            <property name="snap-to-ticks">True</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">2</property>
+                            <property name="width">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                     </child>
