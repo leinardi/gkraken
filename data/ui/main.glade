@@ -869,6 +869,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="adjustment">lighting_logo_colors_spinbutton_adjustment</property>
                             <property name="snap-to-ticks">True</property>
                             <property name="numeric">True</property>
+                            <signal name="value-changed" handler="on_lighting_logo_colors_spinbutton_changed" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
@@ -1284,6 +1285,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="adjustment">lighting_ring_colors_spinbutton_adjustment</property>
                             <property name="snap-to-ticks">True</property>
                             <property name="numeric">True</property>
+                            <signal name="value-changed" handler="on_lighting_ring_colors_spinbutton_changed" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
