@@ -958,6 +958,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="tooltip-text" translatable="yes">Select speed of color mode</property>
                                 <property name="valign">start</property>
                                 <property name="model">lighting_ring_speed_liststore</property>
+                                <property name="id-column">0</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="lighting_ring_speed_renderer"/>
                                   <attributes>
@@ -1086,6 +1087,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="tooltip-text" translatable="yes">Select speed of color mode</property>
                                 <property name="valign">start</property>
                                 <property name="model">lighting_logo_speed_liststore</property>
+                                <property name="id-column">0</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="lighting_logo_speed_renderer"/>
                                   <attributes>
