@@ -31,10 +31,15 @@ from rx.scheduler.mainloop import GtkScheduler
 from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID, APP_SUPPORTED_MODELS
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
+from gkraken.interactor.get_lighting_modes_interactor import GetLightingModesInteractor
 from gkraken.interactor.get_status_interactor import GetStatusInteractor
 from gkraken.interactor.has_supported_kraken_interactor import HasSupportedKrakenInteractor
+from gkraken.interactor.set_lighting_interactor import SetLightingInteractor
 from gkraken.interactor.set_speed_profile_interactor import SetSpeedProfileInteractor
 from gkraken.interactor.settings_interactor import SettingsInteractor
+from gkraken.model.lighting_modes import LightingModes, LightingMode
+from gkraken.model.lighting_settings import LightingColor, LightingSettings, LightingColors, LightingDirection
+from gkraken.model.lighting_speeds import LightingSpeeds
 from gkraken.model.status import Status
 from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.channel_type import ChannelType
@@ -94,6 +99,39 @@ class MainViewInterface:
     def show_error_message_dialog(self, title: str, message: str) -> None:
         raise NotImplementedError()
 
+    def load_color_modes(self, lighting_modes: LightingModes) -> None:
+        raise NotImplementedError()
+
+    def set_lighting_apply_button_enabled(self, enabled: bool) -> None:
+        raise NotImplementedError()
+
+    def set_lighting_logo_color_buttons_enabled(self, max_colors: int) -> None:
+        raise NotImplementedError()
+
+    def get_logo_mode_id(self) -> int:
+        raise NotImplementedError()
+
+    def get_logo_colors(self, max_colors: int) -> LightingColors:
+        raise NotImplementedError()
+    
+    def set_lighting_logo_spin_button(self, lighting_mode: LightingMode) -> None:
+        raise NotImplementedError()
+
+    def get_lighting_logo_spin_button(self) -> int:
+        raise NotImplementedError()
+    
+    def set_lighting_logo_speed_enabled(self, enabled: bool) -> None:
+        raise NotImplementedError()
+    
+    def get_lighting_logo_speed(self) -> int:
+        raise NotImplementedError()
+
+    def set_lighting_logo_direction_enabled(self, enabled: bool) -> None:
+        raise NotImplementedError()
+
+    def get_lighting_logo_direction(self) -> LightingDirection:
+        raise NotImplementedError()
+
 
 @singleton
 class MainPresenter:
@@ -106,6 +144,8 @@ class MainPresenter:
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
                  settings_interactor: SettingsInteractor,
                  check_new_version_interactor: CheckNewVersionInteractor,
+                 set_lighting_interactor: SetLightingInteractor,
+                 get_lighting_modes_interactor: GetLightingModesInteractor,
                  speed_profile_changed_subject: SpeedProfileChangedSubject,
                  speed_step_changed_subject: SpeedStepChangedSubject,
                  composite_disposable: CompositeDisposable,
@@ -120,6 +160,8 @@ class MainPresenter:
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
         self._settings_interactor = settings_interactor
         self._check_new_version_interactor = check_new_version_interactor
+        self._set_lighting_interactor = set_lighting_interactor
+        self._get_lighting_modes_interactor = get_lighting_modes_interactor
         self._speed_profile_changed_subject = speed_profile_changed_subject
         self._speed_step_changed_subject = speed_step_changed_subject
         self._composite_disposable: CompositeDisposable = composite_disposable
@@ -134,6 +176,8 @@ class MainPresenter:
         self._register_db_listeners()
         self._check_supported_kraken()
         self._refresh_speed_profiles(True)
+        self._load_color_modes()
+        # need to start loading color profiles from the driver at startup here
         if self._settings_interactor.get_int('settings_check_new_version'):
             self._check_new_version()
 
@@ -425,3 +469,89 @@ class MainPresenter:
     @staticmethod
     def _get_changelog_uri(version: str = APP_VERSION) -> str:
         return f"{APP_SOURCE_URL}/blob/{version}/CHANGELOG.md"
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Lighting
+
+    def _get_lighting_modes(self) -> Observable:
+        return self._get_lighting_modes_interactor.execute(
+            ).pipe(
+                operators.subscribe_on(self._scheduler),
+                operators.observe_on(GtkScheduler(GLib)),
+            )
+
+    def _load_color_modes(self):
+        self._composite_disposable.add(
+            self._get_lighting_modes().subscribe(
+                on_next=lambda lighting_modes: self.main_view.load_color_modes(lighting_modes),
+                on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))))
+
+    def on_logo_mode_selected(self, widget: Any, *_: Any) -> None:
+        mode_id = self.main_view.get_logo_mode_id()
+        self._get_lighting_modes(
+        ).subscribe(
+            on_next=lambda lighting_modes: self._update_logo_widgets(mode_id, lighting_modes),
+            on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))
+        )
+
+    def _update_logo_widgets(self, mode_id: int, lighting_modes: LightingModes):
+        chosen_logo_mode = lighting_modes.modes_logo[mode_id]
+        self.main_view.set_lighting_logo_spin_button(chosen_logo_mode)
+        self.main_view.set_lighting_logo_color_buttons_enabled(chosen_logo_mode.min_colors)
+        self.main_view.set_lighting_logo_speed_enabled(chosen_logo_mode.speed_enabled)
+        self.main_view.set_lighting_logo_direction_enabled(chosen_logo_mode.direction_enabled)
+        self.main_view.set_lighting_apply_button_enabled(True)
+
+    def on_lighting_apply_button_clicked(self, *_: Any) -> None:
+        self._get_lighting_modes(
+        ).subscribe(
+            on_next=lambda lighting_modes: self._set_lighting(lighting_modes),
+            on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))
+        )
+
+    def _set_lighting(self, lighting_modes: LightingModes):
+        logo_mode_id = self.main_view.get_logo_mode_id()
+        self._set_lighting_logo(logo_mode_id, lighting_modes)
+
+    def _set_lighting_logo(self, mode_id: int, lighting_modes: LightingModes):
+        lighting_mode = lighting_modes.modes_logo[mode_id]
+        if lighting_mode:
+            number_of_selected_colors = self.main_view.get_lighting_logo_spin_button()
+            # there seems to be a bug with liquidctl, it doesn't let me send an empty list or a None list...
+            colors = self.main_view.get_logo_colors(number_of_selected_colors) \
+                if lighting_mode.max_colors > 0 else LightingColors().add(LightingColor())
+            if lighting_mode.speed_enabled:
+                speed_id = self.main_view.get_lighting_logo_speed()
+                speed = LightingSpeeds().get(speed_id) if speed_id > 0 else None
+            else:
+                speed = None
+            direction = self.main_view.get_lighting_logo_direction() \
+                if lighting_mode.direction_enabled else None
+            settings = LightingSettings.create_logo_settings(lighting_mode, colors, speed, direction)
+            _LOG.info(f"Setting lighting: [ Channel: {settings.channel.value}, Mode: {settings.mode}, "
+                      f"Speed: {settings.speed}, Direction: {settings.direction}, Colors: {settings.colors.values()} ]")
+
+            self._composite_disposable.add(
+                self._set_lighting_interactor.execute(
+                    settings
+                ).pipe(
+                    operators.subscribe_on(self._scheduler),
+                    operators.observe_on(GtkScheduler(GLib)),
+                ).subscribe(on_next=self._lighting_applied_status(),
+                            on_error=lambda e: _LOG.exception("Lighting apply error: %s", str(e))))
+
+    def _lighting_applied_status(self):
+        self.main_view.set_statusbar_text(f'Lighting applied')
+
+    def on_lighting_logo_colors_spinbutton_changed(self, spinbutton: Any):
+        self.main_view.set_lighting_logo_color_buttons_enabled(
+            spinbutton.get_value_as_int()
+        )
+        
+    def on_ring_mode_selected(self, widget: Any, *_: Any) -> None:
+        # todo:
+        pass
+
+    def on_lighting_ring_colors_spinbutton_changed(self, spinbutton: Any):
+        # todo:
+        pass
