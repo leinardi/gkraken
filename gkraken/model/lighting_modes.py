@@ -1,4 +1,4 @@
-# This file is part of 2kraken.
+# This file is part of gkraken.
 #
 # Copyright (c) 2021 Roberto Leinardi and Guy Boldon
 #
