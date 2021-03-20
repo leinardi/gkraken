@@ -72,6 +72,8 @@ class MainView(MainViewInterface):
         self._builder: Gtk.Builder = builder
         self._settings_interactor = settings_interactor
         self._init_widgets()
+        self._lighting_logo_button_list: List[Gtk.ColorButton] = []
+        self._lighting_ring_button_list: List[Gtk.ColorButton] = []
         self._init_lighting_widgets()
 
     def _init_widgets(self) -> None:

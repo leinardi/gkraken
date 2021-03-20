@@ -113,16 +113,16 @@ class MainViewInterface:
 
     def get_logo_colors(self, max_colors: int) -> LightingColors:
         raise NotImplementedError()
-    
+
     def set_lighting_logo_spin_button(self, lighting_mode: LightingMode) -> None:
         raise NotImplementedError()
 
     def get_lighting_logo_spin_button(self) -> int:
         raise NotImplementedError()
-    
+
     def set_lighting_logo_speed_enabled(self, enabled: bool) -> None:
         raise NotImplementedError()
-    
+
     def get_lighting_logo_speed(self) -> int:
         raise NotImplementedError()
 
@@ -299,7 +299,8 @@ class MainPresenter:
                     channel=ChannelType.PUMP.value)
                 if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm is not None:
                     _LOG.debug("No Pump Duty reported from device, calculating based on speed profile")
-                    status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile, status.liquid_temperature)
+                    status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile,
+                                                            status.liquid_temperature)
             self.main_view.refresh_status(status)
             if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
                 self._legacy_firmware_dialog_shown = True
@@ -510,10 +511,10 @@ class MainPresenter:
     def _load_color_modes(self) -> None:
         self._composite_disposable.add(
             self._get_lighting_modes().subscribe(
-                on_next=lambda lighting_modes: self.main_view.load_color_modes(lighting_modes),
+                on_next=self.main_view.load_color_modes,
                 on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))))
 
-    def on_logo_mode_selected(self, widget: Any, *_: Any) -> None:
+    def on_logo_mode_selected(self, *_: Any) -> None:
         mode_id = self.main_view.get_logo_mode_id()
         self._get_lighting_modes(
         ).subscribe(
@@ -532,7 +533,7 @@ class MainPresenter:
     def on_lighting_apply_button_clicked(self, *_: Any) -> None:
         self._get_lighting_modes(
         ).subscribe(
-            on_next=lambda lighting_modes: self._set_lighting(lighting_modes),
+            on_next=self._set_lighting,
             on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))
         )
 

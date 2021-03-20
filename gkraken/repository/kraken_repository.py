@@ -56,13 +56,13 @@ class KrakenRepository:
         if self._driver:
             try:
                 driver_status = self._driver.get_status()
-                _LOG.debug(f"Reported status:\n{driver_status}")
+                _LOG.debug("Reported status:\n%s", driver_status)
                 status_list = [v for k, v, u in driver_status]
                 if isinstance(self._driver, KrakenZ3):
                     return Status.get_z3(status_list)
-                elif isinstance(self._driver, KrakenX3):
+                if isinstance(self._driver, KrakenX3):
                     return Status.get_x3(status_list)
-                elif isinstance(self._driver, Kraken2):
+                if isinstance(self._driver, Kraken2):
                     return Status.get_x2(status_list)
             # pylint: disable=bare-except
             except:
@@ -89,12 +89,11 @@ class KrakenRepository:
         self._load_driver()
         if isinstance(self._driver, Kraken2):
             return LightingModes.get_x2()
-        elif isinstance(self._driver, KrakenX3):
+        if isinstance(self._driver, KrakenX3):
             return LightingModes.get_x3()
-        elif isinstance(self._driver, KrakenZ3):
+        if isinstance(self._driver, KrakenZ3):
             return LightingModes.get_z3()
-        else:
-            return None
+        return None
 
     @synchronized_with_attr("lock")
     def set_lighting_mode(self, settings: LightingSettings) -> None:
