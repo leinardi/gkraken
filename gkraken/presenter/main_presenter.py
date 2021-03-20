@@ -204,7 +204,6 @@ class MainPresenter:
         self._check_supported_kraken()
         self._refresh_speed_profiles(True)
         self._load_color_modes()
-        # need to start loading color profiles from the driver at startup here
         if self._settings_interactor.get_int('settings_check_new_version'):
             self._check_new_version()
 

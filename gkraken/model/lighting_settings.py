@@ -80,14 +80,16 @@ class LightingSettings:
         self.direction: str = set_direction
 
     @staticmethod
-    def create_logo_settings(lighting_mode: LightingMode, colors: LightingColors,
+    def create_logo_settings(lighting_mode: LightingMode,
+                             colors: LightingColors,
                              speed: Optional[LightingSpeed] = None,
                              direction: Optional[LightingDirection] = None
                              ) -> 'LightingSettings':
         return LightingSettings(LightingChannel.LOGO, lighting_mode.mode, colors, speed, direction)
 
     @staticmethod
-    def create_ring_settings(lighting_mode: LightingMode, colors: LightingColors,
+    def create_ring_settings(lighting_mode: LightingMode,
+                             colors: LightingColors,
                              speed: Optional[LightingSpeed] = None,
                              direction: Optional[LightingDirection] = None
                              ) -> 'LightingSettings':

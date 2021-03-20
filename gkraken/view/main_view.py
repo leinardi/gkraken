@@ -75,6 +75,7 @@ class MainView(MainViewInterface):
         self._lighting_logo_button_list: List[Gtk.ColorButton] = []
         self._lighting_ring_button_list: List[Gtk.ColorButton] = []
         self._init_lighting_widgets()
+        self._init_button_lists()
 
     def _init_widgets(self) -> None:
         self._app_indicator: Optional[AppIndicator3.Indicator] = None
@@ -152,7 +153,6 @@ class MainView(MainViewInterface):
         self._lighting_ring_colors_spinbutton_adjustment: Gtk.Adjustment = \
             self._builder.get_object('lighting_ring_colors_spinbutton_adjustment')
         self._lighting_apply_button: Gtk.Button = self._builder.get_object('lighting_apply_button')
-        self._init_button_lists()
 
     def _init_button_lists(self) -> None:
         self._lighting_logo_button_list: List[Gtk.ColorButton] = [
