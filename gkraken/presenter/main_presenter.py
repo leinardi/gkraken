@@ -105,10 +105,10 @@ class MainViewInterface:
     def set_lighting_apply_button_enabled(self, enabled: bool) -> None:
         raise NotImplementedError()
 
-    def set_lighting_logo_color_buttons_enabled(self, max_colors: int) -> None:
+    def get_logo_mode_id(self) -> int:
         raise NotImplementedError()
 
-    def get_logo_mode_id(self) -> int:
+    def set_lighting_logo_color_buttons_enabled(self, max_colors: int) -> None:
         raise NotImplementedError()
 
     def get_logo_colors(self, max_colors: int) -> LightingColors:
@@ -130,6 +130,33 @@ class MainViewInterface:
         raise NotImplementedError()
 
     def get_lighting_logo_direction(self) -> LightingDirection:
+        raise NotImplementedError()
+
+    def get_ring_mode_id(self) -> int:
+        raise NotImplementedError()
+
+    def set_lighting_ring_color_buttons_enabled(self, max_colors: int) -> None:
+        raise NotImplementedError()
+
+    def get_ring_colors(self, max_colors: int) -> LightingColors:
+        raise NotImplementedError()
+
+    def set_lighting_ring_spin_button(self, lighting_mode: LightingMode) -> None:
+        raise NotImplementedError()
+
+    def get_lighting_ring_spin_button(self) -> int:
+        raise NotImplementedError()
+
+    def set_lighting_ring_speed_enabled(self, enabled: bool) -> None:
+        raise NotImplementedError()
+
+    def get_lighting_ring_speed(self) -> int:
+        raise NotImplementedError()
+
+    def set_lighting_ring_direction_enabled(self, enabled: bool) -> None:
+        raise NotImplementedError()
+
+    def get_lighting_ring_direction(self) -> LightingDirection:
         raise NotImplementedError()
 
 
@@ -512,9 +539,14 @@ class MainPresenter:
     def _set_lighting(self, lighting_modes: LightingModes) -> None:
         logo_mode_id = self.main_view.get_logo_mode_id()
         self._set_lighting_logo(logo_mode_id, lighting_modes)
+        ring_mode_id = self.main_view.get_ring_mode_id()
+        self._set_lighting_ring(ring_mode_id, lighting_modes)
+
+    def _lighting_applied_status(self) -> None:
+        self.main_view.set_statusbar_text('Lighting applied')
 
     def _set_lighting_logo(self, mode_id: int, lighting_modes: LightingModes) -> None:
-        lighting_mode = lighting_modes.modes_logo[mode_id]
+        lighting_mode = lighting_modes.modes_logo[mode_id] if mode_id > 0 else None
         if lighting_mode:
             number_of_selected_colors = self.main_view.get_lighting_logo_spin_button()
             # possible bug with liquidctl: it doesn't let us send an empty list or a None list...
@@ -528,30 +560,59 @@ class MainPresenter:
             direction = self.main_view.get_lighting_logo_direction() \
                 if lighting_mode.direction_enabled else None
             settings = LightingSettings.create_logo_settings(lighting_mode, colors, speed, direction)
-            _LOG.info(f"Setting lighting: [ Channel: {settings.channel.value}, Mode: {settings.mode}, "
-                      f"Speed: {settings.speed}, Direction: {settings.direction}, Colors: {settings.colors.values()} ]")
-
-            self._composite_disposable.add(
-                self._set_lighting_interactor.execute(
-                    settings
-                ).pipe(
-                    operators.subscribe_on(self._scheduler),
-                    operators.observe_on(GtkScheduler(GLib)),
-                ).subscribe(on_next=lambda _: self._lighting_applied_status(),
-                            on_error=lambda e: _LOG.exception("Lighting apply error: %s", str(e))))
-
-    def _lighting_applied_status(self) -> None:
-        self.main_view.set_statusbar_text(f'Lighting applied')
+            self._schedule_lighting_setting(settings)
 
     def on_lighting_logo_colors_spinbutton_changed(self, spinbutton: Any) -> None:
         self.main_view.set_lighting_logo_color_buttons_enabled(
             spinbutton.get_value_as_int()
         )
-        
-    def on_ring_mode_selected(self, widget: Any, *_: Any) -> None:
-        # todo:
-        pass
+
+    def on_ring_mode_selected(self, *_: Any) -> None:
+        mode_id = self.main_view.get_ring_mode_id()
+        self._get_lighting_modes(
+        ).subscribe(
+            on_next=lambda lighting_modes: self._update_ring_widgets(mode_id, lighting_modes),
+            on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))
+        )
+
+    def _update_ring_widgets(self, mode_id: int, lighting_modes: LightingModes) -> None:
+        chosen_ring_mode = lighting_modes.modes_ring[mode_id]
+        self.main_view.set_lighting_ring_spin_button(chosen_ring_mode)
+        self.main_view.set_lighting_ring_color_buttons_enabled(chosen_ring_mode.min_colors)
+        self.main_view.set_lighting_ring_speed_enabled(chosen_ring_mode.speed_enabled)
+        self.main_view.set_lighting_ring_direction_enabled(chosen_ring_mode.direction_enabled)
+        self.main_view.set_lighting_apply_button_enabled(True)
 
     def on_lighting_ring_colors_spinbutton_changed(self, spinbutton: Any) -> None:
-        # todo:
-        pass
+        self.main_view.set_lighting_ring_color_buttons_enabled(
+            spinbutton.get_value_as_int()
+        )
+
+    def _set_lighting_ring(self, mode_id: int, lighting_modes: LightingModes) -> None:
+        lighting_mode = lighting_modes.modes_ring[mode_id] if mode_id > 0 else None
+        if lighting_mode:
+            number_of_selected_colors = self.main_view.get_lighting_ring_spin_button()
+            # possible bug with liquidctl: it doesn't let us send an empty list or a None list...
+            colors = self.main_view.get_ring_colors(number_of_selected_colors) \
+                if lighting_mode.max_colors > 0 else LightingColors().add(LightingColor())
+            if lighting_mode.speed_enabled:
+                speed_id = self.main_view.get_lighting_ring_speed()
+                speed = LightingSpeeds().get(speed_id) if speed_id > 0 else None
+            else:
+                speed = None
+            direction = self.main_view.get_lighting_ring_direction() \
+                if lighting_mode.direction_enabled else None
+            settings = LightingSettings.create_ring_settings(lighting_mode, colors, speed, direction)
+            self._schedule_lighting_setting(settings)
+
+    def _schedule_lighting_setting(self, settings: LightingSettings) -> None:
+        _LOG.info("Setting lighting: [ Channel: %s, Mode: %s, Speed: %s, Direction: %s, Colors: %s ]",
+                  settings.channel.value, settings.mode, settings.speed, settings.direction, settings.colors.values())
+        self._composite_disposable.add(
+            self._set_lighting_interactor.execute(
+                settings
+            ).pipe(
+                operators.subscribe_on(self._scheduler),
+                operators.observe_on(GtkScheduler(GLib)),
+            ).subscribe(on_next=lambda _: self._lighting_applied_status(),
+                        on_error=lambda e: _LOG.exception("Lighting apply error: %s", str(e))))

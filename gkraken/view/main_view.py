@@ -424,3 +424,46 @@ class MainView(MainViewInterface):
     def get_lighting_logo_direction(self) -> LightingDirection:
         active = self._lighting_logo_direction_reverse.get_active()
         return LightingDirection.BACKWARD if active else LightingDirection.FORWARD
+
+    def get_ring_mode_id(self) -> int:
+        active = self._lighting_ring_mode_combobox.get_active()
+        mode_id = self._lighting_ring_mode_combobox.get_model()[active][0] \
+            if active >= 0 else -1
+        return int(mode_id)
+
+    def set_lighting_ring_color_buttons_enabled(self, max_colors: int) -> None:
+        for index, button in enumerate(self._lighting_ring_button_list):
+            button.set_sensitive(index < max_colors)
+
+    def get_ring_colors(self, max_colors: int) -> LightingColors:
+        colors = LightingColors()
+        for index in range(max_colors):
+            color = self._lighting_ring_button_list[index].get_rgba()
+            colors.add(LightingColor.from_button_color(color))
+        return colors
+
+    def set_lighting_ring_spin_button(self, lighting_mode: LightingMode) -> None:
+        self._lighting_ring_colors_spinbutton.set_sensitive(
+            abs(lighting_mode.min_colors - lighting_mode.max_colors) > 0)
+        self._lighting_ring_colors_spinbutton_adjustment.set_lower(lighting_mode.min_colors)
+        self._lighting_ring_colors_spinbutton_adjustment.set_upper(lighting_mode.max_colors)
+        self._lighting_ring_colors_spinbutton.set_value(lighting_mode.min_colors)
+
+    def get_lighting_ring_spin_button(self) -> int:
+        return int(self._lighting_ring_colors_spinbutton.get_value_as_int())
+
+    def set_lighting_ring_speed_enabled(self, enabled: bool) -> None:
+        self._lighting_ring_speed_combobox.set_sensitive(enabled)
+
+    def get_lighting_ring_speed(self) -> int:
+        active = self._lighting_ring_speed_combobox.get_active()
+        speed_id = self._lighting_ring_speed_combobox.get_model()[active][0] \
+            if active >= 0 else -1
+        return int(speed_id)
+
+    def set_lighting_ring_direction_enabled(self, enabled: bool) -> None:
+        self._lighting_ring_direction_reverse.set_sensitive(enabled)
+
+    def get_lighting_ring_direction(self) -> LightingDirection:
+        active = self._lighting_ring_direction_reverse.get_active()
+        return LightingDirection.BACKWARD if active else LightingDirection.FORWARD
