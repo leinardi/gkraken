@@ -71,12 +71,39 @@ class LightingModes:
 
 
 class _ModesTypeX2:
+    # Logo modes have been adjusted to reasonable settings for the single LED, original settings left for reference
     MODES_LOGO: List[LightingMode] = [
-        # LightingMode(),
+        LightingMode(1, 'off', 'Off', 0, 0, False, False),
+        LightingMode(2, 'fixed', 'Fixed', 1, 1, False, False),
+        # LightingMode(3, 'super-fixed', 'Fixed Individual', 1, 8, False, False),
+        LightingMode(4, 'fading', 'Fade', 2, 8, True, False),
+        LightingMode(5, 'spectrum-wave', 'Spectrum Wave', 0, 0, True, True),
+        LightingMode(14, 'breathing', 'Breathing', 1, 8, True, False),
+        # LightingMode(15, 'super-breathing', 'Breathing Individual', 1, 8, True, False),
+        LightingMode(16, 'pulse', 'Pulse', 1, 8, True, False),
     ]
 
     MODES_RING: List[LightingMode] = [
-        # LightingMode(),
+        LightingMode(1, 'off', 'Off', 0, 0, False, False),
+        LightingMode(2, 'fixed', 'Fixed', 1, 1, False, False),
+        LightingMode(3, 'super-fixed', 'Fixed Individual', 1, 8, False, False),
+        LightingMode(4, 'fading', 'Fade', 2, 8, True, False),
+        LightingMode(5, 'spectrum-wave', 'Spectrum Wave', 0, 0, True, True),
+        LightingMode(6, 'super-wave', 'Wave Individual', 1, 8, True, True),
+        LightingMode(7, 'marquee-3', 'Marquee 3', 1, 1, True, True),
+        LightingMode(8, 'marquee-4', 'Marquee 4', 1, 1, True, True),
+        LightingMode(9, 'marquee-5', 'Marquee 5', 1, 1, True, True),
+        LightingMode(10, 'marquee-6', 'Marquee 6', 1, 1, True, True),
+        LightingMode(11, 'covering-marquee', 'Covering Marquee', 2, 8, True, True),
+        LightingMode(12, 'alternating', 'Alternating', 2, 2, True, False),
+        LightingMode(13, 'moving-alternating', 'Moving Alternating', 2, 2, True, True),
+        LightingMode(14, 'breathing', 'Breathing', 1, 8, True, False),
+        LightingMode(15, 'super-breathing', 'Breathing Individual', 1, 8, True, False),
+        LightingMode(16, 'pulse', 'Pulse', 1, 8, True, False),
+        LightingMode(17, 'tai-chi', 'Tai-Chi', 2, 2, True, False),
+        LightingMode(18, 'water-cooler', 'Water Cooler', 0, 0, True, False),
+        LightingMode(19, 'loading', 'Loading', 1, 1, False, False),
+        LightingMode(20, 'wings', 'Wings', 1, 1, True, False),
     ]
 
 
@@ -152,6 +179,7 @@ class _ModesTypeX3:
     ]
 
 
+# not yet supported:
 class _ModesTypeZ3:
     MODES_LOGO: List[LightingMode] = [
     ]
