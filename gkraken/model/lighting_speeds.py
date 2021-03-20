@@ -23,7 +23,7 @@ class LightingSpeed:
                  speed_id: int,
                  speed: str,
                  frontend_name: str
-                 ):
+                 ) -> None:
         self.speed_id: int = speed_id
         self.speed: str = speed
         self.frontend_name: str = frontend_name

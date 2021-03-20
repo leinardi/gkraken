@@ -27,7 +27,7 @@ class LightingMode:
                  max_colors: int,
                  speed_enabled: bool,
                  direction_enabled: bool
-                 ):
+                 ) -> None:
         self.mode_id: int = mode_id
         self.mode: str = mode
         self.frontend_name: str = frontend_name
