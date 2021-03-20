@@ -128,6 +128,7 @@ class MainPresenter:
         self._should_update_pump_speed: bool = False
         self._legacy_firmware_dialog_shown: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
+        self._critical_error_occurred: bool = False  # to handle multiple startup errors
 
     def on_start(self) -> None:
         self._register_db_listeners()
@@ -194,14 +195,16 @@ class MainPresenter:
 
     def _handle_refresh_error(self, ex: Exception) -> None:
         if isinstance(ex, OSError):
-            self.main_view.show_error_message_dialog(
-                "Unable to communicate with the NZXT Kraken",
-                "It was not possible to communicate with the NZXT Kranen.\n\n"
-                "Most probably the current user does not have the permission to access it.\n\n"
-                "You can try to fix the issue running the following command and then rebooting:\n\n"
-                f"{self._get_udev_command()}\n\n"
-                "For more info check the section \"Adding Udev rule\" of the project's README.md.")
-            get_default_application().quit()
+            if not self._critical_error_occurred:
+                self._critical_error_occurred = True
+                self.main_view.show_error_message_dialog(
+                    "Unable to communicate with the NZXT Kraken",
+                    "It was not possible to communicate with the NZXT Kranen.\n\n"
+                    "Most probably the current user does not have the permission to access it.\n\n"
+                    "You can try to fix the issue running the following command and then rebooting:\n\n"
+                    f"{self._get_udev_command()}\n\n"
+                    "For more info check the section \"Adding Udev rule\" of the project's README.md.")
+                get_default_application().quit()
         _LOG.exception("Refresh error: %s", str(ex))
 
     @staticmethod
@@ -217,13 +220,13 @@ class MainPresenter:
             if self._should_update_fan_speed:
                 last_applied_fan_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
                     channel=ChannelType.FAN.value)
-                if last_applied_fan_profile is not None and status.fan_duty is None and status.fan_rpm != 0:
+                if last_applied_fan_profile is not None and status.fan_duty is None and status.fan_rpm is not None:
                     _LOG.debug("No Fan Duty reported from device, calculating based on speed profile")
                     status.fan_duty = self._calculate_duty(last_applied_fan_profile.profile, status.liquid_temperature)
             if self._should_update_pump_speed:
                 last_applied_pump_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
                     channel=ChannelType.PUMP.value)
-                if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm != 0:
+                if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm is not None:
                     _LOG.debug("No Pump Duty reported from device, calculating based on speed profile")
                     status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile, status.liquid_temperature)
             self.main_view.refresh_status(status)
@@ -266,8 +269,8 @@ class MainPresenter:
     @staticmethod
     def _is_channel_supported(channel: ChannelType, status: Status) -> bool:
         return {
-            ChannelType.FAN: status.fan_rpm != 0,
-            ChannelType.PUMP: status.pump_rpm != 0
+            ChannelType.FAN: status.fan_rpm is not None,
+            ChannelType.PUMP: status.pump_rpm is not None
         }.get(channel, True)
 
     def _refresh_speed_profile(self, channel: ChannelType, init: bool = False,
