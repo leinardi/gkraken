@@ -15,7 +15,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Dict
+from typing import Dict, ValuesView, Optional
 
 
 class LightingSpeed:
@@ -30,7 +30,7 @@ class LightingSpeed:
 
 
 class LightingSpeeds:
-    def __init__(self):
+    def __init__(self) -> None:
         self._speeds: Dict[int, LightingSpeed] = {
             1: LightingSpeed(1, 'slowest', 'Slowest'),
             2: LightingSpeed(2, 'slower', 'Slower'),
@@ -39,8 +39,8 @@ class LightingSpeeds:
             5: LightingSpeed(5, 'fastest', 'Fastest')
         }
 
-    def values(self):
+    def values(self) -> ValuesView[LightingSpeed]:
         return self._speeds.values()
 
-    def get(self, speed_id: int):
+    def get(self, speed_id: int) -> Optional[LightingSpeed]:
         return self._speeds.get(speed_id)

@@ -16,7 +16,6 @@
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import logging
 import multiprocessing
 from typing import Optional, Any, List, Tuple, Dict, Callable
@@ -481,7 +480,7 @@ class MainPresenter:
                 operators.observe_on(GtkScheduler(GLib)),
             )
 
-    def _load_color_modes(self):
+    def _load_color_modes(self) -> None:
         self._composite_disposable.add(
             self._get_lighting_modes().subscribe(
                 on_next=lambda lighting_modes: self.main_view.load_color_modes(lighting_modes),
@@ -495,7 +494,7 @@ class MainPresenter:
             on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))
         )
 
-    def _update_logo_widgets(self, mode_id: int, lighting_modes: LightingModes):
+    def _update_logo_widgets(self, mode_id: int, lighting_modes: LightingModes) -> None:
         chosen_logo_mode = lighting_modes.modes_logo[mode_id]
         self.main_view.set_lighting_logo_spin_button(chosen_logo_mode)
         self.main_view.set_lighting_logo_color_buttons_enabled(chosen_logo_mode.min_colors)
@@ -510,15 +509,15 @@ class MainPresenter:
             on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))
         )
 
-    def _set_lighting(self, lighting_modes: LightingModes):
+    def _set_lighting(self, lighting_modes: LightingModes) -> None:
         logo_mode_id = self.main_view.get_logo_mode_id()
         self._set_lighting_logo(logo_mode_id, lighting_modes)
 
-    def _set_lighting_logo(self, mode_id: int, lighting_modes: LightingModes):
+    def _set_lighting_logo(self, mode_id: int, lighting_modes: LightingModes) -> None:
         lighting_mode = lighting_modes.modes_logo[mode_id]
         if lighting_mode:
             number_of_selected_colors = self.main_view.get_lighting_logo_spin_button()
-            # there seems to be a bug with liquidctl, it doesn't let me send an empty list or a None list...
+            # possible bug with liquidctl: it doesn't let us send an empty list or a None list...
             colors = self.main_view.get_logo_colors(number_of_selected_colors) \
                 if lighting_mode.max_colors > 0 else LightingColors().add(LightingColor())
             if lighting_mode.speed_enabled:
@@ -538,13 +537,13 @@ class MainPresenter:
                 ).pipe(
                     operators.subscribe_on(self._scheduler),
                     operators.observe_on(GtkScheduler(GLib)),
-                ).subscribe(on_next=self._lighting_applied_status(),
+                ).subscribe(on_next=lambda _: self._lighting_applied_status(),
                             on_error=lambda e: _LOG.exception("Lighting apply error: %s", str(e))))
 
-    def _lighting_applied_status(self):
+    def _lighting_applied_status(self) -> None:
         self.main_view.set_statusbar_text(f'Lighting applied')
 
-    def on_lighting_logo_colors_spinbutton_changed(self, spinbutton: Any):
+    def on_lighting_logo_colors_spinbutton_changed(self, spinbutton: Any) -> None:
         self.main_view.set_lighting_logo_color_buttons_enabled(
             spinbutton.get_value_as_int()
         )
@@ -553,6 +552,6 @@ class MainPresenter:
         # todo:
         pass
 
-    def on_lighting_ring_colors_spinbutton_changed(self, spinbutton: Any):
+    def on_lighting_ring_colors_spinbutton_changed(self, spinbutton: Any) -> None:
         # todo:
         pass

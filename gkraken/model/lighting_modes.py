@@ -38,12 +38,12 @@ class LightingMode:
 
 
 class LightingModes:
-    def __init__(self):
+    def __init__(self) -> None:
         self.modes_logo: Dict[int, LightingMode] = {}
         self.modes_ring: Dict[int, LightingMode] = {}
 
     @staticmethod
-    def get_x2():
+    def get_x2() -> 'LightingModes':
         lighting_modes = LightingModes()
         for mode in _ModesTypeX2.MODES_LOGO:
             lighting_modes.modes_logo[mode.mode_id] = mode
@@ -52,7 +52,7 @@ class LightingModes:
         return lighting_modes
 
     @staticmethod
-    def get_x3():
+    def get_x3() -> 'LightingModes':
         lighting_modes = LightingModes()
         for mode in _ModesTypeX3.MODES_LOGO:
             lighting_modes.modes_logo[mode.mode_id] = mode
@@ -61,7 +61,7 @@ class LightingModes:
         return lighting_modes
 
     @staticmethod
-    def get_z3():
+    def get_z3() -> 'LightingModes':
         lighting_modes = LightingModes()
         for mode in _ModesTypeZ3.MODES_LOGO:
             lighting_modes.modes_logo[mode.mode_id] = mode

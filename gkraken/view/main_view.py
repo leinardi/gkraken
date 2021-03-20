@@ -17,7 +17,7 @@
 
 import logging
 from collections import OrderedDict
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Dict, List, Tuple
 
 from gkraken.di import MainBuilder
 from gkraken.interactor.settings_interactor import SettingsInteractor
@@ -112,7 +112,7 @@ class MainView(MainViewInterface):
         self._legacy_firmware_dialog.connect('response', lambda dialog, _: dialog.hide())
         self._init_plot_charts(cooling_fan_scrolled_window, cooling_pump_scrolled_window)
 
-    def _init_lighting_widgets(self):
+    def _init_lighting_widgets(self) -> None:
         self._lighting_logo_mode_liststore: Gtk.ListStore = self._builder.get_object('lighting_logo_mode_liststore')
         self._lighting_logo_mode_combobox: Gtk.ListStore = self._builder.get_object('lighting_logo_mode_combobox')
         self._lighting_logo_speed_liststore: Gtk.ListStore = self._builder.get_object('lighting_logo_speed_liststore')
@@ -152,7 +152,7 @@ class MainView(MainViewInterface):
         self._lighting_apply_button: Gtk.Button = self._builder.get_object('lighting_apply_button')
         self._init_button_lists()
 
-    def _init_button_lists(self):
+    def _init_button_lists(self) -> None:
         self._lighting_logo_button_list: List[Gtk.ColorButton] = [
             self._lighting_logo_color_1, self._lighting_logo_color_2, self._lighting_logo_color_3,
             self._lighting_logo_color_4, self._lighting_logo_color_5, self._lighting_logo_color_6,
@@ -390,7 +390,7 @@ class MainView(MainViewInterface):
         active = self._lighting_logo_mode_combobox.get_active()
         mode_id = self._lighting_logo_mode_combobox.get_model()[active][0] \
             if active >= 0 else -1
-        return mode_id
+        return int(mode_id)
 
     def get_logo_colors(self, max_colors: int) -> LightingColors:
         colors = LightingColors()
@@ -407,7 +407,7 @@ class MainView(MainViewInterface):
         self._lighting_logo_colors_spinbutton.set_value(lighting_mode.min_colors)
 
     def get_lighting_logo_spin_button(self) -> int:
-        return self._lighting_logo_colors_spinbutton.get_value_as_int()
+        return int(self._lighting_logo_colors_spinbutton.get_value_as_int())
 
     def set_lighting_logo_speed_enabled(self, enabled: bool) -> None:
         self._lighting_logo_speed_combobox.set_sensitive(enabled)
@@ -416,7 +416,7 @@ class MainView(MainViewInterface):
         active = self._lighting_logo_speed_combobox.get_active()
         speed_id = self._lighting_logo_speed_combobox.get_model()[active][0] \
             if active >= 0 else -1
-        return speed_id
+        return int(speed_id)
 
     def set_lighting_logo_direction_enabled(self, enabled: bool) -> None:
         self._lighting_logo_direction_reverse.set_sensitive(enabled)

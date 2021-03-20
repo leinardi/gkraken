@@ -39,13 +39,13 @@ class LightingColor:
                  red: int = 0,
                  green: int = 0,
                  blue: int = 0
-                 ):
+                 ) -> None:
         self.red: int = red
         self.green: int = green
         self.blue: int = blue
 
     @staticmethod
-    def from_button_color(color: Gdk.RGBA):
+    def from_button_color(color: Gdk.RGBA) -> 'LightingColor':
         return LightingColor(int(color.red * 255), int(color.green * 255), int(color.blue * 255))
 
     def values(self) -> List[int]:
@@ -53,10 +53,10 @@ class LightingColor:
 
 
 class LightingColors:
-    def __init__(self):
+    def __init__(self) -> None:
         self.colors: List[LightingColor] = []
 
-    def add(self, color: LightingColor):
+    def add(self, color: LightingColor) -> 'LightingColors':
         self.colors.append(color)
         return self
 
@@ -82,11 +82,13 @@ class LightingSettings:
     @staticmethod
     def create_logo_settings(lighting_mode: LightingMode, colors: LightingColors,
                              speed: Optional[LightingSpeed] = None,
-                             direction: Optional[LightingDirection] = None):
+                             direction: Optional[LightingDirection] = None
+                             ) -> 'LightingSettings':
         return LightingSettings(LightingChannel.LOGO, lighting_mode.mode, colors, speed, direction)
 
     @staticmethod
     def create_ring_settings(lighting_mode: LightingMode, colors: LightingColors,
                              speed: Optional[LightingSpeed] = None,
-                             direction: Optional[LightingDirection] = None):
+                             direction: Optional[LightingDirection] = None
+                             ) -> 'LightingSettings':
         return LightingSettings(LightingChannel.RING, lighting_mode.mode, colors, speed, direction)

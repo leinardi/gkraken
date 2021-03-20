@@ -36,7 +36,7 @@ class Status:
         self.pump_duty: Optional[float] = pump_duty
 
     @staticmethod
-    def get_x2(status_list: list):
+    def get_x2(status_list: list) -> 'Status':
         status = Status(
             status_list[_StatusTypeX2.LIQUID_TEMPERATURE.value],
             status_list[_StatusTypeX2.FAN_RPM.value],
@@ -46,7 +46,7 @@ class Status:
         return status if status.fan_rpm < 3500 else None
 
     @staticmethod
-    def get_x3(status_list: list):
+    def get_x3(status_list: list) -> 'Status':
         return Status(
             status_list[_StatusTypeX3.LIQUID_TEMPERATURE.value],
             pump_rpm=status_list[_StatusTypeX3.PUMP_RPM.value],
@@ -54,7 +54,7 @@ class Status:
         )
 
     @staticmethod
-    def get_z3(status_list: list):
+    def get_z3(status_list: list) -> 'Status':
         return Status(
             status_list[_StatusTypeZ3.LIQUID_TEMPERATURE.value],
             fan_rpm=status_list[_StatusTypeZ3.FAN_RPM.value],
