@@ -729,130 +729,145 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="label-xalign">0.5</property>
                     <property name="shadow-type">in</property>
                     <child>
-                      <!-- n-columns=4 n-rows=3 -->
-                      <object class="GtkGrid">
+                      <object class="GtkBox">
                         <property name="height-request">273</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <property name="valign">center</property>
                         <property name="margin-top">10</property>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkColorButton" id="lighting_logo_color_1">
-                            <property name="width-request">80</property>
-                            <property name="height-request">80</property>
+                          <!-- n-columns=4 n-rows=2 -->
+                          <object class="GtkGrid">
+                            <property name="height-request">160</property>
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_1">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_2">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_3">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_4">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_5">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_6">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_7">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_8">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_logo_color_2">
-                            <property name="width-request">80</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_logo_color_3">
-                            <property name="width-request">80</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_logo_color_4">
-                            <property name="width-request">80</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_logo_color_5">
-                            <property name="height-request">80</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_logo_color_6">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_logo_color_7">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_logo_color_8">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Logo Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">1</property>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
@@ -872,16 +887,10 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <signal name="value-changed" handler="on_lighting_logo_colors_spinbutton_changed" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">2</property>
-                            <property name="width">2</property>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
                           </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                     </child>
@@ -1147,130 +1156,145 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="label-xalign">0.5</property>
                     <property name="shadow-type">in</property>
                     <child>
-                      <!-- n-columns=4 n-rows=3 -->
-                      <object class="GtkGrid">
+                      <object class="GtkBox">
                         <property name="height-request">273</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <property name="valign">center</property>
                         <property name="margin-top">10</property>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkColorButton" id="lighting_ring_color_1">
-                            <property name="width-request">80</property>
-                            <property name="height-request">80</property>
+                          <!-- n-columns=4 n-rows=2 -->
+                          <object class="GtkGrid">
+                            <property name="height-request">160</property>
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_1">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_2">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_3">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_4">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_5">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_6">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_7">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_8">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_ring_color_2">
-                            <property name="width-request">80</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_ring_color_3">
-                            <property name="width-request">80</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_ring_color_4">
-                            <property name="width-request">80</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_ring_color_5">
-                            <property name="height-request">80</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_ring_color_6">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_ring_color_7">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkColorButton" id="lighting_ring_color_8">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="title" translatable="yes">Pick a Ring Color</property>
-                            <property name="rgba">rgb(255,255,255)</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">1</property>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
@@ -1290,16 +1314,10 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <signal name="value-changed" handler="on_lighting_ring_colors_spinbutton_changed" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">2</property>
-                            <property name="width">2</property>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
                           </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                     </child>

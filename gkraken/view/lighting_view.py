@@ -118,12 +118,17 @@ class LightingView(LightingViewInterface):
         self._lighting_ring_speed_combobox.set_model(self._lighting_logo_speed_liststore)
         self._lighting_ring_speed_combobox.set_active(2)
 
+        self.set_lighting_logo_color_buttons_enabled(0)
+        self.set_lighting_ring_color_buttons_enabled(0)
+
     def set_lighting_apply_button_enabled(self, enabled: bool) -> None:
         self._lighting_apply_button.set_sensitive(enabled)
 
     def set_lighting_logo_color_buttons_enabled(self, max_colors: int) -> None:
         for index, button in enumerate(self._lighting_logo_button_list):
-            button.set_sensitive(index < max_colors)
+            is_enabled = index < max_colors
+            button.set_visible(is_enabled)
+            button.set_sensitive(is_enabled)
 
     def get_logo_mode_id(self) -> int:
         active = self._lighting_logo_mode_combobox.get_active()
@@ -172,7 +177,9 @@ class LightingView(LightingViewInterface):
 
     def set_lighting_ring_color_buttons_enabled(self, max_colors: int) -> None:
         for index, button in enumerate(self._lighting_ring_button_list):
-            button.set_sensitive(index < max_colors)
+            is_enabled = index < max_colors
+            button.set_visible(is_enabled)
+            button.set_sensitive(is_enabled)
 
     def get_ring_colors(self, max_colors: int) -> LightingColors:
         colors = LightingColors()
