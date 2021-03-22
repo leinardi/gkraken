@@ -21,11 +21,13 @@ from typing import List
 from injector import singleton, inject
 from gi.repository import Gtk
 
+from gkraken.conf import APP_PACKAGE_NAME
 from gkraken.di import MainBuilder
 from gkraken.model.lighting_modes import LightingMode, LightingModes
 from gkraken.model.lighting_settings import LightingDirection, LightingColors, LightingColor
 from gkraken.model.lighting_speeds import LightingSpeeds
-from gkraken.presenter.main_presenter import MainPresenter, LightingViewInterface
+from gkraken.presenter.lighting_presenter import LightingPresenter
+from gkraken.view.lighting_view_interface import LightingViewInterface
 
 _LOG = logging.getLogger(__name__)
 
@@ -35,12 +37,12 @@ class LightingView(LightingViewInterface):
 
     @inject
     def __init__(self,
-                 presenter: MainPresenter,
+                 presenter: LightingPresenter,
                  builder: MainBuilder,
                  ) -> None:
         _LOG.debug('init LightingView')
-        self._presenter: MainPresenter = presenter
-        self._presenter.lighting_view = self
+        self._presenter: LightingPresenter = presenter
+        self._presenter.view = self
         self._builder: Gtk.Builder = builder
         self._lighting_logo_button_list: List[Gtk.ColorButton] = []
         self._lighting_ring_button_list: List[Gtk.ColorButton] = []
@@ -48,6 +50,8 @@ class LightingView(LightingViewInterface):
         self._init_button_lists()
 
     def _init_lighting_widgets(self) -> None:
+        self._statusbar: Gtk.Statusbar = self._builder.get_object('statusbar')
+        self._context = self._statusbar.get_context_id(APP_PACKAGE_NAME)
         self._lighting_logo_mode_liststore: Gtk.ListStore = self._builder.get_object('lighting_logo_mode_liststore')
         self._lighting_logo_mode_combobox: Gtk.ListStore = self._builder.get_object('lighting_logo_mode_combobox')
         self._lighting_logo_speed_liststore: Gtk.ListStore = self._builder.get_object('lighting_logo_speed_liststore')
@@ -120,6 +124,10 @@ class LightingView(LightingViewInterface):
 
         self.set_lighting_logo_color_buttons_enabled(0)
         self.set_lighting_ring_color_buttons_enabled(0)
+
+    def set_statusbar_text(self, text: str) -> None:
+        self._statusbar.remove_all(self._context)
+        self._statusbar.push(self._context, text)
 
     def set_lighting_apply_button_enabled(self, enabled: bool) -> None:
         self._lighting_apply_button.set_sensitive(enabled)

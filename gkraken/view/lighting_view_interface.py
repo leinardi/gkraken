@@ -24,6 +24,9 @@ class LightingViewInterface:
     def load_color_modes(self, lighting_modes: LightingModes) -> None:
         raise NotImplementedError()
 
+    def set_statusbar_text(self, text: str) -> None:
+        raise NotImplementedError()
+
     def set_lighting_apply_button_enabled(self, enabled: bool) -> None:
         raise NotImplementedError()
 
