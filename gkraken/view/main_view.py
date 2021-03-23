@@ -17,7 +17,7 @@
 
 import logging
 from collections import OrderedDict
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Dict, List, Tuple
 
 from gkraken.di import MainBuilder
 from gkraken.interactor.settings_interactor import SettingsInteractor
@@ -30,6 +30,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
 # AppIndicator3 may not be installed
+from gkraken.view.lighting_view import LightingView
 from gkraken.view.preferences_view import PreferencesView
 
 try:
@@ -58,6 +59,7 @@ class MainView(MainViewInterface):
                  presenter: MainPresenter,
                  edit_speed_profile_view: EditSpeedProfileView,
                  preferences_view: PreferencesView,
+                 lighting_view: LightingView,
                  builder: MainBuilder,
                  settings_interactor: SettingsInteractor,
                  ) -> None:
@@ -65,6 +67,7 @@ class MainView(MainViewInterface):
         self._presenter: MainPresenter = presenter
         self._edit_speed_profile_view = edit_speed_profile_view
         self._preferences_view = preferences_view
+        self._lighting_view: LightingView = lighting_view
         self._presenter.main_view = self
         self._builder: Gtk.Builder = builder
         self._settings_interactor = settings_interactor

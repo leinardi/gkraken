@@ -43,56 +43,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
-  <object class="GtkPopover" id="cooling_fixed_speed_popover">
-    <property name="can-focus">False</property>
-    <property name="relative-to">cooling_fan_edit_button</property>
-    <property name="position">bottom</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">6</property>
-        <child>
-          <object class="GtkScale" id="cooling_fixed_speed_scale">
-            <property name="height-request">200</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="orientation">vertical</property>
-            <property name="adjustment">cooling_fixed_speed_adjustment</property>
-            <property name="inverted">True</property>
-            <property name="round-digits">1</property>
-            <property name="digits">0</property>
-            <property name="value-pos">bottom</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton">
-            <property name="label">Save</property>
-            <property name="width-request">-1</property>
-            <property name="height-request">-1</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <signal name="clicked" handler="on_fixed_speed_apply_button_clicked" swapped="no"/>
-            <style>
-              <class name="suggested-action"/>
-            </style>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkImage" id="cooling_pump_edit_image">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -103,6 +53,48 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
       <!-- column-name id -->
       <column type="gint"/>
       <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="lighting_logo_colors_spinbutton_adjustment">
+    <property name="upper">40</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkListStore" id="lighting_logo_mode_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name mode_name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="lighting_logo_speed_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name speed_name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="lighting_ring_colors_spinbutton_adjustment">
+    <property name="upper">40</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkListStore" id="lighting_ring_mode_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name mode_name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="lighting_ring_speed_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name speed_name -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -720,6 +712,635 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                 <property name="title" translatable="yes">Cooling</property>
               </packing>
             </child>
+            <child>
+              <!-- n-columns=2 n-rows=3 -->
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">2</property>
+                <property name="column-spacing">6</property>
+                <property name="column-homogeneous">True</property>
+                <child>
+                  <object class="GtkFrame">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0.5</property>
+                    <property name="shadow-type">in</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="height-request">273</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">10</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <!-- n-columns=4 n-rows=2 -->
+                          <object class="GtkGrid">
+                            <property name="height-request">160</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_1">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_2">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_3">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_4">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_5">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_6">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_7">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_logo_color_8">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Logo Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="lighting_logo_colors_spinbutton">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Select the number of Colors to apply</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="vexpand">True</property>
+                            <property name="caps-lock-warning">False</property>
+                            <property name="input-purpose">number</property>
+                            <property name="adjustment">lighting_logo_colors_spinbutton_adjustment</property>
+                            <property name="snap-to-ticks">True</property>
+                            <property name="numeric">True</property>
+                            <signal name="value-changed" handler="on_lighting_logo_colors_spinbutton_changed" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="justify">center</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0.5</property>
+                    <property name="shadow-type">in</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">8</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkComboBox" id="lighting_ring_mode_combobox">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Set a color mode for the Ring LEDs</property>
+                            <property name="valign">start</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="hexpand">True</property>
+                            <property name="model">lighting_ring_mode_liststore</property>
+                            <property name="id-column">0</property>
+                            <signal name="changed" handler="on_ring_mode_selected" swapped="no"/>
+                            <child>
+                              <object class="GtkCellRendererText" id="lighting_ring_mode_renderer"/>
+                              <attributes>
+                                <attribute name="markup">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="padding">6</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="spacing">6</property>
+                            <property name="homogeneous">True</property>
+                            <child>
+                              <object class="GtkComboBox" id="lighting_ring_speed_combobox">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select speed of color mode</property>
+                                <property name="valign">start</property>
+                                <property name="model">lighting_ring_speed_liststore</property>
+                                <property name="id-column">0</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="lighting_ring_speed_renderer"/>
+                                  <attributes>
+                                    <attribute name="markup">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToggleButton" id="lighting_ring_direction_reverse">
+                                <property name="label" translatable="yes">Reverse Direction</property>
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Toggle to reverse direction of color mode</property>
+                                <property name="valign">start</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Ring</property>
+                        <property name="justify">center</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="lighting_apply_button">
+                    <property name="label" translatable="yes">Apply</property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="margin-top">6</property>
+                    <signal name="clicked" handler="on_lighting_apply_button_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">2</property>
+                    <property name="width">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0.5</property>
+                    <property name="shadow-type">in</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">8</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkComboBox" id="lighting_logo_mode_combobox">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Choose a color mode for the Logo LED</property>
+                            <property name="valign">start</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="hexpand">True</property>
+                            <property name="model">lighting_logo_mode_liststore</property>
+                            <property name="id-column">0</property>
+                            <signal name="changed" handler="on_logo_mode_selected" swapped="no"/>
+                            <child>
+                              <object class="GtkCellRendererText" id="lighting_logo_mode_renderer"/>
+                              <attributes>
+                                <attribute name="markup">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="padding">6</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="spacing">6</property>
+                            <property name="homogeneous">True</property>
+                            <child>
+                              <object class="GtkComboBox" id="lighting_logo_speed_combobox">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select speed of color mode</property>
+                                <property name="valign">start</property>
+                                <property name="model">lighting_logo_speed_liststore</property>
+                                <property name="id-column">0</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="lighting_logo_speed_renderer"/>
+                                  <attributes>
+                                    <attribute name="markup">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToggleButton" id="lighting_logo_direction_reverse">
+                                <property name="label" translatable="yes">Reverse Direction</property>
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Toggle to reverse direction of color mode</property>
+                                <property name="valign">start</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Logo</property>
+                        <property name="justify">center</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0.5</property>
+                    <property name="shadow-type">in</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="height-request">273</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">10</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <!-- n-columns=4 n-rows=2 -->
+                          <object class="GtkGrid">
+                            <property name="height-request">160</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_1">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_2">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_3">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_4">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_5">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_6">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_7">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkColorButton" id="lighting_ring_color_8">
+                                <property name="width-request">80</property>
+                                <property name="height-request">80</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="title" translatable="yes">Pick a Ring Color</property>
+                                <property name="rgba">rgb(255,255,255)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="lighting_ring_colors_spinbutton">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Select the number of Colors to apply</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="vexpand">True</property>
+                            <property name="caps-lock-warning">False</property>
+                            <property name="input-purpose">number</property>
+                            <property name="adjustment">lighting_ring_colors_spinbutton_adjustment</property>
+                            <property name="snap-to-ticks">True</property>
+                            <property name="numeric">True</property>
+                            <signal name="value-changed" handler="on_lighting_ring_colors_spinbutton_changed" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="justify">center</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="name">page_lighting</property>
+                <property name="title" translatable="yes">Lighting</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -762,8 +1383,15 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
           <object class="GtkHeaderBar" id="content_header_bar">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="title" translatable="yes">GKraken</property>
             <property name="show-close-button">True</property>
+            <child type="title">
+              <object class="GtkStackSwitcher">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="homogeneous">True</property>
+                <property name="stack">content_stack</property>
+              </object>
+            </child>
             <child>
               <object class="GtkMenuButton" id="main_menu_button">
                 <property name="visible">True</property>
@@ -826,6 +1454,56 @@ Guy Boldon &lt;gb@guyboldon.com&gt;</property>
         </child>
         <child>
           <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkPopover" id="cooling_fixed_speed_popover">
+    <property name="can-focus">False</property>
+    <property name="relative-to">cooling_fan_edit_button</property>
+    <property name="position">bottom</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkScale" id="cooling_fixed_speed_scale">
+            <property name="height-request">200</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="orientation">vertical</property>
+            <property name="adjustment">cooling_fixed_speed_adjustment</property>
+            <property name="inverted">True</property>
+            <property name="round-digits">1</property>
+            <property name="digits">0</property>
+            <property name="value-pos">bottom</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label">Save</property>
+            <property name="width-request">-1</property>
+            <property name="height-request">-1</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_fixed_speed_apply_button_clicked" swapped="no"/>
+            <style>
+              <class name="suggested-action"/>
+            </style>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
     </child>
