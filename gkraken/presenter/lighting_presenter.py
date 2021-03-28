@@ -81,20 +81,22 @@ class LightingPresenter:
         self.view.set_lighting_apply_button_enabled(True)
 
     def on_lighting_apply_button_clicked(self, *_: Any) -> None:
+        self.view.set_statusbar_text('applying Lighting...')
         self._get_lighting_modes(
         ).subscribe(
             on_next=self._set_lighting,
-            on_error=lambda e: _LOG.exception("Lighting error: %s", str(e))
+            on_error=self._on_lighting_apply_error
         )
+
+    def _on_lighting_apply_error(self, e: Exception) -> None:
+        _LOG.exception("Lighting error: %s", str(e))
+        self.view.set_statusbar_text('Error applying Lighting')
 
     def _set_lighting(self, lighting_modes: LightingModes) -> None:
         logo_mode_id = self.view.get_logo_mode_id()
         self._set_lighting_logo(logo_mode_id, lighting_modes)
         ring_mode_id = self.view.get_ring_mode_id()
         self._set_lighting_ring(ring_mode_id, lighting_modes)
-
-    def _lighting_applied_status(self) -> None:
-        self.view.set_statusbar_text('Lighting applied')
 
     def _set_lighting_logo(self, mode_id: int, lighting_modes: LightingModes) -> None:
         lighting_mode = lighting_modes.modes_logo[mode_id] if mode_id > 0 else None
@@ -165,5 +167,5 @@ class LightingPresenter:
             ).pipe(
                 operators.subscribe_on(self._scheduler),
                 operators.observe_on(GtkScheduler(GLib)),
-            ).subscribe(on_next=lambda _: self._lighting_applied_status(),
+            ).subscribe(on_next=lambda _: self.view.set_statusbar_text('Lighting applied'),
                         on_error=lambda e: _LOG.exception("Lighting apply error: %s", str(e))))

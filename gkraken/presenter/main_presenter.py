@@ -327,11 +327,15 @@ class MainPresenter:
         self.main_view.refresh_chart(profile)
 
     def on_fan_apply_button_clicked(self, *_: Any) -> None:
-        self._set_speed_profile(self._profile_selected[ChannelType.FAN.value])
+        channel = ChannelType.FAN.value
+        self.main_view.set_statusbar_text('applying %s cooling profile...' % channel)
+        self._set_speed_profile(self._profile_selected[channel])
         self._should_update_fan_speed = True
 
     def on_pump_apply_button_clicked(self, *_: Any) -> None:
-        self._set_speed_profile(self._profile_selected[ChannelType.PUMP.value])
+        channel = ChannelType.PUMP.value
+        self.main_view.set_statusbar_text('applying %s cooling profile...' % channel)
+        self._set_speed_profile(self._profile_selected[channel])
         self._should_update_pump_speed = True
 
     def _set_speed_profile(self, profile: SpeedProfile) -> None:
