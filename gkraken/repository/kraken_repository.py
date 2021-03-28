@@ -84,7 +84,6 @@ class KrakenRepository:
                 _LOG.exception("Error getting the status")
                 self.cleanup()
 
-    @synchronized_with_attr("lock")
     def get_lighting_modes(self) -> Optional[LightingModes]:
         self._load_driver()
         if isinstance(self._driver, Kraken2):
@@ -95,7 +94,6 @@ class KrakenRepository:
             return LightingModes.get_z3()
         return None
 
-    @synchronized_with_attr("lock")
     def set_lighting_mode(self, settings: LightingSettings) -> None:
         self._load_driver()
         if self._driver and settings:
