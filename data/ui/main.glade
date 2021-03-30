@@ -64,7 +64,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkListStore" id="lighting_logo_mode_liststore">
     <columns>
       <!-- column-name id -->
-      <column type="gint"/>
+      <column type="gchararray"/>
       <!-- column-name mode_name -->
       <column type="gchararray"/>
     </columns>
@@ -72,7 +72,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkListStore" id="lighting_logo_speed_liststore">
     <columns>
       <!-- column-name id -->
-      <column type="gint"/>
+      <column type="gchararray"/>
       <!-- column-name speed_name -->
       <column type="gchararray"/>
     </columns>
@@ -85,7 +85,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkListStore" id="lighting_ring_mode_liststore">
     <columns>
       <!-- column-name id -->
-      <column type="gint"/>
+      <column type="gchararray"/>
       <!-- column-name mode_name -->
       <column type="gchararray"/>
     </columns>
@@ -93,7 +93,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkListStore" id="lighting_ring_speed_liststore">
     <columns>
       <!-- column-name id -->
-      <column type="gint"/>
+      <column type="gchararray"/>
       <!-- column-name speed_name -->
       <column type="gchararray"/>
     </columns>
