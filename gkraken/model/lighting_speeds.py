@@ -21,11 +21,11 @@ from typing import Dict, ValuesView, Optional
 class LightingSpeed:
     def __init__(self,
                  speed_id: int,
-                 speed: str,
+                 name: str,
                  frontend_name: str
                  ) -> None:
-        self.speed_id: int = speed_id
-        self.speed: str = speed
+        self.id: int = speed_id
+        self.name: str = name
         self.frontend_name: str = frontend_name
 
 

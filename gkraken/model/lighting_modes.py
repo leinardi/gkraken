@@ -21,7 +21,7 @@ from typing import Dict, List
 class LightingMode:
     def __init__(self,
                  mode_id: int,
-                 mode: str,
+                 name: str,
                  frontend_name: str,
                  min_colors: int,
                  max_colors: int,
@@ -29,7 +29,7 @@ class LightingMode:
                  direction_enabled: bool
                  ) -> None:
         self.mode_id: int = mode_id
-        self.mode: str = mode
+        self.name: str = name
         self.frontend_name: str = frontend_name
         self.min_colors: int = min_colors
         self.max_colors: int = max_colors

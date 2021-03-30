@@ -100,10 +100,10 @@ class KrakenRepository:
             try:
                 self._driver.set_color(
                     settings.channel.value,
-                    settings.mode,
+                    settings.mode.name,
                     settings.colors.values(),
-                    speed=settings.speed,
-                    direction=settings.direction)
+                    speed=settings.speed_or_default,
+                    direction=settings.direction_or_default)
             # pylint: disable=bare-except
             except:
                 _LOG.exception("Error setting the Lighting Profile")
