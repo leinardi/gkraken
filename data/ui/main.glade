@@ -917,8 +917,8 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-start">12</property>
-                        <property name="margin-end">12</property>
+                        <property name="margin-start">18</property>
+                        <property name="margin-end">18</property>
                         <property name="margin-top">8</property>
                         <property name="margin-bottom">5</property>
                         <property name="orientation">vertical</property>
@@ -931,8 +931,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Set a color mode for the Ring LEDs</property>
                             <property name="valign">start</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
                             <property name="hexpand">True</property>
                             <property name="model">lighting_ring_mode_liststore</property>
                             <property name="id-column">0</property>
@@ -955,8 +953,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
                             <property name="spacing">6</property>
                             <property name="homogeneous">True</property>
                             <child>
@@ -1046,8 +1042,8 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-start">12</property>
-                        <property name="margin-end">12</property>
+                        <property name="margin-start">18</property>
+                        <property name="margin-end">18</property>
                         <property name="margin-top">8</property>
                         <property name="margin-bottom">6</property>
                         <property name="orientation">vertical</property>
@@ -1060,8 +1056,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Choose a color mode for the Logo LED</property>
                             <property name="valign">start</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
                             <property name="hexpand">True</property>
                             <property name="model">lighting_logo_mode_liststore</property>
                             <property name="id-column">0</property>
@@ -1084,8 +1078,6 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
                             <property name="spacing">6</property>
                             <property name="homogeneous">True</property>
                             <child>
