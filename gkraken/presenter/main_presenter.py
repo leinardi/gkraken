@@ -93,7 +93,7 @@ class MainPresenter:
         self._register_db_listeners()
         self._check_supported_kraken()
         self._refresh_speed_profiles(True)
-        self._load_color_modes()
+        self._load_lighting_modes()
         if self._settings_interactor.get_int('settings_check_new_version'):
             self._check_new_version()
 
@@ -393,8 +393,8 @@ class MainPresenter:
     def _get_changelog_uri(version: str = APP_VERSION) -> str:
         return f"{APP_SOURCE_URL}/blob/{version}/CHANGELOG.md"
 
-    def _load_color_modes(self) -> None:
-        self._lighting_presenter.load_color_modes()
+    def _load_lighting_modes(self) -> None:
+        self._lighting_presenter.load_lighting_modes()
 
     def on_logo_mode_selected(self, *_: Any) -> None:
         self._lighting_presenter.on_logo_mode_selected()

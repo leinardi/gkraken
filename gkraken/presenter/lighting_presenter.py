@@ -51,7 +51,7 @@ class LightingPresenter:
         self._composite_disposable: CompositeDisposable = composite_disposable
         self._scheduler = scheduler.get()
 
-    def load_color_modes(self) -> None:
+    def load_lighting_modes(self) -> None:
         self._composite_disposable.add(
             self._get_lighting_modes().subscribe(
                 on_next=self.view.load_color_modes,
