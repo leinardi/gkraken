@@ -18,8 +18,8 @@
 import logging
 from typing import List
 
-from injector import singleton, inject
 from gi.repository import Gtk
+from injector import singleton, inject
 
 from gkraken.conf import APP_PACKAGE_NAME
 from gkraken.di import MainBuilder
@@ -97,16 +97,16 @@ class LightingView(LightingViewInterface):
             self._lighting_logo_color_7, self._lighting_logo_color_8
         ]
         self._lighting_ring_button_list: List[Gtk.ColorButton] = [
-        self._lighting_ring_color_1, self._lighting_ring_color_2, self._lighting_ring_color_3,
-        self._lighting_ring_color_4, self._lighting_ring_color_5, self._lighting_ring_color_6,
-        self._lighting_ring_color_7, self._lighting_ring_color_8
+            self._lighting_ring_color_1, self._lighting_ring_color_2, self._lighting_ring_color_3,
+            self._lighting_ring_color_4, self._lighting_ring_color_5, self._lighting_ring_color_6,
+            self._lighting_ring_color_7, self._lighting_ring_color_8
         ]
 
     def load_color_modes(self, lighting_modes: LightingModes) -> None:
         for mode_id, lighting_mode in lighting_modes.modes_logo.items():
-            self._lighting_logo_mode_liststore.append([mode_id, lighting_mode.frontend_name])
+            self._lighting_logo_mode_liststore.append([str(mode_id), lighting_mode.frontend_name])
         for mode_id, lighting_mode in lighting_modes.modes_ring.items():
-            self._lighting_ring_mode_liststore.append([mode_id, lighting_mode.frontend_name])
+            self._lighting_ring_mode_liststore.append([str(mode_id), lighting_mode.frontend_name])
 
         self._lighting_logo_mode_combobox.set_model(self._lighting_logo_mode_liststore)
         self._lighting_logo_mode_combobox.set_sensitive(len(self._lighting_logo_mode_liststore) > 0)
@@ -114,8 +114,8 @@ class LightingView(LightingViewInterface):
         self._lighting_ring_mode_combobox.set_sensitive(len(self._lighting_ring_mode_liststore) > 0)
 
         for speed in LightingSpeeds().values():
-            self._lighting_logo_speed_liststore.append([speed.speed_id, speed.frontend_name])
-            self._lighting_ring_speed_liststore.append([speed.speed_id, speed.frontend_name])
+            self._lighting_logo_speed_liststore.append([str(speed.id), speed.frontend_name])
+            self._lighting_ring_speed_liststore.append([str(speed.id), speed.frontend_name])
 
         self._lighting_logo_speed_combobox.set_model(self._lighting_logo_speed_liststore)
         self._lighting_logo_speed_combobox.set_active(2)
@@ -124,6 +124,7 @@ class LightingView(LightingViewInterface):
 
         self.set_lighting_logo_color_buttons_enabled(0)
         self.set_lighting_ring_color_buttons_enabled(0)
+        _LOG.debug("All lighting modes loaded")
 
     def set_statusbar_text(self, text: str) -> None:
         self._statusbar.remove_all(self._context)
@@ -139,10 +140,8 @@ class LightingView(LightingViewInterface):
             button.set_sensitive(is_enabled)
 
     def get_logo_mode_id(self) -> int:
-        active = self._lighting_logo_mode_combobox.get_active()
-        mode_id = self._lighting_logo_mode_combobox.get_model()[active][0] \
-            if active >= 0 else -1
-        return int(mode_id)
+        active_mode_id = self._lighting_logo_mode_combobox.get_active_id()
+        return int(active_mode_id) if active_mode_id else -1
 
     def get_logo_colors(self, max_colors: int) -> LightingColors:
         colors = LightingColors()
@@ -165,10 +164,8 @@ class LightingView(LightingViewInterface):
         self._lighting_logo_speed_combobox.set_sensitive(enabled)
 
     def get_lighting_logo_speed(self) -> int:
-        active = self._lighting_logo_speed_combobox.get_active()
-        speed_id = self._lighting_logo_speed_combobox.get_model()[active][0] \
-            if active >= 0 else -1
-        return int(speed_id)
+        active_speed_id = self._lighting_logo_speed_combobox.get_active_id()
+        return int(active_speed_id) if active_speed_id else -1
 
     def set_lighting_logo_direction_enabled(self, enabled: bool) -> None:
         self._lighting_logo_direction_reverse.set_sensitive(enabled)
@@ -178,10 +175,8 @@ class LightingView(LightingViewInterface):
         return LightingDirection.BACKWARD if active else LightingDirection.FORWARD
 
     def get_ring_mode_id(self) -> int:
-        active = self._lighting_ring_mode_combobox.get_active()
-        mode_id = self._lighting_ring_mode_combobox.get_model()[active][0] \
-            if active >= 0 else -1
-        return int(mode_id)
+        active_mode_id = self._lighting_ring_mode_combobox.get_active_id()
+        return int(active_mode_id) if active_mode_id else -1
 
     def set_lighting_ring_color_buttons_enabled(self, max_colors: int) -> None:
         for index, button in enumerate(self._lighting_ring_button_list):
@@ -210,10 +205,8 @@ class LightingView(LightingViewInterface):
         self._lighting_ring_speed_combobox.set_sensitive(enabled)
 
     def get_lighting_ring_speed(self) -> int:
-        active = self._lighting_ring_speed_combobox.get_active()
-        speed_id = self._lighting_ring_speed_combobox.get_model()[active][0] \
-            if active >= 0 else -1
-        return int(speed_id)
+        active_speed_id = self._lighting_ring_speed_combobox.get_active()
+        return int(active_speed_id) if active_speed_id else -1
 
     def set_lighting_ring_direction_enabled(self, enabled: bool) -> None:
         self._lighting_ring_direction_reverse.set_sensitive(enabled)
@@ -221,3 +214,35 @@ class LightingView(LightingViewInterface):
     def get_lighting_ring_direction(self) -> LightingDirection:
         active = self._lighting_ring_direction_reverse.get_active()
         return LightingDirection.BACKWARD if active else LightingDirection.FORWARD
+
+    def set_logo_mode_id(self, mode_id: int) -> None:
+        self._lighting_logo_mode_combobox.set_active_id(str(mode_id))
+
+    def set_logo_speed_id(self, speed_id: int) -> None:
+        self._lighting_logo_speed_combobox.set_active_id(str(speed_id))
+
+    def set_logo_direction(self, direction: LightingDirection) -> None:
+        self._lighting_logo_direction_reverse.set_active(direction == LightingDirection.BACKWARD)
+
+    def set_logo_colors(self, lighting_colors: LightingColors) -> None:
+        colors: List[LightingColor] = lighting_colors.colors
+        if colors:
+            for index, color in enumerate(colors):
+                self._lighting_logo_button_list[index].set_rgba(LightingColor.to_button_color(color))
+            self._lighting_logo_colors_spinbutton.set_value(len(colors))
+
+    def set_ring_mode_id(self, mode_id: int) -> None:
+        self._lighting_ring_mode_combobox.set_active_id(str(mode_id))
+
+    def set_ring_speed_id(self, speed_id: int) -> None:
+        self._lighting_ring_speed_combobox.set_active_id(str(speed_id))
+
+    def set_ring_direction(self, direction: LightingDirection) -> None:
+        self._lighting_ring_direction_reverse.set_active(direction == LightingDirection.BACKWARD)
+
+    def set_ring_colors(self, lighting_colors: LightingColors) -> None:
+        colors: List[LightingColor] = lighting_colors.colors
+        if colors:
+            for index, color in enumerate(colors):
+                self._lighting_ring_button_list[index].set_rgba(LightingColor.to_button_color(color))
+            self._lighting_ring_colors_spinbutton.set_value(len(colors))

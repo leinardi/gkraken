@@ -83,3 +83,27 @@ class LightingViewInterface:
 
     def get_lighting_ring_direction(self) -> LightingDirection:
         raise NotImplementedError()
+    
+    def set_logo_mode_id(self, mode_id: int) -> None:
+        raise NotImplementedError()
+
+    def set_logo_speed_id(self, speed_id: int) -> None:
+        raise NotImplementedError()
+
+    def set_logo_direction(self, direction: LightingDirection) -> None:
+        raise NotImplementedError()
+
+    def set_logo_colors(self, colors: LightingColors) -> None:
+        raise NotImplementedError()
+
+    def set_ring_mode_id(self, mode_id: int) -> None:
+        raise NotImplementedError()
+
+    def set_ring_speed_id(self, speed_id: int) -> None:
+        raise NotImplementedError()
+
+    def set_ring_direction(self, direction: LightingDirection) -> None:
+        raise NotImplementedError()
+
+    def set_ring_colors(self, colors: LightingColors) -> None:
+        raise NotImplementedError()
