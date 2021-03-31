@@ -22,6 +22,7 @@ from gi.repository import GLib
 from injector import singleton, inject
 from rx import Observable, operators
 from rx.disposable import CompositeDisposable
+from rx.scheduler import ThreadPoolScheduler
 from rx.scheduler.mainloop import GtkScheduler
 
 from gkraken.interactor.get_lighting_modes_interactor import GetLightingModesInteractor
@@ -51,11 +52,13 @@ class LightingPresenter:
                  ) -> None:
         _LOG.debug("init LightingPresenter ")
         self.view: LightingViewInterface = LightingViewInterface()
-        self._set_lighting_interactor = set_lighting_interactor
-        self._get_lighting_modes_interactor = get_lighting_modes_interactor
-        self._settings_interactor = settings_interactor
+        self._set_lighting_interactor: SetLightingInteractor = set_lighting_interactor
+        self._get_lighting_modes_interactor: GetLightingModesInteractor = get_lighting_modes_interactor
+        self._settings_interactor: SettingsInteractor = settings_interactor
         self._composite_disposable: CompositeDisposable = composite_disposable
-        self._scheduler = scheduler.get()
+        self._scheduler: ThreadPoolScheduler = scheduler.get()
+        self._loading_logo_spin_button_override: Optional[int] = None
+        self._loading_ring_spin_button_override: Optional[int] = None
 
     def load_lighting_modes(self) -> None:
         self._composite_disposable.add(
@@ -108,23 +111,19 @@ class LightingPresenter:
         colors: List[CurrentLightingColor] = [color for color in current_colors]
         return profile, colors
 
-    def _set_lighting_logo_widgets(self,
-                                   logo_profile: CurrentLightingProfile,
-                                   logo_colors: List[CurrentLightingColor]
+    def _set_lighting_logo_widgets(self, logo_profile: CurrentLightingProfile, logo_colors: List[CurrentLightingColor]
                                    ) -> None:
-        colors: LightingColors = self._convert_current_colors_to_lighting_colors(logo_colors)
-
+        colors: List[LightingColor] = self._convert_current_colors_to_lighting_colors(logo_colors).colors
+        self._loading_logo_spin_button_override = len(colors)
         self.view.set_logo_mode_id(logo_profile.mode)
         self.view.set_logo_speed_id(logo_profile.speed)
         self.view.set_logo_direction(LightingDirection.from_str(logo_profile.direction))
         self.view.set_logo_colors(colors)
 
-    def _set_lighting_ring_widgets(self,
-                                   ring_profile: CurrentLightingProfile,
-                                   ring_colors: List[CurrentLightingColor]
+    def _set_lighting_ring_widgets(self, ring_profile: CurrentLightingProfile, ring_colors: List[CurrentLightingColor]
                                    ) -> None:
-        colors: LightingColors = self._convert_current_colors_to_lighting_colors(ring_colors)
-
+        colors: List[LightingColor] = self._convert_current_colors_to_lighting_colors(ring_colors).colors
+        self._loading_ring_spin_button_override = len(colors)
         self.view.set_ring_mode_id(ring_profile.mode)
         self.view.set_ring_speed_id(ring_profile.speed)
         self.view.set_ring_direction(LightingDirection.from_str(ring_profile.direction))
@@ -152,11 +151,14 @@ class LightingPresenter:
 
     def _update_logo_widgets(self, mode_id: int, lighting_modes: LightingModes) -> None:
         chosen_logo_mode = lighting_modes.modes_logo[mode_id]
-        self.view.set_lighting_logo_spin_button(chosen_logo_mode)
-        self.view.set_lighting_logo_color_buttons_enabled(chosen_logo_mode.min_colors)
+        self.view.set_lighting_logo_spin_button(chosen_logo_mode, self._loading_logo_spin_button_override)
+        number_of_color_buttons: int = chosen_logo_mode.min_colors \
+            if not self._loading_logo_spin_button_override else self._loading_logo_spin_button_override
+        self.view.set_lighting_logo_color_buttons_enabled(number_of_color_buttons)
         self.view.set_lighting_logo_speed_enabled(chosen_logo_mode.speed_enabled)
         self.view.set_lighting_logo_direction_enabled(chosen_logo_mode.direction_enabled)
         self.view.set_lighting_apply_button_enabled(True)
+        self._loading_logo_spin_button_override = None
 
     def on_lighting_apply_button_clicked(self, *_: Any) -> None:
         self.view.set_statusbar_text('applying Lighting...')
@@ -211,11 +213,14 @@ class LightingPresenter:
 
     def _update_ring_widgets(self, mode_id: int, lighting_modes: LightingModes) -> None:
         chosen_ring_mode = lighting_modes.modes_ring[mode_id]
-        self.view.set_lighting_ring_spin_button(chosen_ring_mode)
-        self.view.set_lighting_ring_color_buttons_enabled(chosen_ring_mode.min_colors)
+        self.view.set_lighting_ring_spin_button(chosen_ring_mode, self._loading_ring_spin_button_override)
+        number_of_color_buttons: int = chosen_ring_mode.min_colors \
+            if not self._loading_ring_spin_button_override else self._loading_ring_spin_button_override
+        self.view.set_lighting_ring_color_buttons_enabled(number_of_color_buttons)
         self.view.set_lighting_ring_speed_enabled(chosen_ring_mode.speed_enabled)
         self.view.set_lighting_ring_direction_enabled(chosen_ring_mode.direction_enabled)
         self.view.set_lighting_apply_button_enabled(True)
+        self._loading_ring_spin_button_override = None
 
     def on_lighting_ring_colors_spinbutton_changed(self, spinbutton: Any) -> None:
         self.view.set_lighting_ring_color_buttons_enabled(

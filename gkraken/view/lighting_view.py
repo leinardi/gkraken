@@ -16,7 +16,7 @@
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from typing import List
+from typing import List, Optional
 
 from gi.repository import Gtk
 from injector import singleton, inject
@@ -150,12 +150,13 @@ class LightingView(LightingViewInterface):
             colors.add(LightingColor.from_button_color(color))
         return colors
 
-    def set_lighting_logo_spin_button(self, lighting_mode: LightingMode) -> None:
+    def set_lighting_logo_spin_button(self, lighting_mode: LightingMode, override: Optional[int] = None) -> None:
         self._lighting_logo_colors_spinbutton.set_sensitive(
             abs(lighting_mode.min_colors - lighting_mode.max_colors) > 0)
         self._lighting_logo_colors_spinbutton_adjustment.set_lower(lighting_mode.min_colors)
         self._lighting_logo_colors_spinbutton_adjustment.set_upper(lighting_mode.max_colors)
-        self._lighting_logo_colors_spinbutton.set_value(lighting_mode.min_colors)
+        value: int = lighting_mode.min_colors if not override else override
+        self._lighting_logo_colors_spinbutton.set_value(value)
 
     def get_lighting_logo_spin_button(self) -> int:
         return int(self._lighting_logo_colors_spinbutton.get_value_as_int())
@@ -191,12 +192,13 @@ class LightingView(LightingViewInterface):
             colors.add(LightingColor.from_button_color(color))
         return colors
 
-    def set_lighting_ring_spin_button(self, lighting_mode: LightingMode) -> None:
+    def set_lighting_ring_spin_button(self, lighting_mode: LightingMode, override: Optional[int] = None) -> None:
         self._lighting_ring_colors_spinbutton.set_sensitive(
             abs(lighting_mode.min_colors - lighting_mode.max_colors) > 0)
         self._lighting_ring_colors_spinbutton_adjustment.set_lower(lighting_mode.min_colors)
         self._lighting_ring_colors_spinbutton_adjustment.set_upper(lighting_mode.max_colors)
-        self._lighting_ring_colors_spinbutton.set_value(lighting_mode.min_colors)
+        value: int = lighting_mode.min_colors if not override else override
+        self._lighting_ring_colors_spinbutton.set_value(value)
 
     def get_lighting_ring_spin_button(self) -> int:
         return int(self._lighting_ring_colors_spinbutton.get_value_as_int())
@@ -224,12 +226,10 @@ class LightingView(LightingViewInterface):
     def set_logo_direction(self, direction: LightingDirection) -> None:
         self._lighting_logo_direction_reverse.set_active(direction == LightingDirection.BACKWARD)
 
-    def set_logo_colors(self, lighting_colors: LightingColors) -> None:
-        colors: List[LightingColor] = lighting_colors.colors
+    def set_logo_colors(self, colors: List[LightingColor]) -> None:
         if colors:
             for index, color in enumerate(colors):
                 self._lighting_logo_button_list[index].set_rgba(LightingColor.to_button_color(color))
-            self._lighting_logo_colors_spinbutton.set_value(len(colors))
 
     def set_ring_mode_id(self, mode_id: int) -> None:
         self._lighting_ring_mode_combobox.set_active_id(str(mode_id))
@@ -240,9 +240,7 @@ class LightingView(LightingViewInterface):
     def set_ring_direction(self, direction: LightingDirection) -> None:
         self._lighting_ring_direction_reverse.set_active(direction == LightingDirection.BACKWARD)
 
-    def set_ring_colors(self, lighting_colors: LightingColors) -> None:
-        colors: List[LightingColor] = lighting_colors.colors
+    def set_ring_colors(self, colors: List[LightingColor]) -> None:
         if colors:
             for index, color in enumerate(colors):
                 self._lighting_ring_button_list[index].set_rgba(LightingColor.to_button_color(color))
-            self._lighting_ring_colors_spinbutton.set_value(len(colors))
