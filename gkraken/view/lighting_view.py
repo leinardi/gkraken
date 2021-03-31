@@ -227,9 +227,8 @@ class LightingView(LightingViewInterface):
         self._lighting_logo_direction_reverse.set_active(direction == LightingDirection.BACKWARD)
 
     def set_logo_colors(self, colors: List[LightingColor]) -> None:
-        if colors:
-            for index, color in enumerate(colors):
-                self._lighting_logo_button_list[index].set_rgba(LightingColor.to_button_color(color))
+        for index, color in enumerate(colors):
+            self._lighting_logo_button_list[index].set_rgba(LightingColor.to_button_color(color))
 
     def set_ring_mode_id(self, mode_id: int) -> None:
         self._lighting_ring_mode_combobox.set_active_id(str(mode_id))
@@ -241,6 +240,5 @@ class LightingView(LightingViewInterface):
         self._lighting_ring_direction_reverse.set_active(direction == LightingDirection.BACKWARD)
 
     def set_ring_colors(self, colors: List[LightingColor]) -> None:
-        if colors:
-            for index, color in enumerate(colors):
-                self._lighting_ring_button_list[index].set_rgba(LightingColor.to_button_color(color))
+        for index, color in enumerate(colors):
+            self._lighting_ring_button_list[index].set_rgba(LightingColor.to_button_color(color))
