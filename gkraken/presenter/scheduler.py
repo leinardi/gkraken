@@ -15,3 +15,17 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
+import multiprocessing
+
+from injector import singleton
+from rx.scheduler import ThreadPoolScheduler
+
+
+@singleton
+class Scheduler:
+
+    def __init__(self) -> None:
+        self._scheduler = ThreadPoolScheduler(multiprocessing.cpu_count())
+
+    def get(self) -> ThreadPoolScheduler:
+        return self._scheduler

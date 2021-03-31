@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2019 Roberto Leianrdi -->
+<!--
+  ~ This file is part of gkraken.
+  ~
+  ~ Copyright (c) 2021 Roberto Leinardi and Guy Boldon
+  ~
+  ~ gkraken is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ gkraken is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <component type="desktop-application">
     <id>com.leinardi.gkraken.desktop</id>
 
@@ -28,6 +45,13 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
+        <release date="2021-03-31" version="1.1.0">
+            <description>
+                <ul>
+                    <li>Added Lighting Control and lighting profile saving.</li>
+                </ul>
+            </description>
+        </release>
         <release date="2021-03-03" version="1.0.2">
             <description>
                 <ul>

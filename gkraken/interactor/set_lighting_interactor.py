@@ -15,3 +15,27 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+
+import rx
+from injector import singleton, inject
+from rx import Observable
+
+from gkraken.model.lighting_settings import LightingSettings
+from gkraken.repository.kraken_repository import KrakenRepository
+
+_LOG = logging.getLogger(__name__)
+
+
+@singleton
+class SetLightingInteractor:
+
+    @inject
+    def __init__(self,
+                 kraken_repository: KrakenRepository,
+                 ) -> None:
+        self._kraken_repository = kraken_repository
+
+    def execute(self, lighting_settings: LightingSettings) -> Observable:
+        _LOG.debug("SetLightingInteractor.execute()")
+        return rx.defer(lambda _: rx.just(self._kraken_repository.set_lighting_mode(lighting_settings)))

@@ -1,19 +1,19 @@
-# This file is part of gkraken.
+#  This file is part of gkraken.
 #
-# Copyright (c) 2019 Roberto Leinardi
+#  Copyright (c) 2021 Roberto Leinardi and Guy Boldon
 #
-# gkraken is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+#  gkraken is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
 #
-# gkraken is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#  gkraken is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
+#  You should have received a copy of the GNU General Public License
+#  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 from enum import Enum
@@ -28,6 +28,8 @@ from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
 from gkraken.interactor.udev_interactor import UdevInteractor
 from gkraken.model import load_db_default_data
+from gkraken.model.current_lighting_color import CurrentLightingColor
+from gkraken.model.current_lighting_profile import CurrentLightingProfile
 from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.speed_step import SpeedStep
 from gkraken.model.current_speed_profile import CurrentSpeedProfile
@@ -59,7 +61,9 @@ class Application(Gtk.Application):
                          **kwargs)
 
         database.connect()
-        database.create_tables([SpeedProfile, SpeedStep, CurrentSpeedProfile, Setting])
+        database.create_tables([
+            SpeedProfile, SpeedStep, CurrentSpeedProfile, Setting, CurrentLightingProfile, CurrentLightingColor
+        ])
 
         if SpeedProfile.select().count() == 0:
             load_db_default_data()

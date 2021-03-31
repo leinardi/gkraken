@@ -1,19 +1,20 @@
-# This file is part of gkraken.
+#  This file is part of gkraken.
 #
-# Copyright (c) 2018 Roberto Leinardi
+#  Copyright (c) 2021 Roberto Leinardi and Guy Boldon
 #
-# gsi is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+#  gkraken is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
 #
-# gsi is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#  gkraken is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with gsi.  If not, see <http://www.gnu.org/licenses/>.
+#  You should have received a copy of the GNU General Public License
+#  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
 import threading
 from typing import Optional, List, Tuple
@@ -25,6 +26,8 @@ from liquidctl.driver.kraken3 import KrakenX3
 from liquidctl.driver.kraken3 import KrakenZ3
 
 from gkraken.di import INJECTOR
+from gkraken.model.lighting_modes import LightingModes
+from gkraken.model.lighting_settings import LightingSettings
 from gkraken.model.status import Status
 from gkraken.util.concurrency import synchronized_with_attr
 
@@ -53,13 +56,13 @@ class KrakenRepository:
         if self._driver:
             try:
                 driver_status = self._driver.get_status()
-                _LOG.debug(f"Reported status:\n{driver_status}")
+                _LOG.debug("Reported status:\n%s", driver_status)
                 status_list = [v for k, v, u in driver_status]
                 if isinstance(self._driver, KrakenZ3):
                     return Status.get_z3(status_list)
-                elif isinstance(self._driver, KrakenX3):
+                if isinstance(self._driver, KrakenX3):
                     return Status.get_x3(status_list)
-                elif isinstance(self._driver, Kraken2):
+                if isinstance(self._driver, Kraken2):
                     return Status.get_x2(status_list)
             # pylint: disable=bare-except
             except:
@@ -79,6 +82,31 @@ class KrakenRepository:
             # pylint: disable=bare-except
             except:
                 _LOG.exception("Error getting the status")
+                self.cleanup()
+
+    def get_lighting_modes(self) -> Optional[LightingModes]:
+        self._load_driver()
+        if isinstance(self._driver, Kraken2):
+            return LightingModes.get_x2()
+        if isinstance(self._driver, KrakenX3):
+            return LightingModes.get_x3()
+        if isinstance(self._driver, KrakenZ3):
+            return LightingModes.get_z3()
+        return None
+
+    def set_lighting_mode(self, settings: LightingSettings) -> None:
+        self._load_driver()
+        if self._driver and settings:
+            try:
+                self._driver.set_color(
+                    settings.channel.value,
+                    settings.mode.name,
+                    settings.colors.values(),
+                    speed=settings.speed_or_default,
+                    direction=settings.direction_or_default)
+            # pylint: disable=bare-except
+            except:
+                _LOG.exception("Error setting the Lighting Profile")
                 self.cleanup()
 
     def _load_driver(self) -> None:

@@ -1,23 +1,23 @@
-# This file is part of gkraken.
+#  This file is part of gkraken.
 #
-# Copyright (c) 2019 Roberto Leinardi
+#  Copyright (c) 2021 Roberto Leinardi and Guy Boldon
 #
-# gkraken is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+#  gkraken is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
 #
-# gkraken is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#  gkraken is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
+#  You should have received a copy of the GNU General Public License
+#  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 from collections import OrderedDict
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Dict, List, Tuple
 
 from gkraken.di import MainBuilder
 from gkraken.interactor.settings_interactor import SettingsInteractor
@@ -30,6 +30,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
 # AppIndicator3 may not be installed
+from gkraken.view.lighting_view import LightingView
 from gkraken.view.preferences_view import PreferencesView
 
 try:
@@ -58,6 +59,7 @@ class MainView(MainViewInterface):
                  presenter: MainPresenter,
                  edit_speed_profile_view: EditSpeedProfileView,
                  preferences_view: PreferencesView,
+                 lighting_view: LightingView,
                  builder: MainBuilder,
                  settings_interactor: SettingsInteractor,
                  ) -> None:
@@ -65,6 +67,7 @@ class MainView(MainViewInterface):
         self._presenter: MainPresenter = presenter
         self._edit_speed_profile_view = edit_speed_profile_view
         self._preferences_view = preferences_view
+        self._lighting_view: LightingView = lighting_view
         self._presenter.main_view = self
         self._builder: Gtk.Builder = builder
         self._settings_interactor = settings_interactor

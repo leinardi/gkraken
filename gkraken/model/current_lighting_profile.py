@@ -15,15 +15,25 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-from peewee import CharField, BlobField, SqliteDatabase
+from peewee import CharField, Check, DateTimeField, SQL, SqliteDatabase, IntegerField
 from playhouse.signals import Model
 
 from gkraken.di import INJECTOR
+from gkraken.model.lighting_settings import LightingChannel, LightingDirection
 
 
-class Setting(Model):
-    key = CharField(primary_key=True)
-    value = BlobField()
+class CurrentLightingProfile(Model):
+    channel = CharField(
+        primary_key=True,
+        constraints=[
+            Check("channel='%s' OR channel='%s'" % (LightingChannel.RING.value, LightingChannel.LOGO.value))])
+    mode = IntegerField()
+    speed = IntegerField()
+    direction = CharField(
+        constraints=[
+            Check("direction='%s' OR direction='%s'" % (
+                LightingDirection.FORWARD.value, LightingDirection.BACKWARD.value))])
+    timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
 
     class Meta:
         legacy_table_names = False

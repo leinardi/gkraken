@@ -15,16 +15,24 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-from peewee import CharField, BlobField, SqliteDatabase
+from peewee import CharField, Check, DateTimeField, SQL, SqliteDatabase, IntegerField, CompositeKey
 from playhouse.signals import Model
 
 from gkraken.di import INJECTOR
+from gkraken.model.lighting_settings import LightingChannel
 
 
-class Setting(Model):
-    key = CharField(primary_key=True)
-    value = BlobField()
+class CurrentLightingColor(Model):
+    channel = CharField(
+        constraints=[
+            Check("channel='%s' OR channel='%s'" % (LightingChannel.RING.value, LightingChannel.LOGO.value))])
+    index = IntegerField()
+    red = IntegerField()
+    green = IntegerField()
+    blue = IntegerField()
+    timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
 
     class Meta:
+        primary_key = CompositeKey('channel', 'index')
         legacy_table_names = False
         database = INJECTOR.get(SqliteDatabase)

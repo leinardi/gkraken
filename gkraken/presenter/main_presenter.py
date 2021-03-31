@@ -1,23 +1,22 @@
-# This file is part of gkraken.
+#  This file is part of gkraken.
 #
-# Copyright (c) 2019 Roberto Leinardi
+#  Copyright (c) 2021 Roberto Leinardi and Guy Boldon
 #
-# gkraken is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+#  gkraken is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
 #
-# gkraken is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#  gkraken is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
+#  You should have received a copy of the GNU General Public License
+#  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import logging
-import multiprocessing
 from typing import Optional, Any, List, Tuple, Dict, Callable
 
 import rx
@@ -25,7 +24,6 @@ from gi.repository import GLib
 from injector import inject, singleton
 from rx import Observable, operators
 from rx.disposable import CompositeDisposable
-from rx.scheduler import ThreadPoolScheduler
 from rx.scheduler.mainloop import GtkScheduler
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID, APP_SUPPORTED_MODELS
@@ -42,57 +40,15 @@ from gkraken.model.current_speed_profile import CurrentSpeedProfile
 from gkraken.model.speed_step import SpeedStep
 from gkraken.model.db_change import DbChange
 from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfilePresenter
+from gkraken.presenter.lighting_presenter import LightingPresenter
 from gkraken.presenter.preferences_presenter import PreferencesPresenter
+from gkraken.presenter.scheduler import Scheduler
 from gkraken.util.deployment import is_flatpak
 from gkraken.util.view import open_uri, get_default_application
+from gkraken.view.main_view_interface import MainViewInterface
 
 _LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
-
-
-class MainViewInterface:
-    def toggle_window_visibility(self) -> None:
-        raise NotImplementedError()
-
-    def refresh_status(self, status: Optional[Status]) -> None:
-        raise NotImplementedError()
-
-    def refresh_profile_combobox(self, channel: ChannelType, data: List[Tuple[int, str]],
-                                 active: Optional[int]) -> None:
-        raise NotImplementedError()
-
-    def refresh_chart(self, profile: Optional[SpeedProfile] = None, channel_to_reset: Optional[str] = None) -> None:
-        raise NotImplementedError()
-
-    def set_apply_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
-        raise NotImplementedError()
-
-    def set_edit_button_enabled(self, channel: ChannelType, enabled: bool) -> None:
-        raise NotImplementedError()
-
-    def set_statusbar_text(self, text: str) -> None:
-        raise NotImplementedError()
-
-    def show_main_infobar_message(self, message: str, markup: bool = False) -> None:
-        raise NotImplementedError()
-
-    def show_add_speed_profile_dialog(self, channel: ChannelType) -> None:
-        raise NotImplementedError()
-
-    def show_fixed_speed_profile_popover(self, profile: SpeedProfile) -> None:
-        raise NotImplementedError()
-
-    def dismiss_and_get_value_fixed_speed_popover(self) -> Tuple[int, str]:
-        raise NotImplementedError()
-
-    def show_about_dialog(self) -> None:
-        raise NotImplementedError()
-
-    def show_legacy_firmware_dialog(self) -> None:
-        raise NotImplementedError()
-
-    def show_error_message_dialog(self, title: str, message: str) -> None:
-        raise NotImplementedError()
 
 
 @singleton
@@ -101,6 +57,7 @@ class MainPresenter:
     def __init__(self,
                  edit_speed_profile_presenter: EditSpeedProfilePresenter,
                  preferences_presenter: PreferencesPresenter,
+                 lighting_presenter: LightingPresenter,
                  has_supported_kraken_interactor: HasSupportedKrakenInteractor,
                  get_status_interactor: GetStatusInteractor,
                  set_speed_profile_interactor: SetSpeedProfileInteractor,
@@ -109,12 +66,14 @@ class MainPresenter:
                  speed_profile_changed_subject: SpeedProfileChangedSubject,
                  speed_step_changed_subject: SpeedStepChangedSubject,
                  composite_disposable: CompositeDisposable,
+                 scheduler: Scheduler,
                  ) -> None:
         _LOG.debug("init MainPresenter ")
         self.main_view: MainViewInterface = MainViewInterface()
         self._edit_speed_profile_presenter = edit_speed_profile_presenter
         self._preferences_presenter = preferences_presenter
-        self._scheduler = ThreadPoolScheduler(multiprocessing.cpu_count())
+        self._lighting_presenter: LightingPresenter = lighting_presenter
+        self._scheduler = scheduler.get()
         self._has_supported_kraken_interactor = has_supported_kraken_interactor
         self._get_status_interactor: GetStatusInteractor = get_status_interactor
         self._set_speed_profile_interactor: SetSpeedProfileInteractor = set_speed_profile_interactor
@@ -134,6 +93,7 @@ class MainPresenter:
         self._register_db_listeners()
         self._check_supported_kraken()
         self._refresh_speed_profiles(True)
+        self._load_lighting_modes()
         if self._settings_interactor.get_int('settings_check_new_version'):
             self._check_new_version()
 
@@ -228,7 +188,8 @@ class MainPresenter:
                     channel=ChannelType.PUMP.value)
                 if last_applied_pump_profile is not None and status.pump_duty is None and status.pump_rpm is not None:
                     _LOG.debug("No Pump Duty reported from device, calculating based on speed profile")
-                    status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile, status.liquid_temperature)
+                    status.pump_duty = self._calculate_duty(last_applied_pump_profile.profile,
+                                                            status.liquid_temperature)
             self.main_view.refresh_status(status)
             if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
                 self._legacy_firmware_dialog_shown = True
@@ -366,11 +327,15 @@ class MainPresenter:
         self.main_view.refresh_chart(profile)
 
     def on_fan_apply_button_clicked(self, *_: Any) -> None:
-        self._set_speed_profile(self._profile_selected[ChannelType.FAN.value])
+        channel = ChannelType.FAN.value
+        self.main_view.set_statusbar_text('applying %s cooling profile...' % channel)
+        self._set_speed_profile(self._profile_selected[channel])
         self._should_update_fan_speed = True
 
     def on_pump_apply_button_clicked(self, *_: Any) -> None:
-        self._set_speed_profile(self._profile_selected[ChannelType.PUMP.value])
+        channel = ChannelType.PUMP.value
+        self.main_view.set_statusbar_text('applying %s cooling profile...' % channel)
+        self._set_speed_profile(self._profile_selected[channel])
         self._should_update_pump_speed = True
 
     def _set_speed_profile(self, profile: SpeedProfile) -> None:
@@ -380,9 +345,11 @@ class MainPresenter:
             operators.subscribe_on(self._scheduler),
             operators.observe_on(GtkScheduler(GLib)),
         ).subscribe(on_next=lambda _: self._update_current_speed_profile(profile),
-                    on_error=lambda e: (_LOG.exception("Set cooling error: %s", str(e)),
-                                        self.main_view.set_statusbar_text('Error applying %s speed profile!'
-                                                                          % profile.channel))))
+                    on_error=lambda e: self._on_set_speed_profile_error(e, profile)))
+
+    def _on_set_speed_profile_error(self, e: Exception, profile: SpeedProfile) -> None:
+        _LOG.exception("Set cooling error: %s", str(e))
+        self.main_view.set_statusbar_text('Error applying %s speed profile!' % profile.channel)
 
     def _update_current_speed_profile(self, profile: SpeedProfile) -> None:
         current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=profile.channel)
@@ -425,3 +392,21 @@ class MainPresenter:
     @staticmethod
     def _get_changelog_uri(version: str = APP_VERSION) -> str:
         return f"{APP_SOURCE_URL}/blob/{version}/CHANGELOG.md"
+
+    def _load_lighting_modes(self) -> None:
+        self._lighting_presenter.load_lighting_modes()
+
+    def on_logo_mode_selected(self, *_: Any) -> None:
+        self._lighting_presenter.on_logo_mode_selected()
+
+    def on_ring_mode_selected(self, *_: Any) -> None:
+        self._lighting_presenter.on_ring_mode_selected()
+
+    def on_lighting_logo_colors_spinbutton_changed(self, spinbutton: Any) -> None:
+        self._lighting_presenter.on_lighting_logo_colors_spinbutton_changed(spinbutton)
+
+    def on_lighting_ring_colors_spinbutton_changed(self, spinbutton: Any) -> None:
+        self._lighting_presenter.on_lighting_ring_colors_spinbutton_changed(spinbutton)
+
+    def on_lighting_apply_button_clicked(self, *_: Any) -> None:
+        self._lighting_presenter.on_lighting_apply_button_clicked()
