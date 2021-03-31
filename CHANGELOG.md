@@ -1,3 +1,9 @@
+Version 1.1.0
+=============
+Released: 2021-03-31
+
+ * Added Lighting Control and lighting profile saving.
+
 Version 1.0.2
 =============
 Released: 2021-03-03

@@ -45,6 +45,13 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
+        <release date="2021-03-31" version="1.1.0">
+            <description>
+                <ul>
+                    <li>Added Lighting Control and lighting profile saving.</li>
+                </ul>
+            </description>
+        </release>
         <release date="2021-03-03" version="1.0.2">
             <description>
                 <ul>
