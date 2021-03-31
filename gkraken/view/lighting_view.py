@@ -207,7 +207,7 @@ class LightingView(LightingViewInterface):
         self._lighting_ring_speed_combobox.set_sensitive(enabled)
 
     def get_lighting_ring_speed(self) -> int:
-        active_speed_id = self._lighting_ring_speed_combobox.get_active()
+        active_speed_id = self._lighting_ring_speed_combobox.get_active_id()
         return int(active_speed_id) if active_speed_id else -1
 
     def set_lighting_ring_direction_enabled(self, enabled: bool) -> None:
