@@ -81,16 +81,16 @@ class LightingPresenter:
         if self._settings_interactor.get_bool('settings_load_last_profile'):
             logo_profile, logo_colors = self._get_current_lighting_profiles(LightingChannel.LOGO)
             if logo_profile:
-                _LOG.info("Saved Lighting Logo Profile found: %s, mode: %s, speed: %s, direction: %s, with %s colors",
-                          logo_profile, logo_profile.mode, logo_profile.speed, logo_profile.direction,
-                          len(logo_colors))
+                _LOG.debug("Found saved Lighting Logo Profile: %s, mode: %s, speed: %s, direction: %s, with %s colors",
+                           logo_profile, logo_profile.mode, logo_profile.speed, logo_profile.direction,
+                           len(logo_colors))
                 self._set_lighting_logo_widgets(logo_profile, logo_colors)
 
             ring_profile, ring_colors = self._get_current_lighting_profiles(LightingChannel.RING)
             if ring_profile:
-                _LOG.info("Savend Lighting Ring Profile found: %s, mode: %s, speed: %s, direction: %s, with %s colors",
-                          ring_profile, ring_profile.mode, ring_profile.speed, ring_profile.direction,
-                          len(ring_colors))
+                _LOG.debug("Found saved Lighting Ring Profile: %s, mode: %s, speed: %s, direction: %s, with %s colors",
+                           ring_profile, ring_profile.mode, ring_profile.speed, ring_profile.direction,
+                           len(ring_colors))
                 self._set_lighting_ring_widgets(ring_profile, ring_colors)
             if logo_profile or ring_profile:
                 self.on_lighting_apply_button_clicked()
