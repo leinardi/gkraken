@@ -277,16 +277,8 @@ class LightingPresenter:
         CurrentLightingColor.delete().where(
             CurrentLightingColor.channel == settings.channel.value
         ).execute()
-        new_colors: List[CurrentLightingColor] = []
         if settings.mode.max_colors > 0:
             for index, lighting_color in enumerate(settings.colors.colors):
-                color: CurrentLightingColor = CurrentLightingColor()
-                color.channel = settings.channel.value,
-                color.index = index,
-                color.red = lighting_color.red,
-                color.green = lighting_color.green,
-                color.blue = lighting_color.blue
-                new_colors.append(color)
                 CurrentLightingColor.create(
                     channel=settings.channel.value,
                     index=index,
@@ -294,4 +286,3 @@ class LightingPresenter:
                     green=lighting_color.green,
                     blue=lighting_color.blue
                 )
-        # CurrentLightingColor.bulk_create(new_colors)
