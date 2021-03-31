@@ -28,6 +28,8 @@ from gkraken.conf import APP_NAME, APP_ID, APP_VERSION
 from gkraken.di import MainBuilder
 from gkraken.interactor.udev_interactor import UdevInteractor
 from gkraken.model import load_db_default_data
+from gkraken.model.current_lighting_color import CurrentLightingColor
+from gkraken.model.current_lighting_profile import CurrentLightingProfile
 from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.speed_step import SpeedStep
 from gkraken.model.current_speed_profile import CurrentSpeedProfile
@@ -59,7 +61,9 @@ class Application(Gtk.Application):
                          **kwargs)
 
         database.connect()
-        database.create_tables([SpeedProfile, SpeedStep, CurrentSpeedProfile, Setting])
+        database.create_tables([
+            SpeedProfile, SpeedStep, CurrentSpeedProfile, Setting, CurrentLightingProfile, CurrentLightingColor
+        ])
 
         if SpeedProfile.select().count() == 0:
             load_db_default_data()

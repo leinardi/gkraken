@@ -14,9 +14,10 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
+from typing import List, Optional
 
 from gkraken.model.lighting_modes import LightingModes, LightingMode
-from gkraken.model.lighting_settings import LightingColors, LightingDirection
+from gkraken.model.lighting_settings import LightingColors, LightingDirection, LightingColor
 
 
 class LightingViewInterface:
@@ -39,7 +40,7 @@ class LightingViewInterface:
     def get_logo_colors(self, max_colors: int) -> LightingColors:
         raise NotImplementedError()
 
-    def set_lighting_logo_spin_button(self, lighting_mode: LightingMode) -> None:
+    def set_lighting_logo_spin_button(self, lighting_mode: LightingMode, override: Optional[int]) -> None:
         raise NotImplementedError()
 
     def get_lighting_logo_spin_button(self) -> int:
@@ -66,7 +67,7 @@ class LightingViewInterface:
     def get_ring_colors(self, max_colors: int) -> LightingColors:
         raise NotImplementedError()
 
-    def set_lighting_ring_spin_button(self, lighting_mode: LightingMode) -> None:
+    def set_lighting_ring_spin_button(self, lighting_mode: LightingMode, override: Optional[int]) -> None:
         raise NotImplementedError()
 
     def get_lighting_ring_spin_button(self) -> int:
@@ -82,4 +83,28 @@ class LightingViewInterface:
         raise NotImplementedError()
 
     def get_lighting_ring_direction(self) -> LightingDirection:
+        raise NotImplementedError()
+
+    def set_logo_mode_id(self, mode_id: int) -> None:
+        raise NotImplementedError()
+
+    def set_logo_speed_id(self, speed_id: int) -> None:
+        raise NotImplementedError()
+
+    def set_logo_direction(self, direction: LightingDirection) -> None:
+        raise NotImplementedError()
+
+    def set_logo_colors(self, colors: List[LightingColor]) -> None:
+        raise NotImplementedError()
+
+    def set_ring_mode_id(self, mode_id: int) -> None:
+        raise NotImplementedError()
+
+    def set_ring_speed_id(self, speed_id: int) -> None:
+        raise NotImplementedError()
+
+    def set_ring_direction(self, direction: LightingDirection) -> None:
+        raise NotImplementedError()
+
+    def set_ring_colors(self, colors: List[LightingColor]) -> None:
         raise NotImplementedError()

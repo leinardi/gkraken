@@ -33,6 +33,13 @@ class LightingDirection(Enum):
     FORWARD = 'forward'
     BACKWARD = 'backward'
 
+    @staticmethod
+    def from_str(given_str: str) -> 'LightingDirection':
+        for direction in LightingDirection:
+            if given_str == direction.value:
+                return direction
+        raise NotImplementedError
+
 
 class LightingColor:
     def __init__(self,
@@ -47,6 +54,10 @@ class LightingColor:
     @staticmethod
     def from_button_color(color: Gdk.RGBA) -> 'LightingColor':
         return LightingColor(int(color.red * 255), int(color.green * 255), int(color.blue * 255))
+
+    @staticmethod
+    def to_button_color(color: 'LightingColor') -> Gdk.RGBA:
+        return Gdk.RGBA(float(color.red / 255.0), float(color.green / 255.0), float(color.blue / 255.0), 1.0)
 
     def values(self) -> List[int]:
         return [self.red, self.green, self.blue]
@@ -67,17 +78,16 @@ class LightingColors:
 class LightingSettings:
     def __init__(self,
                  channel: LightingChannel,
-                 mode: str,
+                 mode: LightingMode,
                  colors: LightingColors,
                  speed: Optional[LightingSpeed],
                  direction: Optional[LightingDirection]):
         self.channel: LightingChannel = channel
-        self.mode: str = mode
+        self.mode: LightingMode = mode
         self.colors: LightingColors = colors
-        set_speed = speed.speed if speed else 'normal'
-        self.speed: str = set_speed
-        set_direction = direction.value if direction else 'forward'
-        self.direction: str = set_direction
+        self.speed_or_default: str = speed.name if speed else 'normal'
+        self.speed_id_or_default: int = speed.id if speed else 3
+        self.direction_or_default: str = direction.value if direction else LightingDirection.FORWARD.value
 
     @staticmethod
     def create_logo_settings(lighting_mode: LightingMode,
@@ -85,7 +95,7 @@ class LightingSettings:
                              speed: Optional[LightingSpeed] = None,
                              direction: Optional[LightingDirection] = None
                              ) -> 'LightingSettings':
-        return LightingSettings(LightingChannel.LOGO, lighting_mode.mode, colors, speed, direction)
+        return LightingSettings(LightingChannel.LOGO, lighting_mode, colors, speed, direction)
 
     @staticmethod
     def create_ring_settings(lighting_mode: LightingMode,
@@ -93,4 +103,4 @@ class LightingSettings:
                              speed: Optional[LightingSpeed] = None,
                              direction: Optional[LightingDirection] = None
                              ) -> 'LightingSettings':
-        return LightingSettings(LightingChannel.RING, lighting_mode.mode, colors, speed, direction)
+        return LightingSettings(LightingChannel.RING, lighting_mode, colors, speed, direction)
