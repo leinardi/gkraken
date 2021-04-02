@@ -20,6 +20,7 @@ from typing import Optional, Any, Dict
 from gi.repository import GLib, Gtk, Gdk
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+from matplotlib.colors import ColorConverter
 from matplotlib.figure import Figure
 
 from gkraken.conf import MIN_TEMP, MAX_TEMP, MAX_DUTY
@@ -53,9 +54,16 @@ def init_plot_chart(scrolled_window: Gtk.ScrolledWindow,
                     figure: Figure,
                     canvas: FigureCanvas,
                     axis: Axes) -> Any:
+    axis.patch.set_visible(False)
+    temp_window = Gtk.Window()
+    style = temp_window.get_style_context()
+    bg_colour = style.get_background_color(Gtk.StateType.NORMAL).to_color().to_floats()
+    cc = ColorConverter()
+    cc.to_rgba(bg_colour)
+    figure.patch.set_facecolor(bg_colour)
     axis.grid(True, linestyle=':')
     axis.margins(x=0, y=0.05)
-    axis.set_facecolor('#00000000')
+
     axis.set_xlabel('Liquid temperature [°C]')
     axis.set_ylabel('Duty [%]')
     figure.subplots_adjust(top=1)
