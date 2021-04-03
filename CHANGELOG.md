@@ -1,3 +1,12 @@
+Version 1.1.1
+=============
+Released: 2021-04-03
+
+ * Fixed #35: MatPlotLib Background Issue
+ * Updated matploglib to 3.4.1
+ * Updated Flatpak dependencies
+ * Fixed Issue with dark theme
+
 Version 1.1.0
 =============
 Released: 2021-03-31
