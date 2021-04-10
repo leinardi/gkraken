@@ -1,6 +1,7 @@
 # GKraken
 GKraken is a GTK application that allows you to control the cooling
-(and soon also the lighting) of a NZXT Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux.
+of a NZXT Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux.  
+Lighting control is now supported for X42, X52, X62, X72, X53, X63, X73 models.
 
 ## Project in Maintenance mode
 <img src="/art/gkraken.png" width="128" align="right" hspace="0" />
@@ -110,6 +111,8 @@ It will automatically refresh also the udev rules.
 Create a new file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
 ```bash
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="2007", MODE="0666"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="3008", MODE="0666"
 ```
 
 After that, run the following commands
