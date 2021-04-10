@@ -1,7 +1,8 @@
 Version 1.1.1
 =============
-Released: 2021-04-03
+Released: 2021-04-10
 
+ * Fixed #36: Z73 lighting error
  * Fixed #35: MatPlotLib Background Issue
  * Updated matploglib to 3.4.1
  * Updated Flatpak dependencies
