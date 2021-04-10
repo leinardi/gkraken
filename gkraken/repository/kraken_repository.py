@@ -86,12 +86,12 @@ class KrakenRepository:
 
     def get_lighting_modes(self) -> Optional[LightingModes]:
         self._load_driver()
-        if isinstance(self._driver, Kraken2):
-            return LightingModes.get_x2()
-        if isinstance(self._driver, KrakenX3):
-            return LightingModes.get_x3()
         if isinstance(self._driver, KrakenZ3):
             return LightingModes.get_z3()
+        if isinstance(self._driver, KrakenX3):
+            return LightingModes.get_x3()
+        if isinstance(self._driver, Kraken2):
+            return LightingModes.get_x2()
         return None
 
     def set_lighting_mode(self, settings: LightingSettings) -> None:
