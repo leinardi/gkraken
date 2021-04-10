@@ -35,6 +35,10 @@ class Status:
         self.firmware_version: str = firmware_version
         self.pump_duty: Optional[float] = pump_duty
 
+    def __repr__(self) -> str:
+        return f"{{temp: {self.liquid_temperature}, fan_rpm: {self.fan_rpm}, fan_duty: {self.fan_duty}, " \
+               f"pump_rpm: {self.pump_rpm}, pump_duty: {self.pump_duty}, firmware_version: {self.firmware_version}}}"
+
     @staticmethod
     def get_x2(status_list: list) -> 'Optional[Status]':
         status = Status(
