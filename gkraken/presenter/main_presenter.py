@@ -371,10 +371,17 @@ class MainPresenter:
 
     def _get_status(self) -> Observable:
         observable = self._get_status_interactor.execute().pipe(
-            operators.catch(self._log_exception_return_empty_observable)
+            operators.catch(self._log_exception_return_empty_observable),
+            operators.map(self.log_status)
         )
+
         assert isinstance(observable, Observable)
         return observable
+
+    @staticmethod
+    def log_status(status: Status) -> Status:
+        _LOG.debug("Internal Status is: %s", repr(status))
+        return status
 
     def _check_new_version(self) -> None:
         self._composite_disposable.add(self._check_new_version_interactor.execute().pipe(
