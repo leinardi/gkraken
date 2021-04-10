@@ -42,6 +42,7 @@ class KrakenRepository:
         self._driver: Optional[BaseDriver] = None
 
     def has_supported_kraken(self) -> bool:
+        self._load_driver()
         return self._driver is not None or INJECTOR.get(Optional[BaseDriver]) is not None
 
     def cleanup(self) -> None:
@@ -100,7 +101,6 @@ class KrakenRepository:
         return None
 
     def set_lighting_mode(self, settings: LightingSettings) -> None:
-        self._load_driver()
         if self._driver and settings:
             try:
                 self._driver.set_color(
@@ -114,6 +114,7 @@ class KrakenRepository:
                 _LOG.exception("Error setting the Lighting Profile")
                 self.cleanup()
 
+    @synchronized_with_attr("lock")
     def _load_driver(self) -> None:
         if not self._driver:
             self._driver = INJECTOR.get(Optional[BaseDriver])
