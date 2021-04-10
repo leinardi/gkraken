@@ -21,7 +21,7 @@ from typing import Optional, List, Tuple
 
 from injector import singleton, inject
 from liquidctl.driver.usb import BaseDriver
-from liquidctl.driver.kraken2 import Kraken2
+from liquidctl.driver.kraken2 import Kraken2, KrakenTwoDriver
 from liquidctl.driver.kraken3 import KrakenX3
 from liquidctl.driver.kraken3 import KrakenZ3
 
@@ -62,8 +62,12 @@ class KrakenRepository:
                     return Status.get_z3(status_list)
                 if isinstance(self._driver, KrakenX3):
                     return Status.get_x3(status_list)
-                if isinstance(self._driver, Kraken2):
+                if isinstance(self._driver, (Kraken2, KrakenTwoDriver)):
                     return Status.get_x2(status_list)
+                if self._driver:
+                    _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
+                else:
+                    _LOG.error("Race cleanup condition has removed the driver")
             # pylint: disable=bare-except
             except:
                 _LOG.exception("Error getting the status")
@@ -90,8 +94,9 @@ class KrakenRepository:
             return LightingModes.get_z3()
         if isinstance(self._driver, KrakenX3):
             return LightingModes.get_x3()
-        if isinstance(self._driver, Kraken2):
+        if isinstance(self._driver, (Kraken2, KrakenTwoDriver)):
             return LightingModes.get_x2()
+        _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
         return None
 
     def set_lighting_mode(self, settings: LightingSettings) -> None:
