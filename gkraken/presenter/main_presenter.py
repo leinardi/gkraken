@@ -159,7 +159,7 @@ class MainPresenter:
                 self._critical_error_occurred = True
                 self.main_view.show_error_message_dialog(
                     "Unable to communicate with the NZXT Kraken",
-                    "It was not possible to communicate with the NZXT Kranen.\n\n"
+                    "It was not possible to communicate with the NZXT Kraken.\n\n"
                     "Most probably the current user does not have the permission to access it.\n\n"
                     "You can try to fix the issue running the following command and then rebooting:\n\n"
                     f"{self._get_udev_command()}\n\n"
