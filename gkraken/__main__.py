@@ -88,6 +88,7 @@ def main() -> int:
     application: Application = INJECTOR.get(Application)
     GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, application.quit)
     exit_status = application.run(sys.argv)
+    _LOG.info("Shutting down")
     _cleanup()
     return sys.exit(exit_status)
 
