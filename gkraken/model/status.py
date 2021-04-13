@@ -15,8 +15,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 from typing import Optional
 from enum import Enum
+
+_LOG = logging.getLogger(__name__)
 
 
 class Status:
@@ -47,7 +50,11 @@ class Status:
             status_list[_StatusTypeX2.PUMP_RPM.value],
             status_list[_StatusTypeX2.FIRMWARE_VERSION.value],
         )
-        return status if status.fan_rpm and status.fan_rpm < 3500 else None
+        if status.fan_rpm is not None and status.fan_rpm < 3500:
+            return status
+        else:
+            _LOG.error('Invalid Fan RPM from X2 Device')
+            return None
 
     @staticmethod
     def get_x3(status_list: list) -> 'Status':
