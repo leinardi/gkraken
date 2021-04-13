@@ -56,19 +56,7 @@ class KrakenRepository:
         self._load_driver()
         if self._driver:
             try:
-                driver_status = self._driver.get_status()
-                _LOG.debug("Reported status:\n%s", driver_status)
-                status_list = [v for k, v, u in driver_status]
-                if isinstance(self._driver, KrakenZ3):
-                    return Status.get_z3(status_list)
-                if isinstance(self._driver, KrakenX3):
-                    return Status.get_x3(status_list)
-                if isinstance(self._driver, (Kraken2, KrakenTwoDriver)):
-                    return Status.get_x2(status_list)
-                if self._driver:
-                    _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
-                else:
-                    _LOG.error("Race cleanup condition has removed the driver")
+                return Status.get_status(self._driver)
             # pylint: disable=bare-except
             except:
                 _LOG.exception("Error getting the status")
@@ -91,14 +79,7 @@ class KrakenRepository:
 
     def get_lighting_modes(self) -> Optional[LightingModes]:
         self._load_driver()
-        if isinstance(self._driver, KrakenZ3):
-            return LightingModes.get_z3()
-        if isinstance(self._driver, KrakenX3):
-            return LightingModes.get_x3()
-        if isinstance(self._driver, (Kraken2, KrakenTwoDriver)):
-            return LightingModes.get_x2()
-        _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
-        return None
+        return LightingModes.get_modes(self._driver)
 
     def set_lighting_mode(self, settings: LightingSettings) -> None:
         if self._driver and settings:

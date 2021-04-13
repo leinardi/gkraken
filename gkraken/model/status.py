@@ -16,8 +16,12 @@
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from typing import Optional
+from typing import Optional, List, Tuple
 from enum import Enum
+
+from liquidctl.driver.base import BaseDriver
+from liquidctl.driver.kraken2 import Kraken2
+from liquidctl.driver.kraken3 import KrakenZ3, KrakenX3
 
 _LOG = logging.getLogger(__name__)
 
@@ -43,12 +47,29 @@ class Status:
                f"pump_rpm: {self.pump_rpm}, pump_duty: {self.pump_duty}, firmware_version: {self.firmware_version}}}"
 
     @staticmethod
-    def get_x2(status_list: list) -> 'Optional[Status]':
+    def get_status(driver: BaseDriver) -> 'Optional[Status]':
+        driver_status = driver.get_status()
+        _LOG.debug("Reported status:\n%s", driver_status)
+        status_list = [v for k, v, u in driver_status]
+        if isinstance(driver, KrakenZ3):
+            return Status._get_z3(status_list)
+        if isinstance(driver, KrakenX3):
+            return Status._get_x3(status_list)
+        if isinstance(driver, Kraken2):
+            return Status._get_x2(status_list)
+        if driver:
+            _LOG.error("Driver Instance is not recognized: %s", driver.description)
+        else:
+            _LOG.error("Race cleanup condition has removed the driver")
+        return None
+
+    @staticmethod
+    def _get_x2(status_list: list) -> 'Optional[Status]':
         status = Status(
-            status_list[_StatusTypeX2.LIQUID_TEMPERATURE.value],
-            status_list[_StatusTypeX2.FAN_RPM.value],
-            status_list[_StatusTypeX2.PUMP_RPM.value],
-            status_list[_StatusTypeX2.FIRMWARE_VERSION.value],
+            liquid_temperature=status_list[_StatusTypeX2.LIQUID_TEMPERATURE.value],
+            fan_rpm=status_list[_StatusTypeX2.FAN_RPM.value],
+            pump_rpm=status_list[_StatusTypeX2.PUMP_RPM.value],
+            firmware_version=status_list[_StatusTypeX2.FIRMWARE_VERSION.value],
         )
         if status.fan_rpm is not None and status.fan_rpm < 3500:
             return status
@@ -57,17 +78,17 @@ class Status:
             return None
 
     @staticmethod
-    def get_x3(status_list: list) -> 'Status':
+    def _get_x3(status_list: list) -> 'Status':
         return Status(
-            status_list[_StatusTypeX3.LIQUID_TEMPERATURE.value],
+            liquid_temperature=status_list[_StatusTypeX3.LIQUID_TEMPERATURE.value],
             pump_rpm=status_list[_StatusTypeX3.PUMP_RPM.value],
             pump_duty=status_list[_StatusTypeX3.PUMP_DUTY.value]
         )
 
     @staticmethod
-    def get_z3(status_list: list) -> 'Status':
+    def _get_z3(status_list: list) -> 'Status':
         return Status(
-            status_list[_StatusTypeZ3.LIQUID_TEMPERATURE.value],
+            liquid_temperature=status_list[_StatusTypeZ3.LIQUID_TEMPERATURE.value],
             fan_rpm=status_list[_StatusTypeZ3.FAN_RPM.value],
             pump_rpm=status_list[_StatusTypeZ3.PUMP_RPM.value],
             pump_duty=status_list[_StatusTypeZ3.PUMP_DUTY.value],
