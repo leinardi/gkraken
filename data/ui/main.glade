@@ -157,7 +157,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
   </object>
   <object class="GtkApplicationWindow" id="application_window">
     <property name="can-focus">False</property>
-    <property name="icon">gkraken.svg</property>
+    <property name="icon">../icons/gkraken.svg</property>
     <property name="gravity">north</property>
     <signal name="delete-event" handler="on_application_window_delete_event" swapped="no"/>
     <child>

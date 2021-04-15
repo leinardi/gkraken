@@ -188,7 +188,7 @@ class MainView(MainViewInterface):
         self._statusbar.push(self._context, text)
 
     def refresh_status(self, status: Optional[Status]) -> None:
-        _LOG.debug('view status')
+        _LOG.debug('Refreshing Status View')
         if status:
             self._cooling_fan_rpm.set_markup("<span size=\"xx-large\">%s</span> RPM" %
                                              ('-' if status.fan_rpm is None else status.fan_rpm))
