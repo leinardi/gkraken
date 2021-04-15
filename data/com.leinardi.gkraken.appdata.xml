@@ -50,6 +50,7 @@
             <description>
                 <ul>
                     <li>Fixed #37: Fan Status error on X2 models</li>
+                    <li>Updated liquidctl version to 1.6.0</li>
                 </ul>
             </description>
         </release>
