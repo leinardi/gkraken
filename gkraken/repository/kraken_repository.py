@@ -21,9 +21,6 @@ from typing import Optional, List, Tuple
 
 from injector import singleton, inject
 from liquidctl.driver.usb import BaseDriver
-from liquidctl.driver.kraken2 import Kraken2, KrakenTwoDriver
-from liquidctl.driver.kraken3 import KrakenX3
-from liquidctl.driver.kraken3 import KrakenZ3
 
 from gkraken.di import INJECTOR
 from gkraken.model.lighting_modes import LightingModes
