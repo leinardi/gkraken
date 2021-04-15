@@ -15,7 +15,14 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Dict, List
+import logging
+from typing import Dict, List, Optional
+
+from liquidctl.driver.base import BaseDriver
+from liquidctl.driver.kraken2 import Kraken2
+from liquidctl.driver.kraken3 import KrakenZ3, KrakenX3
+
+_LOG = logging.getLogger(__name__)
 
 
 class LightingMode:
@@ -43,7 +50,18 @@ class LightingModes:
         self.modes_ring: Dict[int, LightingMode] = {}
 
     @staticmethod
-    def get_x2() -> 'LightingModes':
+    def get_modes(driver: BaseDriver) -> 'Optional[LightingModes]':
+        if isinstance(driver, KrakenZ3):
+            return LightingModes._get_z3()
+        if isinstance(driver, KrakenX3):
+            return LightingModes._get_x3()
+        if isinstance(driver, Kraken2):
+            return LightingModes._get_x2()
+        _LOG.error("Driver Instance is not recognized: %s", driver.description)
+        return None
+
+    @staticmethod
+    def _get_x2() -> 'LightingModes':
         lighting_modes = LightingModes()
         for mode in _ModesTypeX2.MODES_LOGO:
             lighting_modes.modes_logo[mode.mode_id] = mode
@@ -52,7 +70,7 @@ class LightingModes:
         return lighting_modes
 
     @staticmethod
-    def get_x3() -> 'LightingModes':
+    def _get_x3() -> 'LightingModes':
         lighting_modes = LightingModes()
         for mode in _ModesTypeX3.MODES_LOGO:
             lighting_modes.modes_logo[mode.mode_id] = mode
@@ -61,7 +79,7 @@ class LightingModes:
         return lighting_modes
 
     @staticmethod
-    def get_z3() -> 'LightingModes':
+    def _get_z3() -> 'LightingModes':
         lighting_modes = LightingModes()
         for mode in _ModesTypeZ3.MODES_LOGO:
             lighting_modes.modes_logo[mode.mode_id] = mode

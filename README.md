@@ -1,7 +1,7 @@
 # GKraken
 GKraken is a GTK application that allows you to control the cooling
 of a NZXT Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux.  
-Lighting control is now supported for X42, X52, X62, X72, X53, X63, X73 models.
+Lighting control is also supported for X42, X52, X62, X72, X53, X63, X73 models.
 
 ## Project in Maintenance mode
 <img src="/art/gkraken.png" width="128" align="right" hspace="0" />

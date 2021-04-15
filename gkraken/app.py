@@ -102,7 +102,7 @@ class Application(Gtk.Application):
 
         if _Options.VERSION.value in options:
             _LOG.debug("Option %s selected", _Options.VERSION.value)
-            print(APP_VERSION)
+            print(f"{APP_NAME} version: {APP_VERSION}")
             start_app = False
 
         if _Options.DEBUG.value in options:
@@ -136,6 +136,7 @@ class Application(Gtk.Application):
             start_app = False
 
         if start_app:
+            _LOG.info(f"Starting {APP_NAME} {APP_VERSION}")
             self.activate()
         return exit_value
 

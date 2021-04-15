@@ -1,3 +1,10 @@
+Version 1.1.2
+=============
+Released: 2021-04-15
+
+ * Fixed #37: Fan Status error on X2 models
+ * Updated liquidctl version to 1.6.0
+
 Version 1.1.1
 =============
 Released: 2021-04-10
