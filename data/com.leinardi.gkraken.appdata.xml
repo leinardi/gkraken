@@ -28,8 +28,9 @@
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
     <description>
-        <p>GKraken is a GTK application that allows you to control the cooling (and soon also the lighting) of a NZXT
-            Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux.
+        <p>GKraken is a GTK application that allows you to control the cooling of a NZXT
+            Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux. 
+            Lighting control is also supported for X42, X52, X62, X72, X53, X63, X73 models.
         </p>
     </description>
     <launchable type="desktop-id">com.leinardi.gkraken.desktop</launchable>
@@ -45,6 +46,13 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
+        <release date="2021-04-15" version="1.1.2">
+            <description>
+                <ul>
+                    <li>Fixed #37: Fan Status error on X2 models</li>
+                </ul>
+            </description>
+        </release>
         <release date="2021-04-10" version="1.1.1">
             <description>
                 <ul>
