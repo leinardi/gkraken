@@ -15,7 +15,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Dict, Any
+from typing import Dict, Any, List
+
+from liquidctl.driver.kraken2 import Kraken2
+from liquidctl.driver.kraken3 import KrakenZ3, KrakenX3
 
 APP_PACKAGE_NAME = "gkraken"
 APP_NAME = "GKraken"
@@ -58,3 +61,9 @@ DESKTOP_ENTRY: Dict[str, str] = {
     'Terminal': 'false',
     'Categories': 'System;Settings;',
 }
+
+SUPPORTED_DRIVERS: List = [
+    KrakenZ3,
+    KrakenX3,
+    Kraken2,
+]
