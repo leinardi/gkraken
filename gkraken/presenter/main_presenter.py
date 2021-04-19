@@ -208,9 +208,6 @@ class MainPresenter:
             duty = float(p_2[1])
         return duty
 
-    # def _load_last_profile(self) -> None:
-    #     for current in CurrentSpeedProfile.select():
-
     @staticmethod
     def _get_profile_list(channel: ChannelType) -> List[Tuple[int, str]]:
         return [(p.id, p.name) for p in SpeedProfile.select().where(SpeedProfile.channel == channel.value)]
