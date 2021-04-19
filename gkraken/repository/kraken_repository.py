@@ -25,6 +25,9 @@ from liquidctl.driver.usb import BaseDriver
 from gkraken.di import INJECTOR
 from gkraken.model.lighting_modes import LightingModes
 from gkraken.model.lighting_settings import LightingSettings
+from gkraken.model.settings_kraken_2 import SettingsKraken2
+from gkraken.model.settings_kraken_x3 import SettingsKrakenX3
+from gkraken.model.settings_kraken_z3 import SettingsKrakenZ3
 from gkraken.model.status import Status
 from gkraken.util.concurrency import synchronized_with_attr
 
@@ -33,6 +36,10 @@ _LOG = logging.getLogger(__name__)
 
 @singleton
 class KrakenRepository:
+    _SUPPORTED_DEVICE_SETTINGS = {
+        SettingsKraken2, SettingsKrakenX3, SettingsKrakenZ3
+    }
+
     @inject
     def __init__(self) -> None:
         self.lock = threading.RLock()
@@ -42,6 +49,7 @@ class KrakenRepository:
         self._load_driver()
         return self._driver is not None or INJECTOR.get(Optional[BaseDriver]) is not None
 
+    @synchronized_with_attr("lock")
     def cleanup(self) -> None:
         _LOG.debug("KrakenRepository cleanup")
         if self._driver:
@@ -53,10 +61,18 @@ class KrakenRepository:
         self._load_driver()
         if self._driver:
             try:
-                return Status.get_status(self._driver)
-            # pylint: disable=bare-except
-            except:
-                _LOG.exception("Error getting the status")
+                driver_status = self._driver.get_status()
+                _LOG.debug("Reported driver status:\n%s", driver_status)
+                status_list = [v for k, v, u in driver_status]
+                for device_setting in self._SUPPORTED_DEVICE_SETTINGS:
+                    if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
+                        return device_setting().determine_status(status_list)
+                if self._driver:
+                    _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
+                else:
+                    _LOG.error("Race cleanup condition has removed the driver")
+            except BaseException as ex:
+                _LOG.exception("Error getting the status: %s", ex)
                 self.cleanup()
         return None
 
@@ -69,14 +85,17 @@ class KrakenRepository:
                     self._driver.set_fixed_speed(channel_value, profile_data[0][1])
                 else:
                     self._driver.set_speed_profile(channel_value, profile_data)
-            # pylint: disable=bare-except
-            except:
-                _LOG.exception("Error getting the status")
+            except BaseException as ex:
+                _LOG.exception("Error setting the status: %s", ex)
                 self.cleanup()
 
     def get_lighting_modes(self) -> Optional[LightingModes]:
         self._load_driver()
-        return LightingModes.get_modes(self._driver)
+        for device_setting in self._SUPPORTED_DEVICE_SETTINGS:
+            if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
+                return device_setting().get_compatible_lighting_modes()
+        _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
+        return None
 
     def set_lighting_mode(self, settings: LightingSettings) -> None:
         if self._driver and settings:
@@ -87,9 +106,8 @@ class KrakenRepository:
                     settings.colors.values(),
                     speed=settings.speed_or_default,
                     direction=settings.direction_or_default)
-            # pylint: disable=bare-except
-            except:
-                _LOG.exception("Error setting the Lighting Profile")
+            except BaseException as ex:
+                _LOG.exception("Error setting the Lighting Profile: %s", ex)
                 self.cleanup()
 
     @synchronized_with_attr("lock")
