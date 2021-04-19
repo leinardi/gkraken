@@ -35,5 +35,5 @@ class HasSupportedKrakenInteractor:
         self._kraken_repository = kraken_repository
 
     def execute(self) -> Observable:
-        _LOG.debug("GetStatusInteractor.execute()")
+        _LOG.debug("HasSupportedKrakenInteractor.execute()")
         return rx.defer(lambda _: rx.just(self._kraken_repository.has_supported_kraken()))
