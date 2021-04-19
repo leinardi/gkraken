@@ -78,7 +78,8 @@ class KrakenRepository:
 
     @synchronized_with_attr("lock")
     def set_speed_profile(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> None:
-        self._load_driver()
+        if not self._driver:
+            self._load_driver()
         if self._driver and profile_data:
             try:
                 if len(profile_data) == 1:
@@ -90,10 +91,12 @@ class KrakenRepository:
                 self.cleanup()
 
     def get_lighting_modes(self) -> Optional[LightingModes]:
-        self._load_driver()
-        for device_setting in self._SUPPORTED_DEVICE_SETTINGS:
-            if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
-                return device_setting().get_compatible_lighting_modes()
+        if not self._driver:
+            self._load_driver()
+        if self._driver:
+            for device_setting in self._SUPPORTED_DEVICE_SETTINGS:
+                if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
+                    return device_setting().get_compatible_lighting_modes()
         _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
         return None
 
