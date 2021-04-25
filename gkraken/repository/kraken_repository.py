@@ -63,9 +63,9 @@ class KrakenRepository:
             try:
                 driver_status = self._driver.get_status()
                 _LOG.debug("Reported driver status:\n%s", driver_status)
-                status_list = [v for k, v, u in driver_status]
                 for device_setting in self._SUPPORTED_DEVICE_SETTINGS:
                     if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
+                        status_list = [v for k, v, u in driver_status]
                         return device_setting().determine_status(status_list)
                 if self._driver:
                     _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
