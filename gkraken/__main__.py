@@ -53,7 +53,7 @@ except AttributeError as e:
     # Python built without gettext support doesn't have bindtextdomain()
     # and textdomain()
     print("Couldn't bind the gettext translation domain. Some translations"
-    " won't work. Error: \n{}".format(e))
+          " won't work. Error: \n{}".format(e))
 
 gettext.bindtextdomain(APP_PACKAGE_NAME, LOCALE_DIR)
 gettext.textdomain(APP_PACKAGE_NAME)
