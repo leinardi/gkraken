@@ -17,26 +17,26 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-import signal
-import locale
 import gettext
+import locale
 import logging
+import signal
 import sys
+from os.path import abspath, join, dirname
 from typing import Type, Any
 
 import gi
-from os.path import abspath, join, dirname
 from peewee import SqliteDatabase
 from rx.disposable import CompositeDisposable
 
+from gkraken.app import Application
 from gkraken.conf import APP_PACKAGE_NAME
+from gkraken.di import INJECTOR
+from gkraken.repository.kraken_repository import KrakenRepository
+from gkraken.util.log import set_log_level
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GLib
-from gkraken.util.log import set_log_level
-from gkraken.repository.kraken_repository import KrakenRepository
-from gkraken.di import INJECTOR
-from gkraken.app import Application
 
 WHERE_AM_I = abspath(dirname(__file__))
 LOCALE_DIR = join(WHERE_AM_I, 'mo')

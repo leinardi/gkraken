@@ -19,7 +19,7 @@ import logging
 from itertools import chain
 from typing import Optional, NewType, List
 
-from gi.repository import Gtk
+import gi
 from injector import Module, provider, singleton, Injector
 from liquidctl.driver.usb import BaseDriver
 from peewee import SqliteDatabase
@@ -29,6 +29,10 @@ from rx.subject import Subject
 from gkraken.conf import APP_PACKAGE_NAME, APP_MAIN_UI_NAME, APP_DB_NAME, APP_EDIT_SPEED_PROFILE_UI_NAME, \
     APP_PREFERENCES_UI_NAME, SUPPORTED_DRIVERS
 from gkraken.util.path import get_config_path
+
+gi.require_version('Gtk', '3.0') 
+from gi.repository import Gtk
+
 
 _LOG = logging.getLogger(__name__)
 
