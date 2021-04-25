@@ -1,0 +1,26 @@
+image: "python:3.8"
+
+before_script:
+  - python --version
+  - pip install -r requirements.txt
+
+stages:
+  - Analyse
+  - Test
+
+mypy:
+  stage: Analyse
+  allow_failure: true
+  script:
+    - mypy gkraken
+
+pylint:
+  stage: Analyse
+  allow_failure: true
+  script:
+    - pylint gkraken
+
+pytest:
+  stage: Test
+  script:
+    - pytest
