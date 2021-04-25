@@ -7,3 +7,7 @@ PyGObject==3.38.0
 pyxdg==0.27
 requests==2.25.1
 Rx==3.1.1
+pytest~=6.2.3
+pytest_mock~=3.5.1
+mypy==0.812
+pylint~=2.7.4
