@@ -1,4 +1,4 @@
-image: "python:3.8"
+image: registry.gitlab.com/leinardi/gkraken:v1
 
 before_script:
   - python --version
