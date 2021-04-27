@@ -22,12 +22,10 @@ from typing import Optional, List, Tuple
 from injector import singleton, inject
 from liquidctl.driver.usb import BaseDriver
 
+from gkraken.device_setting.device_settings import DeviceSettings
 from gkraken.di import INJECTOR
 from gkraken.model.lighting_modes import LightingModes
 from gkraken.model.lighting_settings import LightingSettings
-from gkraken.model.settings_kraken_2 import SettingsKraken2
-from gkraken.model.settings_kraken_x3 import SettingsKrakenX3
-from gkraken.model.settings_kraken_z3 import SettingsKrakenZ3
 from gkraken.model.status import Status
 from gkraken.util.concurrency import synchronized_with_attr
 
@@ -36,9 +34,6 @@ _LOG = logging.getLogger(__name__)
 
 @singleton
 class KrakenRepository:
-    _SUPPORTED_DEVICE_SETTINGS = {
-        SettingsKraken2, SettingsKrakenX3, SettingsKrakenZ3
-    }
 
     @inject
     def __init__(self) -> None:
@@ -63,7 +58,7 @@ class KrakenRepository:
             try:
                 driver_status = self._driver.get_status()
                 _LOG.debug("Reported driver status:\n%s", driver_status)
-                for device_setting in self._SUPPORTED_DEVICE_SETTINGS:
+                for device_setting in DeviceSettings.__subclasses__():
                     if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
                         status_list = [v for k, v, u in driver_status]
                         return device_setting().determine_status(status_list)
@@ -94,7 +89,7 @@ class KrakenRepository:
         if not self._driver:
             self._load_driver()
         if self._driver:
-            for device_setting in self._SUPPORTED_DEVICE_SETTINGS:
+            for device_setting in DeviceSettings.__subclasses__():
                 if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
                     return device_setting().get_compatible_lighting_modes()
         _LOG.error("Driver Instance is not recognized: %s", self._driver.description)

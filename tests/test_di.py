@@ -22,6 +22,10 @@ from liquidctl.driver.kraken3 import KrakenZ3, KrakenX3
 from pytest_mock import MockerFixture
 
 import gkraken.di
+from gkraken.device_setting import DeviceSettings
+from gkraken.device_setting.settings_kraken_2 import SettingsKraken2
+from gkraken.device_setting.settings_kraken_x3 import SettingsKrakenX3
+from gkraken.device_setting.settings_kraken_z3 import SettingsKrakenZ3
 from gkraken.di import INJECTOR
 
 
@@ -30,16 +34,18 @@ class TestProvideKrakenDriver:
 
     def test_driver(self, mocker: MockerFixture) -> None:
         # arrange
-        mocker.patch.object(gkraken.di, 'SUPPORTED_DRIVERS', [Kraken2])
-        mocker.patch.object(Kraken2, 'find_supported_devices', return_value=[Kraken2('012345', 'test device')])
+        description = 'test device'
+        mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[SettingsKraken2])
+        mocker.patch.object(Kraken2, 'find_supported_devices', return_value=[Kraken2('012345', description)])
         # act
         driver = INJECTOR.get(Optional[BaseDriver])
         # assert
         assert isinstance(driver, Kraken2)
+        assert driver.description == description
 
     def test_driver_none(self, mocker: MockerFixture) -> None:
         # arrange
-        mocker.patch.object(gkraken.di, 'SUPPORTED_DRIVERS', [Kraken2])
+        mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[SettingsKraken2])
         mocker.patch.object(Kraken2, 'find_supported_devices', return_value=[])
         # act
         driver = INJECTOR.get(Optional[BaseDriver])
@@ -48,7 +54,8 @@ class TestProvideKrakenDriver:
 
     def test_driver_multiple(self, mocker: MockerFixture) -> None:
         # arrange
-        mocker.patch.object(gkraken.di, 'SUPPORTED_DRIVERS', [KrakenZ3, KrakenX3, Kraken2])
+        mocker.patch.object(DeviceSettings, '__subclasses__',
+                            return_value=[SettingsKrakenZ3, SettingsKrakenX3, SettingsKraken2])
         mocker.patch.object(Kraken2, 'find_supported_devices', return_value=[Kraken2('01234', 'test device')])
         mocker.patch.object(KrakenX3, 'find_supported_devices', return_value=[KrakenX3('01234', 'test device', [], [])])
         mocker.patch.object(KrakenZ3, 'find_supported_devices',

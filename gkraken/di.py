@@ -27,12 +27,11 @@ from rx.disposable import CompositeDisposable
 from rx.subject import Subject
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_MAIN_UI_NAME, APP_DB_NAME, APP_EDIT_SPEED_PROFILE_UI_NAME, \
-    APP_PREFERENCES_UI_NAME, SUPPORTED_DRIVERS
+    APP_PREFERENCES_UI_NAME
 from gkraken.util.path import get_config_path
 
-gi.require_version('Gtk', '3.0') 
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-
 
 _LOG = logging.getLogger(__name__)
 
@@ -88,9 +87,13 @@ class ProviderModule(Module):
 
     @provider
     def provide_kraken_driver(self) -> Optional[BaseDriver]:
+        from gkraken.device_setting import DeviceSettings
         _LOG.debug("provide Kraken Driver")
         device_supported_drivers: List[BaseDriver] = list(
-            chain.from_iterable([driver.find_supported_devices() for driver in SUPPORTED_DRIVERS])
+            chain.from_iterable([
+                device_setting.SUPPORTED_DRIVER.find_supported_devices()
+                for device_setting in DeviceSettings.__subclasses__()
+            ])
         )
         _LOG.debug("recognized device driver list: %s", [driver.description for driver in device_supported_drivers])
         return next(iter(device_supported_drivers), None)
