@@ -36,6 +36,33 @@ class StatusIndexType(Enum):
 
 
 class DeviceSettings:
+    """This is the base Device Settings class.
+    To support a new device simply extend this class and override it's methods and attributes.
+    It will be automatically loaded at runtime and the supported_driver will search for available devices.
+
+    Attributes
+    ----------
+    SUPPORTED_DRIVER : BaseDriver
+        The supported liquidctl driver class
+
+    _STATUS_INDEX : Dict[StatusIndexType, int]
+        The index values for the various values reported from the liquidctl status list
+
+    _MODES_LOGO : List[LightingMode]
+        A List of LightingMode(s) for the 'logo' channel which are supported
+
+    _MODES_RING : List[LightingMode]
+        A List of LightingMode(s) for the 'ring' channel which are supported
+
+    Methods
+    -------
+    determine_status(status_list: list) -> Optional[Status]
+       creates a Status object from the given liquidctl status_list
+
+    get_compatible_lighting_modes() -> LightingModes
+        creates a LightingModes object containing the supported lighting modes for each channel
+    """
+
     SUPPORTED_DRIVER: BaseDriver = None
 
     _STATUS_INDEX: Dict[StatusIndexType, int] = {}
