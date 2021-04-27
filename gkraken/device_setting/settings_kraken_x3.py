@@ -20,7 +20,7 @@ from typing import Optional, List, Dict
 from liquidctl.driver.base import BaseDriver
 from liquidctl.driver.kraken3 import KrakenX3
 
-from gkraken.model.device_settings import StatusIndexType, DeviceSettings
+from gkraken.device_setting.device_settings import StatusIndexType, DeviceSettings
 from gkraken.model.lighting_modes import LightingMode, LightingModes
 from gkraken.model.status import Status
 
