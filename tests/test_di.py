@@ -71,7 +71,7 @@ class TestProvideKrakenDriver:
 
     def test_driver_x_vs_z(self, mocker: MockerFixture) -> None:
         # arrange
-        mocker.patch.object(gkraken.di, 'SUPPORTED_DRIVERS', [KrakenX3, KrakenZ3])
+        mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[SettingsKrakenX3, SettingsKrakenZ3])
         mocker.patch.object(KrakenX3, 'find_supported_devices', return_value=[])
         mocker.patch.object(KrakenZ3, 'find_supported_devices',
                             return_value=[KrakenZ3('01234', 'test device z', [], []), ])
