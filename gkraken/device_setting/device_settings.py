@@ -40,7 +40,7 @@ class DeviceSettings:
     To support a new device simply extend this class and override it's methods and attributes.
     It will be automatically loaded at runtime and the supported_driver will search for available devices.
 
-    Attributes
+    Attributes:
     ----------
     supported_driver : BaseDriver
         The supported liquidctl driver class
@@ -53,14 +53,6 @@ class DeviceSettings:
 
     _modes_ring : List[LightingMode]
         A List of LightingMode(s) for the 'ring' channel which are supported
-
-    Methods
-    -------
-    determine_status(status_list: list) -> Optional[Status]
-       creates a Status object from the given liquidctl status_list
-
-    get_compatible_lighting_modes() -> LightingModes
-        creates a LightingModes object containing the supported lighting modes for each channel
     """
 
     supported_driver: BaseDriver = None
@@ -72,8 +64,10 @@ class DeviceSettings:
 
     @classmethod
     def determine_status(cls, status_list: list) -> Optional[Status]:
+        """creates a Status object from the given liquidctl status_list"""
         raise NotImplementedError('This should be implemented in one of the child classes')
 
     @classmethod
     def get_compatible_lighting_modes(cls) -> LightingModes:
+        """creates a LightingModes object containing the supported lighting modes for each channel"""
         raise NotImplementedError('This should be implemented in one of the child classes')
