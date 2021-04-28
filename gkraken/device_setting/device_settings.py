@@ -69,5 +69,9 @@ class DeviceSettings:
 
     @classmethod
     def get_compatible_lighting_modes(cls) -> LightingModes:
-        """creates a LightingModes object containing the supported lighting modes for each channel"""
-        raise NotImplementedError('This should be implemented in one of the child classes')
+        """creates a LightingModes object containing the supported lighting modes for each channel.
+        The default implementation works for most devices"""
+        return LightingModes(
+            modes_logo={mode.mode_id: mode for mode in cls._modes_logo},
+            modes_ring={mode.mode_id: mode for mode in cls._modes_ring},
+        )

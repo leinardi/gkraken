@@ -22,7 +22,7 @@ from liquidctl.driver.base import BaseDriver
 from liquidctl.driver.kraken2 import Kraken2
 
 from gkraken.device_setting.device_settings import DeviceSettings, StatusIndexType
-from gkraken.model.lighting_modes import LightingMode, LightingModes
+from gkraken.model.lighting_modes import LightingMode
 from gkraken.model.status import Status
 
 _LOG = logging.getLogger(__name__)
@@ -86,10 +86,3 @@ class SettingsKraken2(DeviceSettings):
         else:
             _LOG.error('Invalid Fan RPM from X2 Device')
             return None
-
-    @classmethod
-    def get_compatible_lighting_modes(cls) -> LightingModes:
-        return LightingModes(
-            modes_logo={mode.mode_id: mode for mode in cls._modes_logo},
-            modes_ring={mode.mode_id: mode for mode in cls._modes_ring},
-        )

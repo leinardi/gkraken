@@ -21,7 +21,7 @@ from liquidctl.driver.base import BaseDriver
 from liquidctl.driver.kraken3 import KrakenX3
 
 from gkraken.device_setting.device_settings import StatusIndexType, DeviceSettings
-from gkraken.model.lighting_modes import LightingMode, LightingModes
+from gkraken.model.lighting_modes import LightingMode
 from gkraken.model.status import Status
 
 
@@ -111,11 +111,4 @@ class SettingsKrakenX3(DeviceSettings):
             liquid_temperature=status_list[cls._status_index[StatusIndexType.LIQUID_TEMPERATURE]],
             pump_rpm=status_list[cls._status_index[StatusIndexType.PUMP_RPM]],
             pump_duty=status_list[cls._status_index[StatusIndexType.PUMP_DUTY]]
-        )
-
-    @classmethod
-    def get_compatible_lighting_modes(cls) -> LightingModes:
-        return LightingModes(
-            modes_logo={mode.mode_id: mode for mode in cls._modes_logo},
-            modes_ring={mode.mode_id: mode for mode in cls._modes_ring},
         )
