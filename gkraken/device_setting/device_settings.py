@@ -42,16 +42,16 @@ class DeviceSettings:
 
     Attributes
     ----------
-    SUPPORTED_DRIVER : BaseDriver
+    supported_driver : BaseDriver
         The supported liquidctl driver class
 
-    _STATUS_INDEX : Dict[StatusIndexType, int]
+    _status_index : Dict[StatusIndexType, int]
         The index values for the various values reported from the liquidctl status list
 
-    _MODES_LOGO : List[LightingMode]
+    _modes_logo : List[LightingMode]
         A List of LightingMode(s) for the 'logo' channel which are supported
 
-    _MODES_RING : List[LightingMode]
+    _modes_ring : List[LightingMode]
         A List of LightingMode(s) for the 'ring' channel which are supported
 
     Methods
@@ -63,15 +63,17 @@ class DeviceSettings:
         creates a LightingModes object containing the supported lighting modes for each channel
     """
 
-    SUPPORTED_DRIVER: BaseDriver = None
+    supported_driver: BaseDriver = None
 
-    _STATUS_INDEX: Dict[StatusIndexType, int] = {}
+    _status_index: Dict[StatusIndexType, int] = {}
 
-    _MODES_LOGO: List[LightingMode] = []
-    _MODES_RING: List[LightingMode] = []
+    _modes_logo: List[LightingMode] = []
+    _modes_ring: List[LightingMode] = []
 
-    def determine_status(self, status_list: list) -> Optional[Status]:
+    @classmethod
+    def determine_status(cls, status_list: list) -> Optional[Status]:
         raise NotImplementedError('This should be implemented in one of the child classes')
 
-    def get_compatible_lighting_modes(self) -> LightingModes:
+    @classmethod
+    def get_compatible_lighting_modes(cls) -> LightingModes:
         raise NotImplementedError('This should be implemented in one of the child classes')

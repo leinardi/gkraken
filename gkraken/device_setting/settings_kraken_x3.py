@@ -26,16 +26,16 @@ from gkraken.model.status import Status
 
 
 class SettingsKrakenX3(DeviceSettings):
-    SUPPORTED_DRIVER: BaseDriver = KrakenX3
+    supported_driver: BaseDriver = KrakenX3
 
-    _STATUS_INDEX: Dict[StatusIndexType, int] = {
+    _status_index: Dict[StatusIndexType, int] = {
         StatusIndexType.LIQUID_TEMPERATURE: 0,
         StatusIndexType.PUMP_RPM: 1,
         StatusIndexType.PUMP_DUTY: 2,
     }
 
     # Logo modes have been adjusted to reasonable settings for the single LED, original settings left for reference
-    _MODES_LOGO: List[LightingMode] = [
+    _modes_logo: List[LightingMode] = [
         LightingMode(1, 'off', 'Off', 0, 0, False, False),
         LightingMode(2, 'fixed', 'Fixed', 1, 1, False, False),
         # LightingMode(3, 'super-fixed', 'Fixed Individual', 1, 8, False, False),
@@ -71,7 +71,7 @@ class SettingsKrakenX3(DeviceSettings):
         LightingMode(30, 'wings', 'Wings', 1, 1, True, False),
     ]
 
-    _MODES_RING: List[LightingMode] = [
+    _modes_ring: List[LightingMode] = [
         LightingMode(1, 'off', 'Off', 0, 0, False, False),
         LightingMode(2, 'fixed', 'Fixed', 1, 1, False, False),
         LightingMode(3, 'super-fixed', 'Fixed Individual', 8, 8, False, False),
@@ -104,16 +104,18 @@ class SettingsKrakenX3(DeviceSettings):
         LightingMode(30, 'wings', 'Wings', 1, 1, True, False),
     ]
 
-    def determine_status(self, status_list: list) -> Optional[Status]:
+    @classmethod
+    def determine_status(cls, status_list: list) -> Optional[Status]:
         return Status(
-            driver_type=self.SUPPORTED_DRIVER,
-            liquid_temperature=status_list[self._STATUS_INDEX[StatusIndexType.LIQUID_TEMPERATURE]],
-            pump_rpm=status_list[self._STATUS_INDEX[StatusIndexType.PUMP_RPM]],
-            pump_duty=status_list[self._STATUS_INDEX[StatusIndexType.PUMP_DUTY]]
+            driver_type=cls.supported_driver,
+            liquid_temperature=status_list[cls._status_index[StatusIndexType.LIQUID_TEMPERATURE]],
+            pump_rpm=status_list[cls._status_index[StatusIndexType.PUMP_RPM]],
+            pump_duty=status_list[cls._status_index[StatusIndexType.PUMP_DUTY]]
         )
 
-    def get_compatible_lighting_modes(self) -> LightingModes:
+    @classmethod
+    def get_compatible_lighting_modes(cls) -> LightingModes:
         return LightingModes(
-            modes_logo={mode.mode_id: mode for mode in self._MODES_LOGO},
-            modes_ring={mode.mode_id: mode for mode in self._MODES_RING},
+            modes_logo={mode.mode_id: mode for mode in cls._modes_logo},
+            modes_ring={mode.mode_id: mode for mode in cls._modes_ring},
         )

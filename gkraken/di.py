@@ -91,7 +91,7 @@ class ProviderModule(Module):
         _LOG.debug("provide Kraken Driver")
         device_supported_drivers: List[BaseDriver] = list(
             chain.from_iterable([
-                device_setting.SUPPORTED_DRIVER.find_supported_devices()
+                device_setting.supported_driver.find_supported_devices()
                 for device_setting in DeviceSettings.__subclasses__()
             ])
         )

@@ -29,9 +29,9 @@ _LOG = logging.getLogger(__name__)
 
 
 class SettingsKraken2(DeviceSettings):
-    SUPPORTED_DRIVER: BaseDriver = Kraken2
+    supported_driver: BaseDriver = Kraken2
 
-    _STATUS_INDEX: Dict[StatusIndexType, int] = {
+    _status_index: Dict[StatusIndexType, int] = {
         StatusIndexType.LIQUID_TEMPERATURE: 0,
         StatusIndexType.FAN_RPM: 1,
         StatusIndexType.PUMP_RPM: 2,
@@ -39,7 +39,7 @@ class SettingsKraken2(DeviceSettings):
     }
 
     # Logo modes have been adjusted to reasonable settings for the single LED, original settings left for reference
-    _MODES_LOGO: List[LightingMode] = [
+    _modes_logo: List[LightingMode] = [
         LightingMode(1, 'off', 'Off', 0, 0, False, False),
         LightingMode(2, 'fixed', 'Fixed', 1, 1, False, False),
         # LightingMode(3, 'super-fixed', 'Fixed Individual', 1, 8, False, False),
@@ -49,7 +49,7 @@ class SettingsKraken2(DeviceSettings):
         # LightingMode(15, 'super-breathing', 'Breathing Individual', 1, 8, True, False),
         LightingMode(16, 'pulse', 'Pulse', 1, 8, True, False),
     ]
-    _MODES_RING: List[LightingMode] = [
+    _modes_ring: List[LightingMode] = [
         LightingMode(1, 'off', 'Off', 0, 0, False, False),
         LightingMode(2, 'fixed', 'Fixed', 1, 1, False, False),
         LightingMode(3, 'super-fixed', 'Fixed Individual', 8, 8, False, False),
@@ -72,13 +72,14 @@ class SettingsKraken2(DeviceSettings):
         LightingMode(20, 'wings', 'Wings', 1, 1, True, False),
     ]
 
-    def determine_status(self, status_list: list) -> Optional[Status]:
+    @classmethod
+    def determine_status(cls, status_list: list) -> Optional[Status]:
         status = Status(
-            driver_type=self.SUPPORTED_DRIVER,
-            liquid_temperature=status_list[self._STATUS_INDEX[StatusIndexType.LIQUID_TEMPERATURE]],
-            firmware_version=status_list[self._STATUS_INDEX[StatusIndexType.FIRMWARE_VERSION]],
-            fan_rpm=status_list[self._STATUS_INDEX[StatusIndexType.FAN_RPM]],
-            pump_rpm=status_list[self._STATUS_INDEX[StatusIndexType.PUMP_RPM]],
+            driver_type=cls.supported_driver,
+            liquid_temperature=status_list[cls._status_index[StatusIndexType.LIQUID_TEMPERATURE]],
+            firmware_version=status_list[cls._status_index[StatusIndexType.FIRMWARE_VERSION]],
+            fan_rpm=status_list[cls._status_index[StatusIndexType.FAN_RPM]],
+            pump_rpm=status_list[cls._status_index[StatusIndexType.PUMP_RPM]],
         )
         if status.fan_rpm is not None and status.fan_rpm < 3500:
             return status
@@ -86,8 +87,9 @@ class SettingsKraken2(DeviceSettings):
             _LOG.error('Invalid Fan RPM from X2 Device')
             return None
 
-    def get_compatible_lighting_modes(self) -> LightingModes:
+    @classmethod
+    def get_compatible_lighting_modes(cls) -> LightingModes:
         return LightingModes(
-            modes_logo={mode.mode_id: mode for mode in self._MODES_LOGO},
-            modes_ring={mode.mode_id: mode for mode in self._MODES_RING},
+            modes_logo={mode.mode_id: mode for mode in cls._modes_logo},
+            modes_ring={mode.mode_id: mode for mode in cls._modes_ring},
         )

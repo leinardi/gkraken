@@ -59,9 +59,9 @@ class KrakenRepository:
                 driver_status = self._driver.get_status()
                 _LOG.debug("Reported driver status:\n%s", driver_status)
                 for device_setting in DeviceSettings.__subclasses__():
-                    if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
+                    if device_setting.supported_driver is self._driver.__class__:
                         status_list = [v for k, v, u in driver_status]
-                        return device_setting().determine_status(status_list)
+                        return device_setting.determine_status(status_list)
                 if self._driver:
                     _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
                 else:
@@ -90,8 +90,8 @@ class KrakenRepository:
             self._load_driver()
         if self._driver:
             for device_setting in DeviceSettings.__subclasses__():
-                if device_setting.SUPPORTED_DRIVER is self._driver.__class__:
-                    return device_setting().get_compatible_lighting_modes()
+                if device_setting.supported_driver is self._driver.__class__:
+                    return device_setting.get_compatible_lighting_modes()
         _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
         return None
 
