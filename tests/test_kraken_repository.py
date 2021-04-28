@@ -25,6 +25,7 @@ from liquidctl.driver.kraken2 import Kraken2
 from liquidctl.driver.kraken3 import KrakenX3, KrakenZ3
 from pytest_mock import MockerFixture
 
+from gkraken.model.lighting_modes import LightingModes
 from gkraken.model.status import Status
 from gkraken.repository.kraken_repository import KrakenRepository
 
@@ -50,8 +51,8 @@ class TestKrakenRepository:
         # act & assert
         assert repo.get_status() is None
 
-    def test_unknown_driver_type(self, repo: KrakenRepository, mocker: MockerFixture, caplog: LogCaptureFixture
-                                 ) -> None:
+    def test_status_unknown_driver_type(self, repo: KrakenRepository, mocker: MockerFixture, caplog: LogCaptureFixture
+                                        ) -> None:
         # arrange
         mocker.patch.object(
             repo, '_driver',
@@ -235,3 +236,62 @@ class TestKrakenRepository:
         assert status.pump_rpm == pump_rpm
         assert status.pump_duty == pump_duty
         assert status.firmware_version == ''
+
+    def test_get_none_lighting_when_driver_none(self, repo: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(
+            repo, '_driver', spec=None
+        )
+        # act & assert
+        assert repo.get_lighting_modes() is None
+
+    def test_lighting_unknown_driver_type(self, repo: KrakenRepository, mocker: MockerFixture, caplog: LogCaptureFixture
+                                          ) -> None:
+        # arrange
+        mocker.patch.object(
+            repo, '_driver',
+            # will likely never be supported by gkraken:
+            spec=CorsairHidPsu
+        )
+        caplog.at_level(logging.ERROR)
+        # act
+        lighting = repo.get_lighting_modes()
+        # assert
+        assert lighting is None
+        assert 'Driver Instance is not recognized' in caplog.text
+
+    def test_lighting_modes_kraken_2(self, repo: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(
+            repo, '_driver', spec=Kraken2
+        )
+        # act
+        lighting_modes = repo.get_lighting_modes()
+        # assert
+        assert isinstance(lighting_modes, LightingModes)
+        assert len(lighting_modes.modes_logo) == 6
+        assert len(lighting_modes.modes_ring) == 20
+
+    def test_lighting_modes_kraken_x3(self, repo: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(
+            repo, '_driver', spec=KrakenX3
+        )
+        # act
+        lighting_modes = repo.get_lighting_modes()
+        # assert
+        assert isinstance(lighting_modes, LightingModes)
+        assert len(lighting_modes.modes_logo) == 17
+        assert len(lighting_modes.modes_ring) == 30
+
+    def test_lighting_modes_kraken_z3(self, repo: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(
+            repo, '_driver', spec=KrakenZ3
+        )
+        # act
+        lighting_modes = repo.get_lighting_modes()
+        # assert
+        assert isinstance(lighting_modes, LightingModes)
+        assert len(lighting_modes.modes_logo) == 0
+        assert len(lighting_modes.modes_ring) == 0
