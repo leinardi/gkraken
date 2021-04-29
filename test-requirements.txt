@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest~=6.2.3
+pytest_mock~=3.5.1
+mypy==0.812
+pylint~=2.7.4
