@@ -41,8 +41,11 @@ class KrakenRepository:
         self._driver: Optional[BaseDriver] = None
 
     def has_supported_kraken(self) -> bool:
-        self._load_driver()
-        return self._driver is not None or INJECTOR.get(Optional[BaseDriver]) is not None
+        try:
+            self._load_driver()
+            return self._driver is not None or INJECTOR.get(Optional[BaseDriver]) is not None
+        except ValueError:
+            return False
 
     @synchronized_with_attr("lock")
     def cleanup(self) -> None:

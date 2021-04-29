@@ -25,6 +25,8 @@ from liquidctl.driver.kraken2 import Kraken2
 from liquidctl.driver.kraken3 import KrakenX3, KrakenZ3
 from pytest_mock import MockerFixture
 
+from gkraken.device import DeviceSettings
+from gkraken.device.settings_kraken_2 import SettingsKraken2
 from gkraken.model.lighting_modes import LightingModes
 from gkraken.model.status import Status
 from gkraken.repository.kraken_repository import KrakenRepository
@@ -35,13 +37,16 @@ from gkraken.repository.kraken_repository import KrakenRepository
 class TestKrakenRepository:
 
     @pytest.fixture(scope='function')
-    def repo(self, mocker: MockerFixture) -> KrakenRepository:
+    def repo_init(self) -> KrakenRepository:
+        return KrakenRepository()
+
+    @pytest.fixture(scope='function')
+    def repo(self, repo_init: KrakenRepository, mocker: MockerFixture) -> KrakenRepository:
         # an arrange fixture for all tests
-        repo = KrakenRepository()
         mocker.patch.object(
-            repo, '_load_driver'
+            repo_init, '_load_driver'
         )
-        return repo
+        return repo_init
 
     def test_get_none_status_when_driver_none(self, repo: KrakenRepository, mocker: MockerFixture) -> None:
         # arrange
@@ -89,6 +94,26 @@ class TestKrakenRepository:
         assert status is None
         assert f'Error getting the status: {error_message}' in caplog.text
         repo.cleanup.assert_called_once()
+
+    def test_has_supported_kraken_no(self, repo_init: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[])
+        # act
+        is_supported = repo_init.has_supported_kraken()
+        # assert
+        assert repo_init._driver is None
+        assert not is_supported
+
+    def test_has_supported_kraken_yes(self, repo_init: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[SettingsKraken2])
+        mocker.patch.object(Kraken2, 'find_supported_devices', return_value=[Kraken2('012345', 'test device')])
+        mocker.patch.object(Kraken2, 'connect')
+        # act
+        is_supported = repo_init.has_supported_kraken()
+        # assert
+        assert isinstance(repo_init._driver, Kraken2)
+        assert is_supported
 
     @pytest.mark.parametrize('temp, fan_rpm, pump_rpm, firmware', [
         (29.9, 853, 1948, '6.0.2'),
