@@ -2,7 +2,7 @@ image: registry.gitlab.com/leinardi/gkraken:v1
 
 before_script:
   - python --version
-  - pip install -r requirements.txt
+  - pip install -r test-requirements.txt
 
 stages:
   - Analyse
