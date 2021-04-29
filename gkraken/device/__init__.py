@@ -23,7 +23,7 @@ from inspect import isclass
 from pathlib import Path
 from pkgutil import iter_modules
 
-from gkraken.device_setting.device_settings import DeviceSettings
+from gkraken.device.device_settings import DeviceSettings
 
 package_dir = Path(__file__).resolve().parent
 # iterate through the modules in the current package:

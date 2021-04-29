@@ -21,11 +21,10 @@ from liquidctl.driver.kraken2 import Kraken2
 from liquidctl.driver.kraken3 import KrakenZ3, KrakenX3
 from pytest_mock import MockerFixture
 
-import gkraken.di
-from gkraken.device_setting import DeviceSettings
-from gkraken.device_setting.settings_kraken_2 import SettingsKraken2
-from gkraken.device_setting.settings_kraken_x3 import SettingsKrakenX3
-from gkraken.device_setting.settings_kraken_z3 import SettingsKrakenZ3
+from gkraken.device import DeviceSettings
+from gkraken.device.settings_kraken_2 import SettingsKraken2
+from gkraken.device.settings_kraken_x3 import SettingsKrakenX3
+from gkraken.device.settings_kraken_z3 import SettingsKrakenZ3
 from gkraken.di import INJECTOR
 
 

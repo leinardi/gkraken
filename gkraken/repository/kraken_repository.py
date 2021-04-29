@@ -22,7 +22,7 @@ from typing import Optional, List, Tuple
 from injector import singleton, inject
 from liquidctl.driver.usb import BaseDriver
 
-from gkraken.device_setting.device_settings import DeviceSettings
+from gkraken.device.device_settings import DeviceSettings
 from gkraken.di import INJECTOR
 from gkraken.model.lighting_modes import LightingModes
 from gkraken.model.lighting_settings import LightingSettings

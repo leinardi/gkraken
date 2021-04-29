@@ -87,7 +87,7 @@ class ProviderModule(Module):
 
     @provider
     def provide_kraken_driver(self) -> Optional[BaseDriver]:
-        from gkraken.device_setting import DeviceSettings
+        from gkraken.device import DeviceSettings
         _LOG.debug("provide Kraken Driver")
         device_supported_drivers: List[BaseDriver] = list(
             chain.from_iterable([
