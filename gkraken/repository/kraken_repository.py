@@ -41,11 +41,17 @@ class KrakenRepository:
         self._driver: Optional[BaseDriver] = None
 
     def has_supported_kraken(self) -> bool:
+        """Checks only if a supported device is found. Connection issues are handled later in the startup process"""
         try:
             self._load_driver()
             return self._driver is not None or INJECTOR.get(Optional[BaseDriver]) is not None
         except ValueError:
+            # ValueError when no device is found
             return False
+        except OSError:
+            # OSError when device is found, but the connection fails
+            self._driver = None
+            return True
 
     @synchronized_with_attr("lock")
     def cleanup(self) -> None:

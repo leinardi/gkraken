@@ -76,8 +76,8 @@ class TestKrakenRepository:
         assert status is None
         assert 'Driver Instance is not recognized' in caplog.text
 
-    def test_driver_can_not_connect(self, repo: KrakenRepository, mocker: MockerFixture, caplog: LogCaptureFixture
-                                    ) -> None:
+    def test_driver_can_not_get_status(self, repo: KrakenRepository, mocker: MockerFixture, caplog: LogCaptureFixture
+                                       ) -> None:
         # arrange
         error_message = 'USB Communication Error'
         mocker.patch.object(
@@ -95,7 +95,7 @@ class TestKrakenRepository:
         assert f'Error getting the status: {error_message}' in caplog.text
         repo.cleanup.assert_called_once()
 
-    def test_has_supported_kraken_no(self, repo_init: KrakenRepository, mocker: MockerFixture) -> None:
+    def test_has_supported_kraken_no_device_found(self, repo_init: KrakenRepository, mocker: MockerFixture) -> None:
         # arrange
         mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[])
         # act
@@ -103,6 +103,17 @@ class TestKrakenRepository:
         # assert
         assert repo_init._driver is None
         assert not is_supported
+
+    def test_has_supported_kraken_connection_error(self, repo_init: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[SettingsKraken2])
+        mocker.patch.object(Kraken2, 'find_supported_devices', return_value=[Kraken2('012345', 'test device')])
+        mocker.patch.object(Kraken2, 'connect', side_effect=OSError("open failed"))
+        # act
+        is_supported = repo_init.has_supported_kraken()
+        # assert
+        assert repo_init._driver is None  # should be reset after has_supported_kraken call
+        assert is_supported
 
     def test_has_supported_kraken_yes(self, repo_init: KrakenRepository, mocker: MockerFixture) -> None:
         # arrange
