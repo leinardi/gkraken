@@ -50,7 +50,7 @@ class KrakenRepository:
             return False
         except OSError:
             # OSError when device is found, but the connection fails
-            self._driver = None
+            self.cleanup()
             return True
 
     @synchronized_with_attr("lock")

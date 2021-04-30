@@ -109,6 +109,7 @@ class TestKrakenRepository:
         mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[SettingsKraken2])
         mocker.patch.object(Kraken2, 'find_supported_devices', return_value=[Kraken2('012345', 'test device')])
         mocker.patch.object(Kraken2, 'connect', side_effect=OSError("open failed"))
+        mocker.patch.object(Kraken2, 'disconnect')
         # act
         is_supported = repo_init.has_supported_kraken()
         # assert
