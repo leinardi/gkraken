@@ -15,9 +15,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-
-# pylint: disable=no-self-use
-# pylint: disable=protected-access
 from liquidctl.driver.kraken2 import Kraken2
 from liquidctl.driver.kraken3 import KrakenX3, KrakenZ3
 from pytest_mock import MockerFixture
