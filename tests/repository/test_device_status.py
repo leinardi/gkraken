@@ -25,6 +25,8 @@ from pytest_mock import MockerFixture
 from gkraken.model.status import Status
 from gkraken.repository.kraken_repository import KrakenRepository
 
+TEST_DESCRIPTION: str = 'Test Device Description'
+
 
 # pylint: disable=no-self-use
 # pylint: disable=protected-access
@@ -50,6 +52,9 @@ class TestDeviceStatus:
             repo, '_driver', spec=driver_type
         )
         mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
+        )
+        mocker.patch.object(
             repo._driver, 'get_status',
             return_value=[
                 ('Liquid temperature', temp, '°C'),
@@ -69,6 +74,7 @@ class TestDeviceStatus:
         assert status.pump_rpm == pump_rpm
         assert status.pump_duty is None
         assert status.firmware_version == firmware
+        assert status.device_description == TEST_DESCRIPTION
 
     @pytest.mark.parametrize('temp, fan_rpm, pump_rpm, firmware', [
         (88.8, 3500, 3500, '2.0.2'),
@@ -117,6 +123,9 @@ class TestDeviceStatus:
             repo, '_driver', spec=driver_type
         )
         mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
+        )
+        mocker.patch.object(
             repo._driver, 'get_status',
             return_value=[
                 ('Liquid temperature', temp, '°C'),
@@ -135,6 +144,7 @@ class TestDeviceStatus:
         assert status.pump_rpm == pump_rpm
         assert status.pump_duty == pump_duty
         assert status.firmware_version == ''
+        assert status.device_description == TEST_DESCRIPTION
 
     @pytest.mark.parametrize('temp, pump_rpm, pump_duty, fan_rpm, fan_duty', [
         (29.9, 1848, 90, 2300, 80),
@@ -154,6 +164,9 @@ class TestDeviceStatus:
         driver_type = KrakenZ3
         mocker.patch.object(
             repo, '_driver', spec=driver_type
+        )
+        mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
         )
         mocker.patch.object(
             repo._driver, 'get_status',
@@ -176,3 +189,4 @@ class TestDeviceStatus:
         assert status.pump_rpm == pump_rpm
         assert status.pump_duty == pump_duty
         assert status.firmware_version == ''
+        assert status.device_description == TEST_DESCRIPTION
