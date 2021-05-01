@@ -14,26 +14,3 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
-
-import logging
-
-import rx
-from injector import singleton, inject
-from rx import Observable
-
-from gkraken.repository.kraken_repository import KrakenRepository
-
-_LOG = logging.getLogger(__name__)
-
-
-@singleton
-class HasSupportedKrakenInteractor:
-    @inject
-    def __init__(self,
-                 kraken_repository: KrakenRepository,
-                 ) -> None:
-        self._kraken_repository = kraken_repository
-
-    def execute(self) -> Observable:
-        _LOG.debug("HasSupportedKrakenInteractor.execute()")
-        return rx.defer(lambda _: rx.just(self._kraken_repository.has_supported_kraken()))

@@ -1,3 +1,11 @@
+Version 1.1.3
+=============
+Released: 2021-05-01
+
+ * Updated liquidctl to 1.6.1
+ * Fixed #39: First-time startup errors and missing icon
+ * Display firware version only when one is reported
+
 Version 1.1.2
 =============
 Released: 2021-04-15

@@ -160,6 +160,21 @@ It is possible to build the local source or the remote one (the same that Flathu
 flatpak run com.leinardi.gkraken --debug
 ```
 
+## Testing
+To run the tests install the test dependencies:
+```bash
+pip install -r test-requirements.txt
+```
+and run from the project directory:
+```bash
+pytest
+```
+To check the Linters run from the project directory:
+```bash
+mypy gkraken
+pylint gkraken
+```
+
 ## ❓ FAQ
 ### The Flatpak version of GKraken is not using my theme, how can I fix it?
 To fix this issue install a Gtk theme from Flathub. This way, Flatpak applications will automatically pick the 

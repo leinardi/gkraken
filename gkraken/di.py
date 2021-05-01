@@ -16,12 +16,11 @@
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from itertools import chain
+from typing import Optional, NewType, List
 
-from typing import Optional, NewType
 from gi.repository import Gtk
 from injector import Module, provider, singleton, Injector
-from liquidctl.driver.kraken2 import Kraken2
-from liquidctl.driver.kraken3 import KrakenX3, KrakenZ3
 from liquidctl.driver.usb import BaseDriver
 from peewee import SqliteDatabase
 from rx.disposable import CompositeDisposable
@@ -85,12 +84,17 @@ class ProviderModule(Module):
 
     @provider
     def provide_kraken_driver(self) -> Optional[BaseDriver]:
+        # pylint: disable=import-outside-toplevel
+        from gkraken.device import DeviceSettings  # to avoid circular dependency
         _LOG.debug("provide Kraken Driver")
-        return next((dev for dev in (
-                KrakenZ3.find_supported_devices()
-                or KrakenX3.find_supported_devices()
-                or Kraken2.find_supported_devices()
-        )), None)
+        device_supported_drivers: List[BaseDriver] = list(
+            chain.from_iterable([
+                device_setting.supported_driver.find_supported_devices()
+                for device_setting in DeviceSettings.__subclasses__()
+            ])
+        )
+        _LOG.debug("recognized device driver list: %s", [driver.description for driver in device_supported_drivers])
+        return next(iter(device_supported_drivers), None)
 
     @singleton
     @provider

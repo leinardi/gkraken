@@ -92,8 +92,8 @@ class MainPresenter:
     def on_start(self) -> None:
         self._register_db_listeners()
         self._check_supported_kraken()
-        self._refresh_speed_profiles(True)
         self._load_lighting_modes()
+        self._refresh_speed_profiles(True)
         if self._settings_interactor.get_int('settings_check_new_version'):
             self._check_new_version()
 
@@ -175,7 +175,7 @@ class MainPresenter:
         command += " --add-udev-rule"
         return command
 
-    def _update_status(self, status: Optional[Status]) -> None:
+    def _update_status(self, status: Optional[Status]) -> Optional[Status]:
         if status is not None:
             if self._should_update_fan_speed:
                 last_applied_fan_profile: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(
@@ -194,6 +194,7 @@ class MainPresenter:
             if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
                 self._legacy_firmware_dialog_shown = True
                 self.main_view.show_legacy_firmware_dialog()
+        return status
 
     @staticmethod
     def _calculate_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
@@ -208,15 +209,13 @@ class MainPresenter:
             duty = float(p_2[1])
         return duty
 
-    # def _load_last_profile(self) -> None:
-    #     for current in CurrentSpeedProfile.select():
-
     @staticmethod
     def _get_profile_list(channel: ChannelType) -> List[Tuple[int, str]]:
         return [(p.id, p.name) for p in SpeedProfile.select().where(SpeedProfile.channel == channel.value)]
 
     def _refresh_speed_profiles(self, init: bool = False, selecter_profile_id: Optional[int] = None) -> None:
         self._get_status().pipe(
+            operators.map(self._update_status),
             operators.flat_map(lambda status: rx.from_list(
                 [channel for channel in ChannelType]
             ).pipe(

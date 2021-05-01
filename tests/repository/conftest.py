@@ -15,25 +15,21 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-
-import rx
-from injector import singleton, inject
-from rx import Observable
+import pytest
+from pytest_mock import MockerFixture
 
 from gkraken.repository.kraken_repository import KrakenRepository
 
-_LOG = logging.getLogger(__name__)
+
+@pytest.fixture
+def repo_init() -> KrakenRepository:
+    return KrakenRepository()
 
 
-@singleton
-class HasSupportedKrakenInteractor:
-    @inject
-    def __init__(self,
-                 kraken_repository: KrakenRepository,
-                 ) -> None:
-        self._kraken_repository = kraken_repository
-
-    def execute(self) -> Observable:
-        _LOG.debug("HasSupportedKrakenInteractor.execute()")
-        return rx.defer(lambda _: rx.just(self._kraken_repository.has_supported_kraken()))
+@pytest.fixture
+def repo(repo_init: KrakenRepository, mocker: MockerFixture) -> KrakenRepository:
+    # an arrange fixture for all tests
+    mocker.patch.object(
+        repo_init, '_load_driver'
+    )
+    return repo_init

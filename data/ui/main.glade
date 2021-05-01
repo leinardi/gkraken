@@ -26,7 +26,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkImage" id="cooling_fan_edit_image">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">edit-symbolic</property>
+    <property name="icon-name">document-edit-symbolic</property>
   </object>
   <object class="GtkListStore" id="cooling_fan_profile_liststore">
     <columns>
@@ -46,7 +46,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkImage" id="cooling_pump_edit_image">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">edit-symbolic</property>
+    <property name="icon-name">document-edit-symbolic</property>
   </object>
   <object class="GtkListStore" id="cooling_pump_profile_liststore">
     <columns>
