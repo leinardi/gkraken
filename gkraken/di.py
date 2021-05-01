@@ -19,7 +19,7 @@ import logging
 from itertools import chain
 from typing import Optional, NewType, List
 
-import gi
+from gi.repository import Gtk
 from injector import Module, provider, singleton, Injector
 from liquidctl.driver.usb import BaseDriver
 from peewee import SqliteDatabase
@@ -29,9 +29,6 @@ from rx.subject import Subject
 from gkraken.conf import APP_PACKAGE_NAME, APP_MAIN_UI_NAME, APP_DB_NAME, APP_EDIT_SPEED_PROFILE_UI_NAME, \
     APP_PREFERENCES_UI_NAME
 from gkraken.util.path import get_config_path
-
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 
 _LOG = logging.getLogger(__name__)
 
@@ -87,7 +84,8 @@ class ProviderModule(Module):
 
     @provider
     def provide_kraken_driver(self) -> Optional[BaseDriver]:
-        from gkraken.device import DeviceSettings
+        # pylint: disable=import-outside-toplevel
+        from gkraken.device import DeviceSettings  # to avoid circular dependency
         _LOG.debug("provide Kraken Driver")
         device_supported_drivers: List[BaseDriver] = list(
             chain.from_iterable([
