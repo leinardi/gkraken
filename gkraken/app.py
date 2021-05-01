@@ -80,7 +80,7 @@ class Application(Gtk.Application):
     def do_activate(self) -> None:
         if not self._window:
             self._builder.connect_signals(self._presenter)
-            self._window: Gtk.ApplicationWindow = self._builder.get_object("application_window")
+            self._window = self._builder.get_object("application_window")
             self._window.set_application(self)
             self._window.show_all()
             self._view.show()

@@ -169,7 +169,7 @@ class MainPresenter:
 
     @staticmethod
     def _get_udev_command() -> str:
-        command = APP_PACKAGE_NAME
+        command: str = APP_PACKAGE_NAME
         if is_flatpak():
             command = f"flatpak run {APP_ID}"
         command += " --add-udev-rule"
@@ -198,7 +198,10 @@ class MainPresenter:
 
     @staticmethod
     def _calculate_duty(profile: SpeedProfile, liquid_temperature: float) -> float:
-        p_1 = ([(i.temperature, i.duty) for i in profile.steps if i.temperature <= liquid_temperature] or [None])[-1]
+        p_1 = (
+                [(i.temperature, i.duty) for i in profile.steps if i.temperature <= liquid_temperature]
+                or [None]  # type: ignore[list-item]
+        )[-1]
         p_2 = next(((i.temperature, i.duty) for i in profile.steps if i.temperature > liquid_temperature), None)
         duty = 0.0
         if p_1 and p_2:

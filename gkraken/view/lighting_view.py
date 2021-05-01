@@ -91,12 +91,12 @@ class LightingView(LightingViewInterface):
         self._lighting_apply_button: Gtk.Button = self._builder.get_object('lighting_apply_button')
 
     def _init_button_lists(self) -> None:
-        self._lighting_logo_button_list: List[Gtk.ColorButton] = [
+        self._lighting_logo_button_list = [
             self._lighting_logo_color_1, self._lighting_logo_color_2, self._lighting_logo_color_3,
             self._lighting_logo_color_4, self._lighting_logo_color_5, self._lighting_logo_color_6,
             self._lighting_logo_color_7, self._lighting_logo_color_8
         ]
-        self._lighting_ring_button_list: List[Gtk.ColorButton] = [
+        self._lighting_ring_button_list = [
             self._lighting_ring_color_1, self._lighting_ring_color_2, self._lighting_ring_color_3,
             self._lighting_ring_color_4, self._lighting_ring_color_5, self._lighting_ring_color_6,
             self._lighting_ring_color_7, self._lighting_ring_color_8

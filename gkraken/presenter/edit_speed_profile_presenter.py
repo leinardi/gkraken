@@ -121,13 +121,13 @@ class EditSpeedProfilePresenter:
         self.view.hide()
 
     def on_delete_step_clicked(self, *_: Any) -> None:
-        self._selected_step.delete_instance()
+        self._selected_step.delete_instance()  # type: ignore[union-attr]
         self.view.refresh_liststore(self._profile)
 
     def on_save_step_clicked(self, *_: Any) -> None:
-        self._selected_step.temperature = self.view.get_temperature()
-        self._selected_step.duty = self.view.get_duty()
-        self._selected_step.save()
+        self._selected_step.temperature = self.view.get_temperature()  # type: ignore[union-attr]
+        self._selected_step.duty = self.view.get_duty()  # type: ignore[union-attr]
+        self._selected_step.save()  # type: ignore[union-attr]
         self.view.refresh_liststore(self._profile)
         if not self.view.has_a_step_selected():
             self.refresh_controls()

@@ -48,7 +48,7 @@ _LOG = logging.getLogger(__name__)
 # POSIX locale settings (for GtkBuilder)
 try:
     locale.setlocale(locale.LC_ALL, locale.getlocale())
-    locale.bindtextdomain(APP_PACKAGE_NAME, LOCALE_DIR)
+    locale.bindtextdomain(APP_PACKAGE_NAME, LOCALE_DIR)  # type: ignore[attr-defined]
 except AttributeError as e:
     # Python built without gettext support doesn't have bindtextdomain()
     # and textdomain()
