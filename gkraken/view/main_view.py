@@ -200,8 +200,8 @@ class MainView(MainViewInterface):
                                               ('-' if status.pump_rpm is None else status.pump_rpm))
             self._cooling_pump_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %
                                                ('-' if status.pump_duty is None else "%.0f" % status.pump_duty))
-            self._firmware_version.set_label("firmware %s - %s %s"
-                                             % (status.firmware_version, APP_NAME, APP_VERSION))
+            firmware_version_label = f"firmware {status.firmware_version} - " if status.firmware_version else ''
+            self._firmware_version.set_label("%s%s %s" % (firmware_version_label, APP_NAME, APP_VERSION))
             if self._app_indicator:
                 if self._settings_interactor.get_bool('settings_show_app_indicator'):
                     self._app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
