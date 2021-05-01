@@ -45,7 +45,7 @@ class Status:
     def __repr__(self) -> str:
         return f"{{temp: {self.liquid_temperature}, fan_rpm: {self.fan_rpm}, fan_duty: {self.fan_duty}, " \
                f"pump_rpm: {self.pump_rpm}, pump_duty: {self.pump_duty}, firmware_version: {self.firmware_version}, " \
-               f"driver: {self.driver_name}}}"
+               f"driver: {self.driver_name}, device_description: {self.device_description}}}"
 
     @property
     def driver_name(self) -> str:
