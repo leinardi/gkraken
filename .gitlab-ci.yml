@@ -1,0 +1,26 @@
+image: registry.gitlab.com/leinardi/gkraken:v1
+
+before_script:
+  - python --version
+  - pip install -r test-requirements.txt
+
+stages:
+  - Analyse
+  - Test
+
+mypy:
+  stage: Analyse
+  allow_failure: true
+  script:
+    - mypy gkraken
+
+pylint:
+  stage: Analyse
+  allow_failure: true
+  script:
+    - pylint gkraken
+
+pytest:
+  stage: Test
+  script:
+    - pytest
