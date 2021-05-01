@@ -105,10 +105,11 @@ class SettingsKrakenX3(DeviceSettings):
     ]
 
     @classmethod
-    def determine_status(cls, status_list: list) -> Optional[Status]:
+    def determine_status(cls, status_list: list, device_description: str) -> Optional[Status]:
         return Status(
             driver_type=cls.supported_driver,
             liquid_temperature=status_list[cls._status_index[StatusIndexType.LIQUID_TEMPERATURE]],
             pump_rpm=status_list[cls._status_index[StatusIndexType.PUMP_RPM]],
-            pump_duty=status_list[cls._status_index[StatusIndexType.PUMP_DUTY]]
+            pump_duty=status_list[cls._status_index[StatusIndexType.PUMP_DUTY]],
+            device_description=device_description,
         )
