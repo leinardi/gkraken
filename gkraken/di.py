@@ -48,6 +48,7 @@ class ProviderModule(Module):
     def provide_main_builder(self) -> MainBuilder:
         _LOG.debug("provide Gtk.Builder")
         builder = MainBuilder(Gtk.Builder())
+        # pylint: disable=no-member
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_MAIN_UI_NAME))
         return builder
@@ -57,6 +58,7 @@ class ProviderModule(Module):
     def provide_edit_speed_profile_builder(self) -> EditSpeedProfileBuilder:
         _LOG.debug("provide Gtk.Builder")
         builder = EditSpeedProfileBuilder(Gtk.Builder())
+        # pylint: disable=no-member
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_EDIT_SPEED_PROFILE_UI_NAME))
         return builder
@@ -66,6 +68,7 @@ class ProviderModule(Module):
     def provide_preferences_builder(self) -> PreferencesBuilder:
         _LOG.debug("provide Gtk.Builder")
         builder = PreferencesBuilder(Gtk.Builder())
+        # pylint: disable=no-member
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_PREFERENCES_UI_NAME))
         return builder

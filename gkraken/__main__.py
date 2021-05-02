@@ -25,7 +25,7 @@ import sys
 from os.path import abspath, join, dirname
 from typing import Type, Any
 
-import gi
+from gi.repository import GLib
 from peewee import SqliteDatabase
 from rx.disposable import CompositeDisposable
 
@@ -34,9 +34,6 @@ from gkraken.conf import APP_PACKAGE_NAME
 from gkraken.di import INJECTOR
 from gkraken.repository.kraken_repository import KrakenRepository
 from gkraken.util.log import set_log_level
-
-gi.require_version('Gtk', '3.0')
-from gi.repository import GLib
 
 WHERE_AM_I = abspath(dirname(__file__))
 LOCALE_DIR = join(WHERE_AM_I, 'mo')
@@ -49,11 +46,11 @@ _LOG = logging.getLogger(__name__)
 try:
     locale.setlocale(locale.LC_ALL, locale.getlocale())
     locale.bindtextdomain(APP_PACKAGE_NAME, LOCALE_DIR)  # type: ignore[attr-defined]
-except AttributeError as e:
+except AttributeError as error:
     # Python built without gettext support doesn't have bindtextdomain()
     # and textdomain()
     print("Couldn't bind the gettext translation domain. Some translations"
-          " won't work. Error: \n{}".format(e))
+          " won't work. Error: \n{}".format(error))
 
 gettext.bindtextdomain(APP_PACKAGE_NAME, LOCALE_DIR)
 gettext.textdomain(APP_PACKAGE_NAME)

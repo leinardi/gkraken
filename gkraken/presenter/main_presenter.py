@@ -51,6 +51,7 @@ _LOG = logging.getLogger(__name__)
 _ADD_NEW_PROFILE_INDEX = -10
 
 
+# pylint: disable=too-many-public-methods
 @singleton
 class MainPresenter:
     @inject
@@ -219,8 +220,8 @@ class MainPresenter:
     def _refresh_speed_profiles(self, init: bool = False, selecter_profile_id: Optional[int] = None) -> None:
         self._get_status().pipe(
             operators.map(self._update_status),
-            operators.flat_map(lambda status: rx.from_list(
-                [channel for channel in ChannelType]
+            operators.flat_map(lambda status: rx.from_list(  # pylint: disable=not-callable
+                list(ChannelType)
             ).pipe(
                 operators.filter(lambda channel: self._is_channel_supported(channel, status))
             ))
@@ -349,8 +350,8 @@ class MainPresenter:
         ).subscribe(on_next=lambda _: self._update_current_speed_profile(profile),
                     on_error=lambda e: self._on_set_speed_profile_error(e, profile)))
 
-    def _on_set_speed_profile_error(self, e: Exception, profile: SpeedProfile) -> None:
-        _LOG.exception("Set cooling error: %s", str(e))
+    def _on_set_speed_profile_error(self, exception: Exception, profile: SpeedProfile) -> None:
+        _LOG.exception("Set cooling error: %s", str(exception))
         self.main_view.set_statusbar_text('Error applying %s speed profile!' % profile.channel)
 
     def _update_current_speed_profile(self, profile: SpeedProfile) -> None:
@@ -367,7 +368,7 @@ class MainPresenter:
         self.main_view.set_statusbar_text(str(ex))
         if isinstance(ex, OSError):
             raise ex
-        observable = rx.just(None)
+        observable = rx.just(None)  # pylint: disable=not-callable
         assert isinstance(operators, Observable)
         return observable
 

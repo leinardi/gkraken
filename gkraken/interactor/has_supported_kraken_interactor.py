@@ -36,4 +36,5 @@ class HasSupportedKrakenInteractor:
 
     def execute(self) -> Observable:
         _LOG.debug("HasSupportedKrakenInteractor.execute()")
+        # pylint: disable=not-callable
         return rx.defer(lambda _: rx.just(self._kraken_repository.has_supported_kraken()))

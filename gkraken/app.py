@@ -65,7 +65,7 @@ class Application(Gtk.Application):
             SpeedProfile, SpeedStep, CurrentSpeedProfile, Setting, CurrentLightingProfile, CurrentLightingColor
         ])
 
-        if SpeedProfile.select().count() == 0:
+        if SpeedProfile.select().count() == 0:  # pylint: disable=no-value-for-parameter
             load_db_default_data()
 
         self.add_main_option_entries(self._get_main_option_entries())
@@ -136,7 +136,7 @@ class Application(Gtk.Application):
             start_app = False
 
         if start_app:
-            _LOG.info(f"Starting {APP_NAME} {APP_VERSION}")
+            _LOG.info("Starting %s %s", APP_NAME, APP_VERSION)
             self.activate()
         return exit_value
 

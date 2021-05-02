@@ -102,13 +102,12 @@ class LightingPresenter:
             channel=channel.value
         )
 
-        current_colors: List[CurrentLightingColor] = CurrentLightingColor.select(
+        colors: List[CurrentLightingColor] = CurrentLightingColor.select(
         ).where(
             CurrentLightingColor.channel == channel.value
         ).order_by(
             CurrentLightingColor.index
         )
-        colors: List[CurrentLightingColor] = [color for color in current_colors]
         return profile, colors
 
     def _set_lighting_logo_widgets(self, logo_profile: CurrentLightingProfile, logo_colors: List[CurrentLightingColor]
@@ -168,8 +167,8 @@ class LightingPresenter:
             on_error=self._on_lighting_apply_error
         )
 
-    def _on_lighting_apply_error(self, e: Exception) -> None:
-        _LOG.exception("Lighting error: %s", str(e))
+    def _on_lighting_apply_error(self, exception: Exception) -> None:
+        _LOG.exception("Lighting error: %s", str(exception))
         self.view.set_statusbar_text('Error applying Lighting')
 
     def _set_lighting(self, lighting_modes: LightingModes) -> None:

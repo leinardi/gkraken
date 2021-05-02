@@ -82,8 +82,7 @@ class SettingsKraken2(DeviceSettings):
             pump_rpm=status_list[cls._status_index[StatusIndexType.PUMP_RPM]],
             device_description=device_description,
         )
-        if status.fan_rpm is not None and status.fan_rpm < 3500:
-            return status
-        else:
+        if status.fan_rpm is None or status.fan_rpm >= 3500:
             _LOG.error('Invalid Fan RPM from X2 Device')
             return None
+        return status
