@@ -219,7 +219,8 @@ class MainView(MainViewInterface):
         if channel_to_reset is not None:
             self._plot_chart(channel_to_reset, {})
         else:
-            self._plot_chart(profile.channel, get_speed_profile_data(profile))
+            if profile is not None:
+                self._plot_chart(profile.channel, get_speed_profile_data(profile))
 
     def refresh_profile_combobox(self, channel: ChannelType, data: List[Tuple[int, str]],
                                  active: Optional[int]) -> None:

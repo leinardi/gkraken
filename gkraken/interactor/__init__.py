@@ -28,15 +28,16 @@ def _run_and_get_stdout(command: List[str], pipe_command: List[str] = None) -> T
         if is_flatpak():
             command = _FLATPAK_COMMAND_PREFIX + command
         process1 = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-        output = process1.communicate()[0]
-        output = output.decode(encoding='UTF-8')
+        output_bytes = process1.communicate()[0]
+        output = output_bytes.decode(encoding='UTF-8')
         return process1.returncode, output
     if is_flatpak():
         command = _FLATPAK_COMMAND_PREFIX + command
         pipe_command = _FLATPAK_COMMAND_PREFIX + pipe_command
     process1 = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     process2 = subprocess.Popen(pipe_command, stdin=process1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    process1.stdout.close()
-    output = process2.communicate()[0]
-    output = output.decode(encoding='UTF-8')
+    if process1.stdout is not None:
+        process1.stdout.close()
+    output_bytes = process2.communicate()[0]
+    output = output_bytes.decode(encoding='UTF-8')
     return process2.returncode, output

@@ -32,11 +32,11 @@ from gkraken.util.path import get_config_path
 
 _LOG = logging.getLogger(__name__)
 
-SpeedProfileChangedSubject = NewType("SpeedProfileChangedSubject", Subject)
-SpeedStepChangedSubject = NewType("SpeedStepChangedSubject", Subject)
-MainBuilder = NewType('MainBuilder', Gtk.Builder)
-EditSpeedProfileBuilder = NewType('EditSpeedProfileBuilder', Gtk.Builder)
-PreferencesBuilder = NewType('PreferencesBuilder', Gtk.Builder)
+SpeedProfileChangedSubject = NewType("SpeedProfileChangedSubject", Subject)  # type: ignore[valid-newtype]
+SpeedStepChangedSubject = NewType("SpeedStepChangedSubject", Subject)  # type: ignore[valid-newtype]
+MainBuilder = NewType('MainBuilder', Gtk.Builder)  # type: ignore[valid-newtype]
+EditSpeedProfileBuilder = NewType('EditSpeedProfileBuilder', Gtk.Builder)  # type: ignore[valid-newtype]
+PreferencesBuilder = NewType('PreferencesBuilder', Gtk.Builder)  # type: ignore[valid-newtype]
 
 _UI_RESOURCE_PATH = "/com/leinardi/gkraken/ui/{}"
 

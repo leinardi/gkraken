@@ -53,7 +53,7 @@ class UdevInteractor:
             _LOG.warning(f"Error while creating rule file. Exit code: {result[0]}. {result[1]}")
         else:
             _LOG.info("udev rules successfully applied. You may need to restart for changes to take effect.")
-        return result[0]
+        return int(result[0])
 
     @staticmethod
     def remove_udev_rule() -> int:
@@ -64,4 +64,4 @@ class UdevInteractor:
         result = _run_and_get_stdout(cmd)
         if result[0] != 0:
             _LOG.warning(f"Error while removing rule file. Exit code: {result[0]}. {result[1]}")
-        return result[0]
+        return int(result[0])

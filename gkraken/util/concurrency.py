@@ -14,10 +14,12 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
+from typing import Any
 
-def synchronized_with_attr(lock_name):
-    def decorator(method):
-        def synced_method(self, *args, **kws):
+
+def synchronized_with_attr(lock_name: str) -> Any:
+    def decorator(method: Any) -> Any:
+        def synced_method(self, *args: Any, **kws: Any) -> Any:  # type: ignore[no-untyped-def]
             lock = getattr(self, lock_name)
             with lock:
                 return method(self, *args, **kws)
