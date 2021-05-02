@@ -28,7 +28,6 @@ from gkraken.model.status import Status
 _LOG = logging.getLogger(__name__)
 
 
-# pylint: disable=duplicate-code
 class SettingsKraken2(DeviceSettings):
     supported_driver: BaseDriver = Kraken2
 
