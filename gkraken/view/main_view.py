@@ -33,6 +33,8 @@ from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCan
 from gkraken.view.lighting_view import LightingView
 from gkraken.view.preferences_view import PreferencesView
 
+SEPARATOR = '  -  '
+
 try:
     gi.require_version('AppIndicator3', '0.1')
     from gi.repository import AppIndicator3
@@ -200,8 +202,7 @@ class MainView(MainViewInterface):
                                               ('-' if status.pump_rpm is None else status.pump_rpm))
             self._cooling_pump_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %
                                                ('-' if status.pump_duty is None else "%.0f" % status.pump_duty))
-            firmware_version_label = f"firmware {status.firmware_version} - " if status.firmware_version else ''
-            self._firmware_version.set_label("%s%s %s" % (firmware_version_label, APP_NAME, APP_VERSION))
+            self._firmware_version.set_label(self._create_firmware_version_label(status))
             if self._app_indicator:
                 if self._settings_interactor.get_bool('settings_show_app_indicator'):
                     self._app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
@@ -211,6 +212,16 @@ class MainView(MainViewInterface):
                     self._app_indicator.set_label("  %s°C" % status.liquid_temperature, "  XX°C")
                 else:
                     self._app_indicator.set_label("", "")
+
+    @staticmethod
+    def _create_firmware_version_label(status: Status) -> str:
+        label_texts = []
+        if status.device_description:
+            label_texts.append(f"{status.device_description}{SEPARATOR}")
+        if status.firmware_version:
+            label_texts.append(f"firmware {status.firmware_version}{SEPARATOR}")
+        label_texts.append(f"{APP_NAME} {APP_VERSION}")
+        return ''.join(label_texts)
 
     def refresh_chart(self, profile: Optional[SpeedProfile] = None, channel_to_reset: Optional[str] = None) -> None:
         if profile is None and channel_to_reset is None:

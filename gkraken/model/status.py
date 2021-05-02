@@ -29,6 +29,7 @@ class Status:
                  fan_duty: float = None,
                  pump_rpm: int = None,
                  pump_duty: int = None,
+                 device_description: str = '',
                  ) -> None:
         if not driver_type:
             raise ValueError("Status Driver Type should not be None")
@@ -39,11 +40,12 @@ class Status:
         self.fan_duty: Optional[float] = fan_duty
         self.pump_rpm: Optional[int] = pump_rpm
         self.pump_duty: Optional[float] = pump_duty
+        self.device_description: str = device_description
 
     def __repr__(self) -> str:
         return f"{{temp: {self.liquid_temperature}, fan_rpm: {self.fan_rpm}, fan_duty: {self.fan_duty}, " \
                f"pump_rpm: {self.pump_rpm}, pump_duty: {self.pump_duty}, firmware_version: {self.firmware_version}, " \
-               f"driver: {self.driver_name}}}"
+               f"driver: {self.driver_name}, device_description: {self.device_description}}}"
 
     @property
     def driver_name(self) -> str:

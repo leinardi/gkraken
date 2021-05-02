@@ -23,4 +23,4 @@ pylint:
 pytest:
   stage: Test
   script:
-    - pytest
+    - xvfb-run pytest

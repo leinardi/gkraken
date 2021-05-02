@@ -63,7 +63,7 @@ class DeviceSettings:
     _modes_ring: List[LightingMode] = []
 
     @classmethod
-    def determine_status(cls, status_list: list) -> Optional[Status]:
+    def determine_status(cls, status_list: list, device_description: str) -> Optional[Status]:
         """creates a Status object from the given liquidctl status_list"""
         raise NotImplementedError('This should be implemented in one of the child classes')
 
