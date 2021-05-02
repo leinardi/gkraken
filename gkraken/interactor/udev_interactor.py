@@ -50,7 +50,7 @@ class UdevInteractor:
                f'echo \'{_UDEV_RULE}\' > {_UDEV_RULE_FILE_PATH} && {_UDEV_RULE_RELOAD_COMMANDS}']
         result = _run_and_get_stdout(cmd)
         if result[0] != 0:
-            _LOG.warning(f"Error while creating rule file. Exit code: {result[0]}. {result[1]}")
+            _LOG.warning("Error while creating rule file. Exit code: %d. %s", result[0], result[1])
         else:
             _LOG.info("udev rules successfully applied. You may need to restart for changes to take effect.")
         return int(result[0])
@@ -63,5 +63,7 @@ class UdevInteractor:
                f'rm {_UDEV_RULE_FILE_PATH} && {_UDEV_RULE_RELOAD_COMMANDS}']
         result = _run_and_get_stdout(cmd)
         if result[0] != 0:
-            _LOG.warning(f"Error while removing rule file. Exit code: {result[0]}. {result[1]}")
+            _LOG.warning("Error while removing rule file. Exit code: %d. %s", result[0], result[1])
+        else:
+            _LOG.info("udev rules successfully removed.")
         return int(result[0])

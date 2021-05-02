@@ -67,8 +67,8 @@ def init_plot_chart(scrolled_window: Gtk.ScrolledWindow,
     temp_window = Gtk.Window()
     style = temp_window.get_style_context()
     bg_colour = style.get_background_color(Gtk.StateType.NORMAL).to_color().to_floats()
-    cc = ColorConverter()
-    cc.to_rgba(bg_colour)
+    color_converter = ColorConverter()
+    color_converter.to_rgba(bg_colour)
     figure.patch.set_facecolor(bg_colour)
 
     # correct text and line colors

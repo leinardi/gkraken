@@ -32,6 +32,7 @@ from gkraken.view.lighting_view_interface import LightingViewInterface
 _LOG = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-public-methods
 @singleton
 class LightingView(LightingViewInterface):
 

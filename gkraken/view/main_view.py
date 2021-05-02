@@ -19,35 +19,33 @@ import logging
 from collections import OrderedDict
 from typing import Optional, Dict, List, Tuple
 
-from gkraken.di import MainBuilder
-from gkraken.interactor.settings_interactor import SettingsInteractor
-from gkraken.view.edit_speed_profile_view import EditSpeedProfileView
-from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
-from injector import inject, singleton
 import gi
 from gi.repository import Gtk
-from matplotlib.figure import Figure
+from injector import inject, singleton
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
-
-# AppIndicator3 may not be installed
-from gkraken.view.lighting_view import LightingView
-from gkraken.view.preferences_view import PreferencesView
-
-SEPARATOR = '  -  '
-
-try:
-    gi.require_version('AppIndicator3', '0.1')
-    from gi.repository import AppIndicator3
-except (ImportError, ValueError):
-    AppIndicator3 = None
+from matplotlib.figure import Figure
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, MAX_DUTY, PUMP_MIN_DUTY, APP_NAME, \
     APP_VERSION, APP_SOURCE_URL, APP_ICON_NAME_SYMBOLIC
-from gkraken.model.status import Status
-from gkraken.model.speed_profile import SpeedProfile
+from gkraken.di import MainBuilder
+from gkraken.interactor.settings_interactor import SettingsInteractor
 from gkraken.model.channel_type import ChannelType
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.status import Status
 from gkraken.presenter.main_presenter import MainPresenter, MainViewInterface
+from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
+from gkraken.view.edit_speed_profile_view import EditSpeedProfileView
+from gkraken.view.lighting_view import LightingView
+from gkraken.view.preferences_view import PreferencesView
 
+# AppIndicator3 may not be installed
+try:
+    gi.require_version('AppIndicator3', '0.1')
+    from gi.repository import AppIndicator3  # pylint: disable=ungrouped-imports
+except (ImportError, ValueError):
+    AppIndicator3 = None
+
+SEPARATOR = '  -  '
 _LOG = logging.getLogger(__name__)
 if AppIndicator3 is None:
     _LOG.warning("AppIndicator3 is not installed. The App indicator will not be shown.")
@@ -125,6 +123,7 @@ class MainView(MainViewInterface):
 
     def _init_app_indicator(self) -> None:
         if AppIndicator3:
+            # pylint: disable=attribute-defined-outside-init
             # Setting icon name in new() as '', because new() wants an icon path
             self._app_indicator = AppIndicator3.Indicator \
                 .new(APP_ID, '', AppIndicator3.IndicatorCategory.HARDWARE)

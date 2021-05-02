@@ -40,12 +40,13 @@ class CheckNewVersionInteractor:
 
     def execute(self) -> Observable:
         _LOG.debug("CheckNewVersionInteractor.execute()")
+        # pylint: disable=not-callable
         return rx.defer(lambda _: rx.just(self._check_new_version()))
 
     def _check_new_version(self) -> Optional[LooseVersion]:
         req = requests.get(self.URL_PATTERN.format(package=APP_ID))
         version = LooseVersion("0")
-        if req.status_code == requests.codes.ok:
+        if req.status_code == requests.codes.ok:  # pylint: disable=no-member
             j = json.loads(req.text)
             current_release_version = j.get('currentReleaseVersion', "0.0.0")
             version = LooseVersion(current_release_version)

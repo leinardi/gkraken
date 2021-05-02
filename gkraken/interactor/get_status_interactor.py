@@ -36,4 +36,5 @@ class GetStatusInteractor:
 
     def execute(self) -> Observable:
         _LOG.debug("GetStatusInteractor.execute()")
+        # pylint: disable=not-callable
         return rx.defer(lambda _: rx.just(self._kraken_repository.get_status()))
