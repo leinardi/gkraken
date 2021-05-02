@@ -24,7 +24,7 @@ device, please join the discord server of the project: https://discord.gg/Q33n3U
 - [Running the App](#running-the-app)
     - [Adding Udev rule](#adding-udev-rule)
     - [Command line options](#command-line-options)
-- [Building Flatpak](#-build-install-and-run-with-flatpak)
+- [Building Flatpak](#-building-flatpak)
 - [Running tests](#testing)
 - [FAQ](#-faq)
 - [How to help the project](#-how-to-help-the-project)
@@ -185,7 +185,7 @@ sudo udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=a
 |--autostart-on             |Enable automatic start of the app on login                   |    x   |         |
 |--autostart-off            |Disable automatic start of the app on login                  |    x   |         |
 
-## 🖥️ Build install and run with Flatpak
+## 🖥️ Building Flatpak
 
 If you don't have Flatpak installed you can find step by step instructions [here](https://flatpak.org/setup/).
 
