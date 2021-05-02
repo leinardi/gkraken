@@ -185,7 +185,7 @@ sudo udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=a
 |--autostart-on             |Enable automatic start of the app on login                   |    x   |         |
 |--autostart-off            |Disable automatic start of the app on login                  |    x   |         |
 
-## 🖥️ Build, install and run with Flatpak
+## 🖥️ Build install and run with Flatpak
 
 If you don't have Flatpak installed you can find step by step instructions [here](https://flatpak.org/setup/).
 
