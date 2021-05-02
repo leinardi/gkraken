@@ -1,7 +1,13 @@
 # GKraken
-GKraken is a GTK application that allows you to control the cooling
-of a NZXT Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux.  
-Lighting control is also supported for X42, X52, X62, X72, X53, X63, X73 models.
+
+---
+GKraken is a GTK application that allows you to control the following AIO liquid coolers:
+
+| Device | Pump | Fan | Lighting |
+|:---|:---:|:---:|:---:|
+| NZXT Kraken X42, X52, X62, X72 | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| NZXT Kraken X53, X63, X73 | :white_check_mark: |  | :white_check_mark: |
+| NZXT Kraken Z53, Z63, Z73 | :white_check_mark: | :white_check_mark: |  |
 
 ## Project in Maintenance mode
 <img src="/art/gkraken.png" width="128" align="right" hspace="0" />
@@ -10,7 +16,27 @@ This project is now in maintenance mode. New features will be added only via Con
 I also don't own a NZXT Kraken anymore so I am unable to test GKraken myself.
 If you want to help with a code contribution or testing with your device, please join the discord server of the project: https://discord.gg/Q33n3UC.
 
+## Table of contents
+
+---
+- [How to get GKraken](#-how-to-get-gkraken)
+  - [Flathub](#install-from-flathub)
+  - [Source](#install-from-source-code)
+  
+- [Running the App](#running-the-app)
+  - [Adding Udev rule](#adding-udev-rule)
+  - [Command line options](#command-line-options)
+  
+- [Building Flatpak](#-build-install-and-run-with-flatpak)
+- [Running tests](#testing)
+- [FAQ](#-faq)
+- [How to help the project](#-how-to-help-the-project)
+- [Acknowledgements](#-acknowledgements)
+- [License](#license)
+
 ## Screenshots
+
+---
 <img src="/art/screenshot-09.png" width="844"/>
 
 <img src="/art/screenshot-08.png" width="844"/>
@@ -18,9 +44,13 @@ If you want to help with a code contribution or testing with your device, please
 <img src="/art/screenshot-05.png" width="844"/>
 
 ## Video
+
+---
 Click [here](https://gitlab.com/leinardi/gkraken/blob/master/art/video.mp4) to see a short video of the application.
 
 ## 📦 How to get GKraken
+
+---
 ### Install from Flathub
 This is the preferred way to get GKraken on any major distribution (Arch, Fedora, Linux Mint, openSUSE, Ubuntu, etc).
 
@@ -93,8 +123,12 @@ gkraken
 ```
 
 ## Running the app
-To start the app you have to run the command `gkraken` in a terminal. The app needs to access the USB interface of the Kraken that, normally,
-is not available to unprivileged users. 
+
+---
+You can run the app from the desktop launcher or use the terminal:  
+Run the command `gkraken` if installed from source, or if installed with flatpak `flatpak run com.leinardi.gkraken`.  
+
+The app needs to access the USB interface of the Kraken that, normally, is not available to unprivileged users. 
 
 To allow normal users to access the Kraken's USB interface you can 
 create a custom udev rule
@@ -105,7 +139,13 @@ Simply run:
 ```bash
 gkraken --add-udev-rule
 ```
-It will automatically refresh also the udev rules.
+or with flatpak:
+```bash
+flatpak run com.leinardi.gkraken --add-udev-rule
+```
+
+It will automatically refresh also the udev rules. In some cases though, you may need to restart for the changes 
+to take effect
 
 #### Manually
 Create a new file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
@@ -134,6 +174,8 @@ sudo udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=a
   |--autostart-off            |Disable automatic start of the app on login                  |    x   |         |
 
 ## 🖥️ Build, install and run with Flatpak
+
+---
 If you don't have Flatpak installed you can find step by step instructions [here](https://flatpak.org/setup/).
 
 Make sure to have the Flathub remote added to the current user:
@@ -161,6 +203,8 @@ flatpak run com.leinardi.gkraken --debug
 ```
 
 ## Testing
+
+---
 To run the tests install the test dependencies:
 ```bash
 pip install -r test-requirements.txt
@@ -176,6 +220,8 @@ pylint gkraken
 ```
 
 ## ❓ FAQ
+
+---
 ### The Flatpak version of GKraken is not using my theme, how can I fix it?
 To fix this issue install a Gtk theme from Flathub. This way, Flatpak applications will automatically pick the 
 installed Gtk theme and use that instead of Adwaita.
@@ -195,18 +241,7 @@ flatpak install flathub org.gtk.Gtk3theme.Yaru
 | Flatpak           |        `$HOME/.var/app/com.leinardi.gkraken/`        |
 | Source code       | `$XDG_CONFIG_HOME` (usually `$HOME/.config/gkraken`) |
 
-## 💚 How to help the project
-### Discord server
-If you want to help testing or developing it would be easier to get in touch using the Discord server of the project: https://discord.gg/Q33n3UC  
-Just write a message on the general channel saying how you want to help (test, dev, etc) and quoting @leinardi. If you don't use discor but still want to help just open a new issue here.
-
-### Can I support this project some other way?
-
-Something simple that everyone can do is to star it on both [GitLab](https://gitlab.com/leinardi/gkraken) and [GitHub](https://github.com/leinardi/gkraken).
-Feedback is always welcome: if you found a bug or would like to suggest a feature,
-feel free to open an issue on the [issue tracker](https://gitlab.com/leinardi/gkraken/issues).
-
-## ⚠ Dropped PyPI support
+### ⚠ Dropped PyPI support
 Production builds were previously distributed using PyPI. This way of distributing the software is simple
 but requires the user to manually install all the non Python dependencies like cairo, glib, appindicator3, etc.  
 A solution for all this problems is distributing the app via Flatpak, since with it all the dependencies
@@ -223,13 +258,30 @@ pip3 uninstall gkraken
 rm -rf ~/.config/gkraken
 ```
 
+## 💚 How to help the project
+
+---
+### Discord server
+If you want to help testing or developing it would be easier to get in touch using the Discord server of the project: https://discord.gg/Q33n3UC  
+Just write a message on the general channel saying how you want to help (test, dev, etc) and quoting @leinardi. If you don't use discor but still want to help just open a new issue here.
+
+### Can I support this project some other way?
+
+Something simple that everyone can do is to star it on both [GitLab](https://gitlab.com/leinardi/gkraken) and [GitHub](https://github.com/leinardi/gkraken).
+Feedback is always welcome: if you found a bug or would like to suggest a feature,
+feel free to open an issue on the [issue tracker](https://gitlab.com/leinardi/gkraken/issues).
+
 ## ℹ️ Acknowledgements
+
+---
 Thanks to:
 
  - Jonas Malaco for the [`liquidctl`](https://github.com/jonasmalacofilho/liquidctl) CLI library
  - @codifryed for adding support of many new Kraken devices!
 
 ## License
+
+---
 ```
 This file is part of gkraken.
 
