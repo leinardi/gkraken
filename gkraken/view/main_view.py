@@ -239,7 +239,7 @@ class MainView(MainViewInterface):
             for item in data:
                 self._cooling_fan_liststore.append([item[0], item[1]])
             self._cooling_fan_combobox.set_model(self._cooling_fan_liststore)
-            self._cooling_fan_combobox.set_sensitive(len(self._cooling_fan_liststore) > 1)
+            self._cooling_fan_combobox.set_sensitive(len(self._cooling_fan_liststore) > 0)
             if active is not None:
                 self._cooling_fan_combobox.set_active(active)
             else:
@@ -249,7 +249,7 @@ class MainView(MainViewInterface):
             for item in data:
                 self._cooling_pump_liststore.append([item[0], item[1]])
             self._cooling_pump_combobox.set_model(self._cooling_pump_liststore)
-            self._cooling_pump_combobox.set_sensitive(len(self._cooling_pump_liststore) > 1)
+            self._cooling_pump_combobox.set_sensitive(len(self._cooling_pump_liststore) > 0)
             if active is not None:
                 self._cooling_pump_combobox.set_active(active)
             else:

@@ -22,6 +22,7 @@ from typing import Optional, Any, List, Tuple, Dict, Callable
 import rx
 from gi.repository import GLib
 from injector import inject, singleton
+from liquidctl.driver.asetek import Legacy690Lc
 from rx import Observable, operators
 from rx.disposable import CompositeDisposable
 from rx.scheduler.mainloop import GtkScheduler
@@ -223,10 +224,12 @@ class MainPresenter:
             operators.flat_map(lambda status: rx.from_list(  # pylint: disable=not-callable
                 list(ChannelType)
             ).pipe(
-                operators.filter(lambda channel: self._is_channel_supported(channel, status))
+                operators.filter(lambda channel: self._is_channel_supported(channel, status)),
+                operators.map(lambda channel: (channel, status))
             ))
         ).subscribe(
-            on_next=lambda channel: self._refresh_speed_profile(channel, init, selecter_profile_id),
+            on_next=lambda channel_status_tuple: self._check_driver_and_refresh_profile(channel_status_tuple, init,
+                                                                                        selecter_profile_id),
             on_error=self._handle_refresh_error
         )
 
@@ -236,6 +239,34 @@ class MainPresenter:
             ChannelType.FAN: status.fan_rpm is not None,
             ChannelType.PUMP: status.pump_rpm is not None
         }.get(channel, True)
+
+    def _check_driver_and_refresh_profile(self, channel_status_tuple: Tuple[ChannelType, Status],
+                                          init: bool,
+                                          selector_profile_id: Optional[int]
+                                          ) -> None:
+        channel, status = channel_status_tuple
+        if status.driver_type is Legacy690Lc:
+            self._refresh_speed_profile_fixed_only(channel, init, selector_profile_id)
+        else:
+            self._refresh_speed_profile(channel, init, selector_profile_id)
+
+    def _refresh_speed_profile_fixed_only(self, channel: ChannelType,
+                                          init: bool = False,
+                                          profile_id: Optional[int] = None
+                                          ) -> None:
+        """This method will only allow fixed profiles for those models that only support fixed speeds"""
+        data = list(filter(lambda profile_data: profile_data[1] == 'Fixed', self._get_profile_list(channel)))
+        active = None
+        if profile_id is not None:
+            active = next(i for i, item in enumerate(data) if item[0] == profile_id)
+        elif init and self._settings_interactor.get_bool('settings_load_last_profile'):
+            self._should_update_fan_speed = True
+            self._should_update_pump_speed = True
+            current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
+            if current is not None and current.profile.single_step:  # make sure current is fixed only
+                active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
+                self._set_speed_profile(current.profile)
+        self.main_view.refresh_profile_combobox(channel, data, active)
 
     def _refresh_speed_profile(self, channel: ChannelType, init: bool = False,
                                profile_id: Optional[int] = None) -> None:
