@@ -14,7 +14,7 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
-
+from liquidctl.driver.asetek import Legacy690Lc
 from liquidctl.driver.kraken2 import Kraken2
 from liquidctl.driver.kraken3 import KrakenX3, KrakenZ3
 from pytest_mock import MockerFixture
@@ -61,4 +61,16 @@ class TestDeviceLighting:
         # assert
         assert isinstance(lighting_modes, LightingModes)
         assert len(lighting_modes.modes_logo) == 0
+        assert len(lighting_modes.modes_ring) == 0
+
+    def test_lighting_modes_kraken_legacy(self, repo: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(
+            repo, '_driver', spec=Legacy690Lc
+        )
+        # act
+        lighting_modes = repo.get_lighting_modes()
+        # assert
+        assert isinstance(lighting_modes, LightingModes)
+        assert len(lighting_modes.modes_logo) == 4
         assert len(lighting_modes.modes_ring) == 0
