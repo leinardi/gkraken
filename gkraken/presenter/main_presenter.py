@@ -125,10 +125,10 @@ class MainPresenter:
             self.main_view.refresh_chart(profile)
 
     def _check_supported_kraken(self) -> None:
-        self._composite_disposable.add(self._has_supported_kraken_interactor.execute().pipe(
-            operators.subscribe_on(self._scheduler),
-            operators.observe_on(GtkScheduler(GLib)),
-        ).subscribe(on_next=self._has_supported_kraken_result))
+        self._composite_disposable.add(
+            self._has_supported_kraken_interactor.execute()
+                .subscribe(on_next=self._has_supported_kraken_result,
+                           on_error=self._handle_supported_error))
 
     def _has_supported_kraken_result(self, has_supported_kraken: bool) -> None:
         if has_supported_kraken:
