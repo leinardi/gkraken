@@ -23,7 +23,9 @@ from injector import singleton, inject
 from liquidctl.driver.usb import BaseDriver
 
 from gkraken.device.device_settings import DeviceSettings
+from gkraken.device.settings_kraken_legacy import SettingsKrakenLegacy
 from gkraken.di import INJECTOR
+from gkraken.error.legacy_kraken_warning import LegacyKrakenWarning
 from gkraken.model.lighting_modes import LightingModes
 from gkraken.model.lighting_settings import LightingSettings
 from gkraken.model.status import Status
@@ -39,6 +41,7 @@ class KrakenRepository:
     def __init__(self) -> None:
         self.lock = threading.RLock()
         self._driver: Optional[BaseDriver] = None
+        self._legacy_kraken_warning_issued: bool = False
 
     def has_supported_kraken(self) -> bool:
         """Checks only if a supported device is found. Connection issues are handled later in the startup process"""
@@ -122,6 +125,12 @@ class KrakenRepository:
         if not self._driver:
             self._driver = INJECTOR.get(Optional[BaseDriver])
 
+            if isinstance(self._driver, SettingsKrakenLegacy.supported_driver) \
+                    and not self._legacy_kraken_warning_issued:
+                self._driver = None
+                self._legacy_kraken_warning_issued = True
+                raise LegacyKrakenWarning(
+                    "Aestek potential driver conflict detected. Requires user confirmation to continue.")
             if self._driver:
                 self._driver.connect()
             else:
