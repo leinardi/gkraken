@@ -90,14 +90,16 @@ class MainPresenter:
         self._legacy_firmware_dialog_shown: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
         self._critical_error_occurred: bool = False  # to handle multiple startup errors
+        self._startup_process_can_continue: bool = True
 
     def on_start(self) -> None:
         self._register_db_listeners()
         self._check_supported_kraken()
-        self._load_lighting_modes()
-        self._refresh_speed_profiles(True)
-        if self._settings_interactor.get_int('settings_check_new_version'):
-            self._check_new_version()
+        if self._startup_process_can_continue:
+            self._load_lighting_modes()
+            self._refresh_speed_profiles(True)
+            if self._settings_interactor.get_int('settings_check_new_version'):
+                self._check_new_version()
 
     def on_application_window_delete_event(self, *_: Any) -> bool:
         if self._settings_interactor.get_int('settings_minimize_to_tray'):
