@@ -29,6 +29,7 @@ from rx.scheduler.mainloop import GtkScheduler
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID, APP_SUPPORTED_MODELS
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
+from gkraken.error.legacy_kraken_warning import LegacyKrakenWarning
 from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
 from gkraken.interactor.get_status_interactor import GetStatusInteractor
 from gkraken.interactor.has_supported_kraken_interactor import HasSupportedKrakenInteractor
@@ -134,8 +135,10 @@ class MainPresenter:
 
     def _has_supported_kraken_result(self, has_supported_kraken: bool) -> None:
         if has_supported_kraken:
+            self._startup_process_can_continue = True
             self._start_refresh()
         else:
+            self._startup_process_can_continue = False
             _LOG.error("Unable to find supported Kraken device!")
             self.main_view.show_error_message_dialog(
                 "Unable to find supported NZXT Kraken devices",
@@ -170,6 +173,27 @@ class MainPresenter:
                     "For more info check the section \"Adding Udev rule\" of the project's README.md.")
                 get_default_application().quit()
         _LOG.exception("Refresh error: %s", str(ex))
+
+    def _handle_supported_error(self, ex: Exception) -> None:
+        self._startup_process_can_continue = False
+        if isinstance(ex, LegacyKrakenWarning):
+            _LOG.warning(ex)
+            self._legacy_kraken_warning_message()
+        else:
+            _LOG.exception(ex)
+
+    def _legacy_kraken_warning_message(self) -> None:
+        confirmed = self.main_view.show_warning_dialog(
+            "Driver Conflict",
+            "GKraken has detected a potential driver conflict:\n\n"
+            "GKraken only supports NZXT Kraken devices but a EVGA CLC cooler can be mistaken for a kraken device\n\n"
+            "YES if you have a EVGA CLC installed to quit and avoid any issues\n"
+            "NO if you do not have a EVGA CLC installed"
+        )
+        if confirmed:
+            self._check_supported_kraken()  # connect to the device this time.
+        else:
+            get_default_application().quit()
 
     @staticmethod
     def _get_udev_command() -> str:
