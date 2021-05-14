@@ -39,7 +39,8 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="3008", MODE="0666
 '''
 _UDEV_RULE_FILE_PATH = '/lib/udev/rules.d/60-gkraken.rules'
 _UDEV_RULE_RELOAD_COMMANDS = 'udevadm control --reload-rules ' \
-                             '&& udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=add'
+                             '&& udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=add' \
+                             '&& udevadm trigger --subsystem-match=usb --attr-match=idVendor=2433 --action=add'
 
 
 @singleton
