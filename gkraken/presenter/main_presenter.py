@@ -187,6 +187,7 @@ class MainPresenter:
             "Driver Conflict",
             "GKraken has detected a potential driver conflict:\n\n"
             "GKraken only supports NZXT Kraken devices but a EVGA CLC cooler can be mistaken for a kraken device\n\n"
+            "Choose:\n"
             "YES if you have a EVGA CLC installed to quit and avoid any issues\n"
             "NO if you do not have a EVGA CLC installed"
         )

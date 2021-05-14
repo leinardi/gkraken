@@ -4,9 +4,12 @@ GKraken is a GTK application that allows you to control the following AIO liquid
 
 | Device | Pump | Fan | Lighting |
 |:---|:---:|:---:|:---:|
+| NZXT Kraken X40, X60, X31, X41, X51, X61 | :heavy_check_mark:<sup>_L_</sup> | :heavy_check_mark:<sup>_L_</sup>| :heavy_check_mark:<sup>_L_</sup> |
 | NZXT Kraken X42, X52, X62, X72 | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| NZXT Kraken X53, X63, X73 | :white_check_mark: |  | :white_check_mark: |
-| NZXT Kraken Z53, Z63, Z73 | :white_check_mark: | :white_check_mark: |  |
+| NZXT Kraken X53, X63, X73 | :white_check_mark: | :x: | :white_check_mark: |
+| NZXT Kraken Z53, Z63, Z73 | :white_check_mark: | :white_check_mark: | :x: |
+
+<sup>_L_</sup> _Limited functionality offered by legacy Kraken models_
 
 ## Project in Maintenance mode
 
@@ -164,6 +167,7 @@ Create a new file in `/lib/udev/rules.d/60-gkraken.rules` containing this text:
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="170e", MODE="0666"
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="2007", MODE="0666"
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="1e71", ATTRS{idProduct}=="3008", MODE="0666"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2433", ATTRS{idProduct}=="b200", MODE="0666"
 ```
 
 After that, run the following commands
@@ -171,6 +175,7 @@ After that, run the following commands
 ```bash
 sudo udevadm control --reload-rules
 sudo udevadm trigger --subsystem-match=usb --attr-match=idVendor=1e71 --action=add
+sudo udevadm trigger --subsystem-match=usb --attr-match=idVendor=2433 --action=add
 ```
 
 ## Command line options

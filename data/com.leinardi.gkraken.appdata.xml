@@ -28,9 +28,8 @@
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
     <description>
-        <p>GKraken is a GTK application that allows you to control the cooling of a NZXT
-            Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 pump from Linux. 
-            Lighting control is also supported for X42, X52, X62, X72, X53, X63, X73 models.
+        <p>GKraken is a GTK application that allows you to control a NZXT Kraken
+            X40, X60, X31, X41, X51, X61, X42, X52, X62, X72, X53, X63, X73, Z63 or Z73 from Linux.
         </p>
     </description>
     <launchable type="desktop-id">com.leinardi.gkraken.desktop</launchable>
