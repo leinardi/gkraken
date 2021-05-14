@@ -22,12 +22,12 @@ from typing import Optional, Any, List, Tuple, Dict, Callable
 import rx
 from gi.repository import GLib
 from injector import inject, singleton
-from liquidctl.driver.asetek import Legacy690Lc
 from rx import Observable, operators
 from rx.disposable import CompositeDisposable
 from rx.scheduler.mainloop import GtkScheduler
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID, APP_SUPPORTED_MODELS
+from gkraken.device.settings_kraken_legacy import SettingsKrakenLegacy
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.error.legacy_kraken_warning import LegacyKrakenWarning
 from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
@@ -35,12 +35,12 @@ from gkraken.interactor.get_status_interactor import GetStatusInteractor
 from gkraken.interactor.has_supported_kraken_interactor import HasSupportedKrakenInteractor
 from gkraken.interactor.set_speed_profile_interactor import SetSpeedProfileInteractor
 from gkraken.interactor.settings_interactor import SettingsInteractor
-from gkraken.model.status import Status
-from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.channel_type import ChannelType
 from gkraken.model.current_speed_profile import CurrentSpeedProfile
-from gkraken.model.speed_step import SpeedStep
 from gkraken.model.db_change import DbChange
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.speed_step import SpeedStep
+from gkraken.model.status import Status
 from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfilePresenter
 from gkraken.presenter.lighting_presenter import LightingPresenter
 from gkraken.presenter.preferences_presenter import PreferencesPresenter
@@ -272,7 +272,7 @@ class MainPresenter:
                                           selector_profile_id: Optional[int]
                                           ) -> None:
         channel, status = channel_status_tuple
-        if status.driver_type is Legacy690Lc:
+        if status.driver_type is SettingsKrakenLegacy.supported_driver:
             self._refresh_speed_profile_fixed_only(channel, init, selector_profile_id)
         else:
             self._refresh_speed_profile(channel, init, selector_profile_id)
