@@ -14,7 +14,7 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
-
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional
 
@@ -41,15 +41,11 @@ class LightingDirection(Enum):
         raise NotImplementedError
 
 
+@dataclass(frozen=True)
 class LightingColor:
-    def __init__(self,
-                 red: int = 0,
-                 green: int = 0,
-                 blue: int = 0
-                 ) -> None:
-        self.red: int = red
-        self.green: int = green
-        self.blue: int = blue
+    red: int = 0
+    green: int = 0
+    blue: int = 0
 
     @staticmethod
     def from_button_color(color: Gdk.RGBA) -> 'LightingColor':
@@ -63,9 +59,9 @@ class LightingColor:
         return [self.red, self.green, self.blue]
 
 
+@dataclass(frozen=True)
 class LightingColors:
-    def __init__(self) -> None:
-        self.colors: List[LightingColor] = []
+    colors: List[LightingColor] = field(init=False, default_factory=list)
 
     def add(self, color: LightingColor) -> 'LightingColors':
         self.colors.append(color)
@@ -75,6 +71,7 @@ class LightingColors:
         return list(map(lambda color: color.values(), self.colors))
 
 
+@dataclass
 class LightingSettings:
     def __init__(self,
                  channel: LightingChannel,
@@ -89,18 +86,18 @@ class LightingSettings:
         self.speed_id_or_default: int = speed.id if speed else 3
         self.direction_or_default: str = direction.value if direction else LightingDirection.FORWARD.value
 
-    @staticmethod
-    def create_logo_settings(lighting_mode: LightingMode,
+    @classmethod
+    def create_logo_settings(cls, lighting_mode: LightingMode,
                              colors: LightingColors,
                              speed: Optional[LightingSpeed] = None,
                              direction: Optional[LightingDirection] = None
                              ) -> 'LightingSettings':
-        return LightingSettings(LightingChannel.LOGO, lighting_mode, colors, speed, direction)
+        return cls(LightingChannel.LOGO, lighting_mode, colors, speed, direction)
 
-    @staticmethod
-    def create_ring_settings(lighting_mode: LightingMode,
+    @classmethod
+    def create_ring_settings(cls, lighting_mode: LightingMode,
                              colors: LightingColors,
                              speed: Optional[LightingSpeed] = None,
                              direction: Optional[LightingDirection] = None
                              ) -> 'LightingSettings':
-        return LightingSettings(LightingChannel.RING, lighting_mode, colors, speed, direction)
+        return cls(LightingChannel.RING, lighting_mode, colors, speed, direction)

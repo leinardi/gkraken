@@ -14,33 +14,22 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
-
+from dataclasses import dataclass
 from typing import Dict
 
 
+@dataclass(frozen=True)
 class LightingMode:
-    def __init__(self,
-                 mode_id: int,
-                 name: str,
-                 frontend_name: str,
-                 min_colors: int,
-                 max_colors: int,
-                 speed_enabled: bool,
-                 direction_enabled: bool
-                 ) -> None:
-        self.mode_id: int = mode_id
-        self.name: str = name
-        self.frontend_name: str = frontend_name
-        self.min_colors: int = min_colors
-        self.max_colors: int = max_colors
-        self.speed_enabled: bool = speed_enabled
-        self.direction_enabled: bool = direction_enabled
+    mode_id: int
+    name: str
+    frontend_name: str
+    min_colors: int
+    max_colors: int
+    speed_enabled: bool
+    direction_enabled: bool
 
 
+@dataclass(frozen=True)
 class LightingModes:
-    def __init__(self,
-                 modes_logo: Dict[int, LightingMode],
-                 modes_ring: Dict[int, LightingMode],
-                 ) -> None:
-        self.modes_logo: Dict[int, LightingMode] = modes_logo
-        self.modes_ring: Dict[int, LightingMode] = modes_ring
+    modes_logo: Dict[int, LightingMode]
+    modes_ring: Dict[int, LightingMode]
