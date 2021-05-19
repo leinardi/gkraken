@@ -184,6 +184,16 @@ class MainView(MainViewInterface):
         dialog.run()
         dialog.destroy()
 
+    def show_warning_dialog(self, title: str, message: str) -> bool:
+        dialog = Gtk.MessageDialog(self._window, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.YES_NO, title)
+        dialog.format_secondary_text(message)
+        confirmed: bool = False
+        response = dialog.run()
+        if response == Gtk.ResponseType.NO:
+            confirmed = True
+        dialog.destroy()
+        return confirmed
+
     def set_statusbar_text(self, text: str) -> None:
         self._statusbar.remove_all(self._context)
         self._statusbar.push(self._context, text)
@@ -239,7 +249,7 @@ class MainView(MainViewInterface):
             for item in data:
                 self._cooling_fan_liststore.append([item[0], item[1]])
             self._cooling_fan_combobox.set_model(self._cooling_fan_liststore)
-            self._cooling_fan_combobox.set_sensitive(len(self._cooling_fan_liststore) > 1)
+            self._cooling_fan_combobox.set_sensitive(len(self._cooling_fan_liststore) > 0)
             if active is not None:
                 self._cooling_fan_combobox.set_active(active)
             else:
@@ -249,7 +259,7 @@ class MainView(MainViewInterface):
             for item in data:
                 self._cooling_pump_liststore.append([item[0], item[1]])
             self._cooling_pump_combobox.set_model(self._cooling_pump_liststore)
-            self._cooling_pump_combobox.set_sensitive(len(self._cooling_pump_liststore) > 1)
+            self._cooling_pump_combobox.set_sensitive(len(self._cooling_pump_liststore) > 0)
             if active is not None:
                 self._cooling_pump_combobox.set_active(active)
             else:

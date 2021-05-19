@@ -33,7 +33,9 @@
 
 import logging
 
+import pytest
 from _pytest.logging import LogCaptureFixture
+from liquidctl.driver.asetek import Legacy690Lc
 from liquidctl.driver.corsair_hid_psu import CorsairHidPsu
 from liquidctl.driver.kraken2 import Kraken2
 from liquidctl.driver.kraken3 import KrakenX3
@@ -41,6 +43,8 @@ from pytest_mock import MockerFixture
 
 from gkraken.device import DeviceSettings
 from gkraken.device.settings_kraken_2 import SettingsKraken2
+from gkraken.device.settings_kraken_legacy import SettingsKrakenLegacy
+from gkraken.error.legacy_kraken_warning import LegacyKrakenWarning
 from gkraken.repository.kraken_repository import KrakenRepository
 
 
@@ -149,3 +153,19 @@ class TestKrakenRepository:
         # assert
         assert lighting is None
         assert 'Driver Instance is not recognized' in caplog.text
+
+    def test_legacy_kraken_warning(self, repo_init: KrakenRepository, mocker: MockerFixture) -> None:
+        # arrange
+        mocker.patch.object(DeviceSettings, '__subclasses__', return_value=[SettingsKrakenLegacy])
+        mocker.patch.object(Legacy690Lc, 'find_supported_devices', return_value=[Legacy690Lc('012345', 'test device')])
+        mocker.patch.object(Legacy690Lc, 'connect')
+        # act
+        with pytest.raises(LegacyKrakenWarning) as warning:
+            repo_init.has_supported_kraken()
+        # assert
+        assert 'driver conflict' in str(warning.value)
+        # act 2 - after warning has been issued to the user
+        is_supported = repo_init.has_supported_kraken()
+        # assert 2
+        assert isinstance(repo_init._driver, Legacy690Lc)
+        assert is_supported

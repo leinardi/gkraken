@@ -27,18 +27,20 @@ from rx.disposable import CompositeDisposable
 from rx.scheduler.mainloop import GtkScheduler
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID, APP_SUPPORTED_MODELS
+from gkraken.device.settings_kraken_legacy import SettingsKrakenLegacy
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
+from gkraken.error.legacy_kraken_warning import LegacyKrakenWarning
 from gkraken.interactor.check_new_version_interactor import CheckNewVersionInteractor
 from gkraken.interactor.get_status_interactor import GetStatusInteractor
 from gkraken.interactor.has_supported_kraken_interactor import HasSupportedKrakenInteractor
 from gkraken.interactor.set_speed_profile_interactor import SetSpeedProfileInteractor
 from gkraken.interactor.settings_interactor import SettingsInteractor
-from gkraken.model.status import Status
-from gkraken.model.speed_profile import SpeedProfile
 from gkraken.model.channel_type import ChannelType
 from gkraken.model.current_speed_profile import CurrentSpeedProfile
-from gkraken.model.speed_step import SpeedStep
 from gkraken.model.db_change import DbChange
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.speed_step import SpeedStep
+from gkraken.model.status import Status
 from gkraken.presenter.edit_speed_profile_presenter import EditSpeedProfilePresenter
 from gkraken.presenter.lighting_presenter import LightingPresenter
 from gkraken.presenter.preferences_presenter import PreferencesPresenter
@@ -89,14 +91,16 @@ class MainPresenter:
         self._legacy_firmware_dialog_shown: bool = False
         self.application_quit: Callable = lambda *args: None  # will be set by the Application
         self._critical_error_occurred: bool = False  # to handle multiple startup errors
+        self._startup_process_can_continue: bool = True
 
     def on_start(self) -> None:
         self._register_db_listeners()
         self._check_supported_kraken()
-        self._load_lighting_modes()
-        self._refresh_speed_profiles(True)
-        if self._settings_interactor.get_int('settings_check_new_version'):
-            self._check_new_version()
+        if self._startup_process_can_continue:
+            self._load_lighting_modes()
+            self._refresh_speed_profiles(True)
+            if self._settings_interactor.get_int('settings_check_new_version'):
+                self._check_new_version()
 
     def on_application_window_delete_event(self, *_: Any) -> bool:
         if self._settings_interactor.get_int('settings_minimize_to_tray'):
@@ -124,15 +128,17 @@ class MainPresenter:
             self.main_view.refresh_chart(profile)
 
     def _check_supported_kraken(self) -> None:
-        self._composite_disposable.add(self._has_supported_kraken_interactor.execute().pipe(
-            operators.subscribe_on(self._scheduler),
-            operators.observe_on(GtkScheduler(GLib)),
-        ).subscribe(on_next=self._has_supported_kraken_result))
+        self._composite_disposable.add(
+            self._has_supported_kraken_interactor.execute()
+                .subscribe(on_next=self._has_supported_kraken_result,
+                           on_error=self._handle_supported_error))
 
     def _has_supported_kraken_result(self, has_supported_kraken: bool) -> None:
         if has_supported_kraken:
+            self._startup_process_can_continue = True
             self._start_refresh()
         else:
+            self._startup_process_can_continue = False
             _LOG.error("Unable to find supported Kraken device!")
             self.main_view.show_error_message_dialog(
                 "Unable to find supported NZXT Kraken devices",
@@ -167,6 +173,28 @@ class MainPresenter:
                     "For more info check the section \"Adding Udev rule\" of the project's README.md.")
                 get_default_application().quit()
         _LOG.exception("Refresh error: %s", str(ex))
+
+    def _handle_supported_error(self, ex: Exception) -> None:
+        self._startup_process_can_continue = False
+        if isinstance(ex, LegacyKrakenWarning):
+            _LOG.warning(ex)
+            self._legacy_kraken_warning_message()
+        else:
+            _LOG.exception(ex)
+
+    def _legacy_kraken_warning_message(self) -> None:
+        confirmed = self.main_view.show_warning_dialog(
+            "Driver Conflict",
+            "GKraken has detected a potential driver conflict:\n\n"
+            "GKraken only supports NZXT Kraken devices but a EVGA CLC cooler can be mistaken for a kraken device\n\n"
+            "Choose:\n"
+            "YES if you have a EVGA CLC installed to quit and avoid any issues\n"
+            "NO if you do not have a EVGA CLC installed"
+        )
+        if confirmed:
+            self._check_supported_kraken()  # connect to the device this time.
+        else:
+            get_default_application().quit()
 
     @staticmethod
     def _get_udev_command() -> str:
@@ -223,10 +251,12 @@ class MainPresenter:
             operators.flat_map(lambda status: rx.from_list(  # pylint: disable=not-callable
                 list(ChannelType)
             ).pipe(
-                operators.filter(lambda channel: self._is_channel_supported(channel, status))
+                operators.filter(lambda channel: self._is_channel_supported(channel, status)),
+                operators.map(lambda channel: (channel, status))
             ))
         ).subscribe(
-            on_next=lambda channel: self._refresh_speed_profile(channel, init, selecter_profile_id),
+            on_next=lambda channel_status_tuple: self._check_driver_and_refresh_profile(channel_status_tuple, init,
+                                                                                        selecter_profile_id),
             on_error=self._handle_refresh_error
         )
 
@@ -236,6 +266,34 @@ class MainPresenter:
             ChannelType.FAN: status.fan_rpm is not None,
             ChannelType.PUMP: status.pump_rpm is not None
         }.get(channel, True)
+
+    def _check_driver_and_refresh_profile(self, channel_status_tuple: Tuple[ChannelType, Status],
+                                          init: bool,
+                                          selector_profile_id: Optional[int]
+                                          ) -> None:
+        channel, status = channel_status_tuple
+        if status.driver_type is SettingsKrakenLegacy.supported_driver:
+            self._refresh_speed_profile_fixed_only(channel, init, selector_profile_id)
+        else:
+            self._refresh_speed_profile(channel, init, selector_profile_id)
+
+    def _refresh_speed_profile_fixed_only(self, channel: ChannelType,
+                                          init: bool = False,
+                                          profile_id: Optional[int] = None
+                                          ) -> None:
+        """This method will only allow fixed profiles for those models that only support fixed speeds"""
+        data = list(filter(lambda profile_data: profile_data[1] == 'Fixed', self._get_profile_list(channel)))
+        active = None
+        if profile_id is not None:
+            active = next(i for i, item in enumerate(data) if item[0] == profile_id)
+        elif init and self._settings_interactor.get_bool('settings_load_last_profile'):
+            self._should_update_fan_speed = True
+            self._should_update_pump_speed = True
+            current: CurrentSpeedProfile = CurrentSpeedProfile.get_or_none(channel=channel.value)
+            if current is not None and current.profile.single_step:  # make sure current is fixed only
+                active = next(i for i, item in enumerate(data) if item[0] == current.profile.id)
+                self._set_speed_profile(current.profile)
+        self.main_view.refresh_profile_combobox(channel, data, active)
 
     def _refresh_speed_profile(self, channel: ChannelType, init: bool = False,
                                profile_id: Optional[int] = None) -> None:

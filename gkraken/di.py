@@ -92,7 +92,8 @@ class ProviderModule(Module):
         _LOG.debug("provide Kraken Driver")
         device_supported_drivers: List[BaseDriver] = list(
             chain.from_iterable([
-                device_setting.supported_driver.find_supported_devices()
+                # the legacy_690lc keyword is only used to make sure the Legacy690Lc driver probes the device
+                device_setting.supported_driver.find_supported_devices(legacy_690lc=True)
                 for device_setting in DeviceSettings.__subclasses__()
             ])
         )
