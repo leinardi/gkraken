@@ -15,29 +15,37 @@
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Optional, List, Dict
+import logging
+from typing import Optional, Dict, List
 
+from liquidctl.driver.asetek import Legacy690Lc
 from liquidctl.driver.base import BaseDriver
-from liquidctl.driver.kraken3 import KrakenZ3
 
 from gkraken.device.device_settings import DeviceSettings, StatusIndexType
 from gkraken.model.lighting_modes import LightingMode
 from gkraken.model.status import Status
 
+_LOG = logging.getLogger(__name__)
 
-class SettingsKrakenZ3(DeviceSettings):
-    supported_driver: BaseDriver = KrakenZ3
+
+class SettingsKrakenLegacy(DeviceSettings):
+    supported_driver: BaseDriver = Legacy690Lc
 
     _status_index: Dict[StatusIndexType, int] = {
         StatusIndexType.LIQUID_TEMPERATURE: 0,
-        StatusIndexType.PUMP_RPM: 1,
-        StatusIndexType.PUMP_DUTY: 2,
-        StatusIndexType.FAN_RPM: 3,
-        StatusIndexType.FAN_DUTY: 4
+        StatusIndexType.FAN_RPM: 1,
+        StatusIndexType.PUMP_RPM: 2,
+        StatusIndexType.FIRMWARE_VERSION: 3
     }
 
-    # not yet supported:
-    _modes_logo: List[LightingMode] = []
+    _modes_logo: List[LightingMode] = [
+        LightingMode(1, 'blackout', 'Blackout', 0, 0, False, False),
+        LightingMode(2, 'fixed', 'Fixed', 1, 1, False, False),
+        LightingMode(3, 'fading', 'Fade', 2, 2, False, False),  # speed is possible, but different from other drivers
+        LightingMode(4, 'blinking', 'Blinking', 1, 1, True, True),
+    ]
+
+    # no ring LEDs for this model
     _modes_ring: List[LightingMode] = []
 
     @classmethod
@@ -45,9 +53,8 @@ class SettingsKrakenZ3(DeviceSettings):
         return Status(
             driver_type=cls.supported_driver,
             liquid_temperature=status_list[cls._status_index[StatusIndexType.LIQUID_TEMPERATURE]],
+            firmware_version=status_list[cls._status_index[StatusIndexType.FIRMWARE_VERSION]],
             fan_rpm=status_list[cls._status_index[StatusIndexType.FAN_RPM]],
-            fan_duty=status_list[cls._status_index[StatusIndexType.FAN_DUTY]],
             pump_rpm=status_list[cls._status_index[StatusIndexType.PUMP_RPM]],
-            pump_duty=status_list[cls._status_index[StatusIndexType.PUMP_DUTY]],
             device_description=device_description,
         )

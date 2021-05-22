@@ -1,3 +1,12 @@
+Version 1.1.4
+=============
+Released: 2021-05-22
+
+ * Added support for older Kraken devices
+ * Improved the readme
+ * Added the connected device description to the UI
+ * Improved CI pipeline
+
 Version 1.1.3
 =============
 Released: 2021-05-01

@@ -37,4 +37,5 @@ class SetSpeedProfileInteractor:
 
     def execute(self, channel_value: str, profile_data: List[Tuple[int, int]]) -> Observable:
         _LOG.debug("SetSpeedProfileInteractor.execute()")
+        # pylint: disable=not-callable
         return rx.defer(lambda _: rx.just(self._kraken_repository.set_speed_profile(channel_value, profile_data)))

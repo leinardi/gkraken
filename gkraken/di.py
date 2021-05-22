@@ -32,11 +32,11 @@ from gkraken.util.path import get_config_path
 
 _LOG = logging.getLogger(__name__)
 
-SpeedProfileChangedSubject = NewType("SpeedProfileChangedSubject", Subject)
-SpeedStepChangedSubject = NewType("SpeedStepChangedSubject", Subject)
-MainBuilder = NewType('MainBuilder', Gtk.Builder)
-EditSpeedProfileBuilder = NewType('EditSpeedProfileBuilder', Gtk.Builder)
-PreferencesBuilder = NewType('PreferencesBuilder', Gtk.Builder)
+SpeedProfileChangedSubject = NewType("SpeedProfileChangedSubject", Subject)  # type: ignore[valid-newtype]
+SpeedStepChangedSubject = NewType("SpeedStepChangedSubject", Subject)  # type: ignore[valid-newtype]
+MainBuilder = NewType('MainBuilder', Gtk.Builder)  # type: ignore[valid-newtype]
+EditSpeedProfileBuilder = NewType('EditSpeedProfileBuilder', Gtk.Builder)  # type: ignore[valid-newtype]
+PreferencesBuilder = NewType('PreferencesBuilder', Gtk.Builder)  # type: ignore[valid-newtype]
 
 _UI_RESOURCE_PATH = "/com/leinardi/gkraken/ui/{}"
 
@@ -48,6 +48,7 @@ class ProviderModule(Module):
     def provide_main_builder(self) -> MainBuilder:
         _LOG.debug("provide Gtk.Builder")
         builder = MainBuilder(Gtk.Builder())
+        # pylint: disable=no-member
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_MAIN_UI_NAME))
         return builder
@@ -57,6 +58,7 @@ class ProviderModule(Module):
     def provide_edit_speed_profile_builder(self) -> EditSpeedProfileBuilder:
         _LOG.debug("provide Gtk.Builder")
         builder = EditSpeedProfileBuilder(Gtk.Builder())
+        # pylint: disable=no-member
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_EDIT_SPEED_PROFILE_UI_NAME))
         return builder
@@ -66,6 +68,7 @@ class ProviderModule(Module):
     def provide_preferences_builder(self) -> PreferencesBuilder:
         _LOG.debug("provide Gtk.Builder")
         builder = PreferencesBuilder(Gtk.Builder())
+        # pylint: disable=no-member
         builder.set_translation_domain(APP_PACKAGE_NAME)
         builder.add_from_resource(_UI_RESOURCE_PATH.format(APP_PREFERENCES_UI_NAME))
         return builder
@@ -89,7 +92,8 @@ class ProviderModule(Module):
         _LOG.debug("provide Kraken Driver")
         device_supported_drivers: List[BaseDriver] = list(
             chain.from_iterable([
-                device_setting.supported_driver.find_supported_devices()
+                # the legacy_690lc keyword is only used to make sure the Legacy690Lc driver probes the device
+                device_setting.supported_driver.find_supported_devices(legacy_690lc=True)
                 for device_setting in DeviceSettings.__subclasses__()
             ])
         )

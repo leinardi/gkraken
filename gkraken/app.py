@@ -65,7 +65,7 @@ class Application(Gtk.Application):
             SpeedProfile, SpeedStep, CurrentSpeedProfile, Setting, CurrentLightingProfile, CurrentLightingColor
         ])
 
-        if SpeedProfile.select().count() == 0:
+        if SpeedProfile.select().count() == 0:  # pylint: disable=no-value-for-parameter
             load_db_default_data()
 
         self.add_main_option_entries(self._get_main_option_entries())
@@ -80,7 +80,7 @@ class Application(Gtk.Application):
     def do_activate(self) -> None:
         if not self._window:
             self._builder.connect_signals(self._presenter)
-            self._window: Gtk.ApplicationWindow = self._builder.get_object("application_window")
+            self._window = self._builder.get_object("application_window")
             self._window.set_application(self)
             self._window.show_all()
             self._view.show()
@@ -136,7 +136,7 @@ class Application(Gtk.Application):
             start_app = False
 
         if start_app:
-            _LOG.info(f"Starting {APP_NAME} {APP_VERSION}")
+            _LOG.info("Starting %s %s", APP_NAME, APP_VERSION)
             self.activate()
         return exit_value
 

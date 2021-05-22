@@ -19,23 +19,23 @@ import os
 from typing import List, Tuple
 
 
-class DesktopParser(object):
+class DesktopParser:
     DESKTOP_SECTION = '[Desktop Entry]'
 
     def __init__(self, filename: str) -> None:
         self._filename = filename
         self.__property_list: List[Tuple[str, str]] = []
         self.read()
-        super(DesktopParser, self).__init__()
+        super().__init__()
 
     def read(self) -> None:
         """
         Read [Desktop Entry] section and save key=values pairs to __property_list
         """
         if os.path.exists(self._filename):
-            with open(self._filename, 'r') as f:
+            with open(self._filename, 'r') as file:
                 is_desktop_section = False
-                for line in f.readlines():
+                for line in file.readlines():
                     line = line.strip(' ' + os.linesep)
                     if line == self.DESKTOP_SECTION:
                         is_desktop_section = True
@@ -56,9 +56,9 @@ class DesktopParser(object):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        with open(self._filename, 'w') as f:
-            f.write(os.linesep.join((self.DESKTOP_SECTION,
-                                     os.linesep.join(['='.join((k, v.strip())) for k, v in self.__property_list]))))
+        with open(self._filename, 'w') as file:
+            file.write(os.linesep.join((self.DESKTOP_SECTION,
+                                        os.linesep.join(['='.join((k, v.strip())) for k, v in self.__property_list]))))
 
     def get(self, name: str) -> str:
         """

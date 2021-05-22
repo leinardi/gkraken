@@ -38,4 +38,5 @@ class SetLightingInteractor:
 
     def execute(self, lighting_settings: LightingSettings) -> Observable:
         _LOG.debug("SetLightingInteractor.execute()")
+        # pylint: disable=not-callable
         return rx.defer(lambda _: rx.just(self._kraken_repository.set_lighting_mode(lighting_settings)))

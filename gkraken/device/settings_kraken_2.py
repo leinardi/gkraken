@@ -73,16 +73,16 @@ class SettingsKraken2(DeviceSettings):
     ]
 
     @classmethod
-    def determine_status(cls, status_list: list) -> Optional[Status]:
+    def determine_status(cls, status_list: list, device_description: str) -> Optional[Status]:
         status = Status(
             driver_type=cls.supported_driver,
             liquid_temperature=status_list[cls._status_index[StatusIndexType.LIQUID_TEMPERATURE]],
             firmware_version=status_list[cls._status_index[StatusIndexType.FIRMWARE_VERSION]],
             fan_rpm=status_list[cls._status_index[StatusIndexType.FAN_RPM]],
             pump_rpm=status_list[cls._status_index[StatusIndexType.PUMP_RPM]],
+            device_description=device_description,
         )
-        if status.fan_rpm is not None and status.fan_rpm < 3500:
-            return status
-        else:
+        if status.fan_rpm is None or status.fan_rpm >= 3500:
             _LOG.error('Invalid Fan RPM from X2 Device')
             return None
+        return status

@@ -10,17 +10,17 @@ stages:
 
 mypy:
   stage: Analyse
-  allow_failure: true
+  allow_failure: false
   script:
     - mypy gkraken
 
 pylint:
   stage: Analyse
-  allow_failure: true
+  allow_failure: false
   script:
     - pylint gkraken
 
 pytest:
   stage: Test
   script:
-    - pytest
+    - xvfb-run pytest

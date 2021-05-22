@@ -19,33 +19,33 @@ import logging
 from collections import OrderedDict
 from typing import Optional, Dict, List, Tuple
 
-from gkraken.di import MainBuilder
-from gkraken.interactor.settings_interactor import SettingsInteractor
-from gkraken.view.edit_speed_profile_view import EditSpeedProfileView
-from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
-from injector import inject, singleton
 import gi
 from gi.repository import Gtk
-from matplotlib.figure import Figure
+from injector import inject, singleton
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
-
-# AppIndicator3 may not be installed
-from gkraken.view.lighting_view import LightingView
-from gkraken.view.preferences_view import PreferencesView
-
-try:
-    gi.require_version('AppIndicator3', '0.1')
-    from gi.repository import AppIndicator3
-except (ImportError, ValueError):
-    AppIndicator3 = None
+from matplotlib.figure import Figure
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_ID, FAN_MIN_DUTY, MAX_DUTY, PUMP_MIN_DUTY, APP_NAME, \
     APP_VERSION, APP_SOURCE_URL, APP_ICON_NAME_SYMBOLIC
-from gkraken.model.status import Status
-from gkraken.model.speed_profile import SpeedProfile
+from gkraken.di import MainBuilder
+from gkraken.interactor.settings_interactor import SettingsInteractor
 from gkraken.model.channel_type import ChannelType
+from gkraken.model.speed_profile import SpeedProfile
+from gkraken.model.status import Status
 from gkraken.presenter.main_presenter import MainPresenter, MainViewInterface
+from gkraken.util.view import hide_on_delete, init_plot_chart, get_speed_profile_data
+from gkraken.view.edit_speed_profile_view import EditSpeedProfileView
+from gkraken.view.lighting_view import LightingView
+from gkraken.view.preferences_view import PreferencesView
 
+# AppIndicator3 may not be installed
+try:
+    gi.require_version('AppIndicator3', '0.1')
+    from gi.repository import AppIndicator3  # pylint: disable=ungrouped-imports
+except (ImportError, ValueError):
+    AppIndicator3 = None
+
+SEPARATOR = '  -  '
 _LOG = logging.getLogger(__name__)
 if AppIndicator3 is None:
     _LOG.warning("AppIndicator3 is not installed. The App indicator will not be shown.")
@@ -123,6 +123,7 @@ class MainView(MainViewInterface):
 
     def _init_app_indicator(self) -> None:
         if AppIndicator3:
+            # pylint: disable=attribute-defined-outside-init
             # Setting icon name in new() as '', because new() wants an icon path
             self._app_indicator = AppIndicator3.Indicator \
                 .new(APP_ID, '', AppIndicator3.IndicatorCategory.HARDWARE)
@@ -183,6 +184,16 @@ class MainView(MainViewInterface):
         dialog.run()
         dialog.destroy()
 
+    def show_warning_dialog(self, title: str, message: str) -> bool:
+        dialog = Gtk.MessageDialog(self._window, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.YES_NO, title)
+        dialog.format_secondary_text(message)
+        confirmed: bool = False
+        response = dialog.run()
+        if response == Gtk.ResponseType.NO:
+            confirmed = True
+        dialog.destroy()
+        return confirmed
+
     def set_statusbar_text(self, text: str) -> None:
         self._statusbar.remove_all(self._context)
         self._statusbar.push(self._context, text)
@@ -200,8 +211,7 @@ class MainView(MainViewInterface):
                                               ('-' if status.pump_rpm is None else status.pump_rpm))
             self._cooling_pump_duty.set_markup("<span size=\"xx-large\">%s</span> %%" %
                                                ('-' if status.pump_duty is None else "%.0f" % status.pump_duty))
-            firmware_version_label = f"firmware {status.firmware_version} - " if status.firmware_version else ''
-            self._firmware_version.set_label("%s%s %s" % (firmware_version_label, APP_NAME, APP_VERSION))
+            self._firmware_version.set_label(self._create_firmware_version_label(status))
             if self._app_indicator:
                 if self._settings_interactor.get_bool('settings_show_app_indicator'):
                     self._app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
@@ -212,6 +222,16 @@ class MainView(MainViewInterface):
                 else:
                     self._app_indicator.set_label("", "")
 
+    @staticmethod
+    def _create_firmware_version_label(status: Status) -> str:
+        label_texts = []
+        if status.device_description:
+            label_texts.append(f"{status.device_description}{SEPARATOR}")
+        if status.firmware_version:
+            label_texts.append(f"firmware {status.firmware_version}{SEPARATOR}")
+        label_texts.append(f"{APP_NAME} {APP_VERSION}")
+        return ''.join(label_texts)
+
     def refresh_chart(self, profile: Optional[SpeedProfile] = None, channel_to_reset: Optional[str] = None) -> None:
         if profile is None and channel_to_reset is None:
             raise ValueError("Both parameters are None!")
@@ -219,7 +239,8 @@ class MainView(MainViewInterface):
         if channel_to_reset is not None:
             self._plot_chart(channel_to_reset, {})
         else:
-            self._plot_chart(profile.channel, get_speed_profile_data(profile))
+            if profile is not None:
+                self._plot_chart(profile.channel, get_speed_profile_data(profile))
 
     def refresh_profile_combobox(self, channel: ChannelType, data: List[Tuple[int, str]],
                                  active: Optional[int]) -> None:
@@ -228,7 +249,7 @@ class MainView(MainViewInterface):
             for item in data:
                 self._cooling_fan_liststore.append([item[0], item[1]])
             self._cooling_fan_combobox.set_model(self._cooling_fan_liststore)
-            self._cooling_fan_combobox.set_sensitive(len(self._cooling_fan_liststore) > 1)
+            self._cooling_fan_combobox.set_sensitive(len(self._cooling_fan_liststore) > 0)
             if active is not None:
                 self._cooling_fan_combobox.set_active(active)
             else:
@@ -238,7 +259,7 @@ class MainView(MainViewInterface):
             for item in data:
                 self._cooling_pump_liststore.append([item[0], item[1]])
             self._cooling_pump_combobox.set_model(self._cooling_pump_liststore)
-            self._cooling_pump_combobox.set_sensitive(len(self._cooling_pump_liststore) > 1)
+            self._cooling_pump_combobox.set_sensitive(len(self._cooling_pump_liststore) > 0)
             if active is not None:
                 self._cooling_pump_combobox.set_active(active)
             else:

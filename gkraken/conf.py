@@ -20,7 +20,7 @@ from typing import Dict, Any
 APP_PACKAGE_NAME = "gkraken"
 APP_NAME = "GKraken"
 APP_ID = "com.leinardi.gkraken"
-APP_VERSION = "1.1.3"
+APP_VERSION = "1.1.4"
 APP_ICON_NAME = APP_ID
 APP_ICON_NAME_SYMBOLIC = APP_ID + "-symbolic"
 APP_DB_NAME = APP_PACKAGE_NAME + ".db"
@@ -28,7 +28,7 @@ APP_MAIN_UI_NAME = "main.glade"
 APP_EDIT_SPEED_PROFILE_UI_NAME = "edit_speed_profile.glade"
 APP_PREFERENCES_UI_NAME = "preferences.glade"
 APP_DESKTOP_ENTRY_NAME = APP_PACKAGE_NAME + ".desktop"
-APP_SUPPORTED_MODELS = 'NZXT Kraken X42, X52, X62, X72, X53, X63, X73, Z63 or Z73'
+APP_SUPPORTED_MODELS = 'NZXT Kraken X40, X60, X31, X41, X51, X61, X42, X52, X62, X72, X53, X63, X73, Z63 or Z73'
 APP_DESCRIPTION = 'GUI to control cooling and lighting of ' + APP_SUPPORTED_MODELS + ' pumps'
 APP_SOURCE_URL = 'https://gitlab.com/leinardi/gkraken'
 APP_AUTHOR = 'Roberto Leinardi'

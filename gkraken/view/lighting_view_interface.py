@@ -20,6 +20,7 @@ from gkraken.model.lighting_modes import LightingModes, LightingMode
 from gkraken.model.lighting_settings import LightingColors, LightingDirection, LightingColor
 
 
+# pylint: disable=too-many-public-methods
 class LightingViewInterface:
 
     def load_color_modes(self, lighting_modes: LightingModes) -> None:

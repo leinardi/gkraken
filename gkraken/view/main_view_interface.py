@@ -65,3 +65,6 @@ class MainViewInterface:
 
     def show_error_message_dialog(self, title: str, message: str) -> None:
         raise NotImplementedError()
+
+    def show_warning_dialog(self, title: str, message: str) -> bool:
+        raise NotImplementedError()

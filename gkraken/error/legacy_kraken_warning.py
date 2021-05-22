@@ -14,22 +14,6 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
-from dataclasses import dataclass
-from typing import Dict
 
-
-@dataclass(frozen=True)
-class LightingMode:
-    mode_id: int
-    name: str
-    frontend_name: str
-    min_colors: int
-    max_colors: int
-    speed_enabled: bool
-    direction_enabled: bool
-
-
-@dataclass(frozen=True)
-class LightingModes:
-    modes_logo: Dict[int, LightingMode]
-    modes_ring: Dict[int, LightingMode]
+class LegacyKrakenWarning(Warning):
+    pass

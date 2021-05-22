@@ -18,12 +18,15 @@
 from typing import Optional
 
 import pytest
+from liquidctl.driver.asetek import Legacy690Lc
 from liquidctl.driver.kraken2 import Kraken2
 from liquidctl.driver.kraken3 import KrakenZ3, KrakenX3
 from pytest_mock import MockerFixture
 
 from gkraken.model.status import Status
 from gkraken.repository.kraken_repository import KrakenRepository
+
+TEST_DESCRIPTION: str = 'Test Device Description'
 
 
 # pylint: disable=no-self-use
@@ -50,6 +53,9 @@ class TestDeviceStatus:
             repo, '_driver', spec=driver_type
         )
         mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
+        )
+        mocker.patch.object(
             repo._driver, 'get_status',
             return_value=[
                 ('Liquid temperature', temp, '°C'),
@@ -69,6 +75,7 @@ class TestDeviceStatus:
         assert status.pump_rpm == pump_rpm
         assert status.pump_duty is None
         assert status.firmware_version == firmware
+        assert status.device_description == TEST_DESCRIPTION
 
     @pytest.mark.parametrize('temp, fan_rpm, pump_rpm, firmware', [
         (88.8, 3500, 3500, '2.0.2'),
@@ -117,6 +124,9 @@ class TestDeviceStatus:
             repo, '_driver', spec=driver_type
         )
         mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
+        )
+        mocker.patch.object(
             repo._driver, 'get_status',
             return_value=[
                 ('Liquid temperature', temp, '°C'),
@@ -135,6 +145,7 @@ class TestDeviceStatus:
         assert status.pump_rpm == pump_rpm
         assert status.pump_duty == pump_duty
         assert status.firmware_version == ''
+        assert status.device_description == TEST_DESCRIPTION
 
     @pytest.mark.parametrize('temp, pump_rpm, pump_duty, fan_rpm, fan_duty', [
         (29.9, 1848, 90, 2300, 80),
@@ -154,6 +165,9 @@ class TestDeviceStatus:
         driver_type = KrakenZ3
         mocker.patch.object(
             repo, '_driver', spec=driver_type
+        )
+        mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
         )
         mocker.patch.object(
             repo._driver, 'get_status',
@@ -176,3 +190,50 @@ class TestDeviceStatus:
         assert status.pump_rpm == pump_rpm
         assert status.pump_duty == pump_duty
         assert status.firmware_version == ''
+        assert status.device_description == TEST_DESCRIPTION
+
+    @pytest.mark.parametrize('temp, fan_rpm, pump_rpm, firmware', [
+        (29.9, 853, 1948, '6.0.2'),
+        (0, 0, 0, '0'),
+        (88.8, 3499, 3499, '2.0.2'),
+        (0, 0, None, ''),
+        (88.8, 3500, 3500, '2.0.2'),
+        (0, None, None, ''),
+    ])
+    def test_get_status_kraken_legacy(self,
+                                         repo: KrakenRepository,
+                                         mocker: MockerFixture,
+                                         temp: float,
+                                         fan_rpm: Optional[int],
+                                         pump_rpm: Optional[int],
+                                         firmware: str
+                                         ) -> None:
+        # arrange
+        driver_type = Legacy690Lc
+        mocker.patch.object(
+            repo, '_driver', spec=driver_type
+        )
+        mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
+        )
+        mocker.patch.object(
+            repo._driver, 'get_status',
+            return_value=[
+                ('Liquid temperature', temp, '°C'),
+                ('Fan speed', fan_rpm, 'rpm'),
+                ('Pump speed', pump_rpm, 'rpm'),
+                ('Firmware version', firmware, '')
+            ]
+        )
+        # act
+        status = repo.get_status()
+        # assert
+        assert isinstance(status, Status)
+        assert status.driver_type == driver_type
+        assert status.liquid_temperature == temp
+        assert status.fan_rpm == fan_rpm
+        assert status.fan_duty is None
+        assert status.pump_rpm == pump_rpm
+        assert status.pump_duty is None
+        assert status.firmware_version == firmware
+        assert status.device_description == TEST_DESCRIPTION
