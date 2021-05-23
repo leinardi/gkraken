@@ -31,3 +31,27 @@ class Status:
     pump_rpm: Optional[int] = None
     pump_duty: Optional[float] = None
     device_description: str = ''
+
+    def with_fan_duty(self, fan_duty: float) -> 'Status':
+        return Status(
+            self.driver_type,
+            self.liquid_temperature,
+            self.firmware_version,
+            self.fan_rpm,
+            fan_duty,
+            self.pump_rpm,
+            self.pump_duty,
+            self.device_description
+        )
+
+    def with_pump_duty(self, pump_duty: float) -> 'Status':
+        return Status(
+            self.driver_type,
+            self.liquid_temperature,
+            self.firmware_version,
+            self.fan_rpm,
+            self.fan_duty,
+            self.pump_rpm,
+            pump_duty,
+            self.device_description
+        )
