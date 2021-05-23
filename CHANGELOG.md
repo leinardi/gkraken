@@ -1,3 +1,9 @@
+Version 1.1.5
+=============
+Released: 2021-05-23
+
+ * Fixed #40: Duty calculation Exception
+
 Version 1.1.4
 =============
 Released: 2021-05-22
