@@ -244,6 +244,7 @@ class MainPresenter:
 
     @staticmethod
     def _get_profile_list(channel: ChannelType) -> List[Tuple[int, str]]:
+        # pylint: disable=not-an-iterable
         return [(p.id, p.name) for p in SpeedProfile.select().where(SpeedProfile.channel == channel.value)]
 
     def _refresh_speed_profiles(self, init: bool = False, selecter_profile_id: Optional[int] = None) -> None:
