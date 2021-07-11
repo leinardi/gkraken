@@ -116,6 +116,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkEntry" id="profile_name_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="tooltip-text" translatable="yes">Edit the current profile name</property>
                     <property name="xalign">0.5</property>
                     <property name="placeholder_text" translatable="yes">Profile name</property>
                     <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_NONE</property>
@@ -361,6 +362,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                 <property name="height_request">300</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="tooltip-text" translatable="yes">Edit the profile steps using the step editor on the left</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
                 <property name="propagate_natural_width">True</property>

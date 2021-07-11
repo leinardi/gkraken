@@ -502,6 +502,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">The selected colling profile</property>
                                 <property name="hexpand">True</property>
                                 <property name="model">cooling_fan_profile_liststore</property>
                                 <property name="id-column">0</property>
@@ -525,6 +526,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Edit currectly selected profile</property>
                                 <property name="image">cooling_fan_edit_image</property>
                                 <property name="always-show-image">True</property>
                                 <signal name="clicked" handler="on_fan_edit_button_clicked" swapped="no"/>
@@ -614,6 +616,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">The selected cooling profile</property>
                                 <property name="hexpand">True</property>
                                 <property name="model">cooling_pump_profile_liststore</property>
                                 <property name="id-column">0</property>
@@ -637,6 +640,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Edit currectly selected profile</property>
                                 <property name="image">cooling_pump_edit_image</property>
                                 <property name="always-show-image">True</property>
                                 <signal name="clicked" handler="on_pump_edit_button_clicked" swapped="no"/>
