@@ -548,6 +548,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <property name="height-request">300</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="vexpand">True</property>
                             <property name="propagate-natural-width">True</property>
                             <property name="propagate-natural-height">True</property>
                             <child>
@@ -657,6 +658,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                           <object class="GtkScrolledWindow" id="cooling_pump_scrolled_window">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="vexpand">True</property>
                             <property name="min-content-width">400</property>
                             <property name="min-content-height">300</property>
                             <property name="propagate-natural-width">True</property>
