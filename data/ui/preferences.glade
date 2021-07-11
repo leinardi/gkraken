@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.38.2 
 
 Copyright (C) 
 
@@ -20,32 +20,33 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <interface>
-  <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk+" version="3.24"/>
   <!-- interface-license-type gplv3 -->
   <!-- interface-name GKraken -->
   <object class="GtkAdjustment" id="settings_refresh_interval_adjustment">
     <property name="lower">1</property>
     <property name="upper">3600</property>
     <property name="value">3</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkDialog" id="dialog">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="title" translatable="yes">Settings</property>
-    <property name="type_hint">dialog</property>
-    <child>
-      <placeholder/>
-    </child>
+    <property name="type-hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">3</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <placeholder/>
             </child>
@@ -59,21 +60,21 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can-focus">True</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkViewport">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="hexpand">True</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="hexpand">True</property>
                       </object>
                       <packing>
@@ -84,26 +85,26 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     </child>
                     <child>
                       <object class="GtkBox">
-                        <property name="width_request">400</property>
+                        <property name="width-request">400</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="margin_left">24</property>
-                        <property name="margin_right">24</property>
-                        <property name="margin_top">8</property>
-                        <property name="margin_bottom">24</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-left">24</property>
+                        <property name="margin-right">24</property>
+                        <property name="margin-top">8</property>
+                        <property name="margin-bottom">24</property>
                         <property name="hexpand">True</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkBox" id="settings_section_general">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_top">8</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-top">8</property>
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_bottom">12</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-bottom">12</property>
                                 <property name="label" translatable="yes">General</property>
                                 <property name="xalign">0</property>
                                 <attributes>
@@ -122,48 +123,49 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <child>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label_xalign">0</property>
-                                <property name="shadow_type">in</property>
+                                <property name="can-focus">False</property>
+                                <property name="label-xalign">0</property>
+                                <property name="shadow-type">in</property>
                                 <child>
                                   <object class="GtkListBox" id="settings_list_general">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="selection_mode">none</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="selection-mode">none</property>
                                     <child>
                                       <object class="GtkListBoxRow">
-                                        <property name="height_request">52</property>
+                                        <property name="height-request">52</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                         <child>
+                                          <!-- n-columns=3 n-rows=3 -->
                                           <object class="GtkGrid" id="settings_launch_on_login_grid">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="valign">center</property>
-                                            <property name="margin_left">20</property>
-                                            <property name="margin_right">20</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="row_spacing">2</property>
-                                            <property name="column_spacing">24</property>
+                                            <property name="margin-left">20</property>
+                                            <property name="margin-right">20</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="row-spacing">2</property>
+                                            <property name="column-spacing">24</property>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="hexpand">True</property>
                                                 <property name="label" translatable="yes" comments="Translators: This switch reverses the scrolling direction for mices. The term used comes from OS X so use the same translation if possible.">Launch on login</property>
-                                                <property name="use_underline">True</property>
+                                                <property name="use-underline">True</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkLabel" id="settings_launch_on_login_description_label">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes">Automatically start the App hidden on login</property>
                                                 <property name="xalign">0</property>
                                                 <attributes>
@@ -174,24 +176,39 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                                 </style>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">1</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkSwitch" id="settings_launch_on_login_switch">
                                                 <property name="name">settings_launch_on_login_switch</property>
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
+                                                <property name="can-focus">True</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                                 <signal name="state-set" handler="on_setting_changed" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">0</property>
                                                 <property name="height">2</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                         </child>
@@ -199,40 +216,41 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                     </child>
                                     <child>
                                       <object class="GtkListBoxRow">
-                                        <property name="height_request">52</property>
+                                        <property name="height-request">52</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                         <property name="activatable">False</property>
                                         <property name="selectable">False</property>
                                         <child>
+                                          <!-- n-columns=3 n-rows=3 -->
                                           <object class="GtkGrid" id="settings_check_new_version_grid">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="valign">center</property>
-                                            <property name="margin_left">20</property>
-                                            <property name="margin_right">20</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="row_spacing">2</property>
-                                            <property name="column_spacing">24</property>
+                                            <property name="margin-left">20</property>
+                                            <property name="margin-right">20</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="row-spacing">2</property>
+                                            <property name="column-spacing">24</property>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="hexpand">True</property>
                                                 <property name="label" translatable="yes" comments="Translators: This switch reverses the scrolling direction for mices. The term used comes from OS X so use the same translation if possible.">Check for new App version on launch</property>
-                                                <property name="use_underline">True</property>
+                                                <property name="use-underline">True</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkLabel" id="settings_check_new_version_description_label">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes">Automatically check for a new App version on launch</property>
                                                 <property name="xalign">0</property>
                                                 <attributes>
@@ -243,24 +261,39 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                                 </style>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">1</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkSwitch" id="settings_check_new_version_switch">
                                                 <property name="name">settings_check_new_version_switch</property>
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
+                                                <property name="can-focus">True</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                                 <signal name="state-set" handler="on_setting_changed" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">0</property>
                                                 <property name="height">2</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                         </child>
@@ -268,40 +301,41 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                     </child>
                                     <child>
                                       <object class="GtkListBoxRow">
-                                        <property name="height_request">52</property>
+                                        <property name="height-request">52</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                         <property name="activatable">False</property>
                                         <property name="selectable">False</property>
                                         <child>
+                                          <!-- n-columns=3 n-rows=3 -->
                                           <object class="GtkGrid">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="valign">center</property>
-                                            <property name="margin_left">20</property>
-                                            <property name="margin_right">20</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="row_spacing">2</property>
-                                            <property name="column_spacing">24</property>
+                                            <property name="margin-left">20</property>
+                                            <property name="margin-right">20</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="row-spacing">2</property>
+                                            <property name="column-spacing">24</property>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="hexpand">True</property>
                                                 <property name="label" translatable="yes" comments="Translators: This switch reverses the scrolling direction for mices. The term used comes from OS X so use the same translation if possible.">Load last profile</property>
-                                                <property name="use_underline">True</property>
+                                                <property name="use-underline">True</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes">Automatically apply last used cooling and lighting profile when the App starts</property>
                                                 <property name="xalign">0</property>
                                                 <attributes>
@@ -312,24 +346,39 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                                 </style>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">1</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkSwitch" id="settings_load_last_profile_switch">
                                                 <property name="name">settings_load_last_profile_switch</property>
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
+                                                <property name="can-focus">True</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                                 <signal name="state-set" handler="on_setting_changed" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">0</property>
                                                 <property name="height">2</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                         </child>
@@ -337,40 +386,41 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                     </child>
                                     <child>
                                       <object class="GtkListBoxRow">
-                                        <property name="height_request">52</property>
+                                        <property name="height-request">52</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                         <property name="activatable">False</property>
                                         <property name="selectable">False</property>
                                         <child>
+                                          <!-- n-columns=3 n-rows=3 -->
                                           <object class="GtkGrid">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="valign">center</property>
-                                            <property name="margin_left">20</property>
-                                            <property name="margin_right">20</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="row_spacing">2</property>
-                                            <property name="column_spacing">24</property>
+                                            <property name="margin-left">20</property>
+                                            <property name="margin-right">20</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="row-spacing">2</property>
+                                            <property name="column-spacing">24</property>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="hexpand">True</property>
                                                 <property name="label" translatable="yes" comments="Translators: This switch reverses the scrolling direction for mices. The term used comes from OS X so use the same translation if possible.">Minimize to tray on close</property>
-                                                <property name="use_underline">True</property>
+                                                <property name="use-underline">True</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes">The App will be minimized to the tray and it will keep running on background</property>
                                                 <property name="xalign">0</property>
                                                 <attributes>
@@ -381,23 +431,38 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                                 </style>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">1</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkSwitch" id="settings_minimize_to_tray_switch">
                                                 <property name="name">settings_minimize_to_tray_switch</property>
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
+                                                <property name="can-focus">True</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">0</property>
                                                 <property name="height">2</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                         </child>
@@ -405,38 +470,39 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                     </child>
                                     <child>
                                       <object class="GtkListBoxRow">
-                                        <property name="height_request">52</property>
+                                        <property name="height-request">52</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                         <child>
+                                          <!-- n-columns=3 n-rows=3 -->
                                           <object class="GtkGrid">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="valign">center</property>
-                                            <property name="margin_left">20</property>
-                                            <property name="margin_right">20</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="row_spacing">2</property>
-                                            <property name="column_spacing">24</property>
+                                            <property name="margin-left">20</property>
+                                            <property name="margin-right">20</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="row-spacing">2</property>
+                                            <property name="column-spacing">24</property>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="hexpand">True</property>
                                                 <property name="label" translatable="yes" comments="Translators: This switch reverses the scrolling direction for mices. The term used comes from OS X so use the same translation if possible.">Refresh interval (in seconds)</property>
-                                                <property name="use_underline">True</property>
+                                                <property name="use-underline">True</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes">(Application restart required)</property>
                                                 <property name="xalign">0</property>
                                                 <attributes>
@@ -447,25 +513,40 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                                 </style>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">1</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkSpinButton" id="settings_refresh_interval_spinbutton">
                                                 <property name="name">settings_refresh_interval_spinbutton</property>
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="input_purpose">digits</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="input-purpose">digits</property>
                                                 <property name="adjustment">settings_refresh_interval_adjustment</property>
-                                                <property name="update_policy">if-valid</property>
+                                                <property name="update-policy">if-valid</property>
                                                 <signal name="value-changed" handler="on_setting_changed" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">0</property>
                                                 <property name="height">2</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                         </child>
@@ -473,40 +554,41 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                     </child>
                                     <child>
                                       <object class="GtkListBoxRow">
-                                        <property name="height_request">52</property>
+                                        <property name="height-request">52</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                         <property name="activatable">False</property>
                                         <property name="selectable">False</property>
                                         <child>
+                                          <!-- n-columns=3 n-rows=3 -->
                                           <object class="GtkGrid">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="valign">center</property>
-                                            <property name="margin_left">20</property>
-                                            <property name="margin_right">20</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="row_spacing">2</property>
-                                            <property name="column_spacing">24</property>
+                                            <property name="margin-left">20</property>
+                                            <property name="margin-right">20</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="row-spacing">2</property>
+                                            <property name="column-spacing">24</property>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="hexpand">True</property>
                                                 <property name="label" translatable="yes" comments="Translators: This switch reverses the scrolling direction for mices. The term used comes from OS X so use the same translation if possible.">Show App indicator</property>
-                                                <property name="use_underline">True</property>
+                                                <property name="use-underline">True</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes">(AppIndicator3 must be installed)</property>
                                                 <property name="xalign">0</property>
                                                 <attributes>
@@ -517,24 +599,39 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                                 </style>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">1</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkSwitch" id="settings_show_app_indicator_switch">
                                                 <property name="name">settings_show_app_indicator_switch</property>
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
+                                                <property name="can-focus">True</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                                 <signal name="state-set" handler="on_setting_changed" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">0</property>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">0</property>
                                                 <property name="height">2</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                         </child>
@@ -562,14 +659,14 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                         <child>
                           <object class="GtkBox" id="settings_section_app_indicator">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_top">16</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-top">16</property>
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_bottom">12</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-bottom">12</property>
                                 <property name="label" translatable="yes">App indicator</property>
                                 <property name="xalign">0</property>
                                 <attributes>
@@ -588,35 +685,35 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                             <child>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label_xalign">0</property>
-                                <property name="shadow_type">in</property>
+                                <property name="can-focus">False</property>
+                                <property name="label-xalign">0</property>
+                                <property name="shadow-type">in</property>
                                 <child>
                                   <object class="GtkListBox" id="settings_list_app_indicator">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="selection_mode">none</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="selection-mode">none</property>
                                     <child>
                                       <object class="GtkListBoxRow">
-                                        <property name="height_request">52</property>
+                                        <property name="height-request">52</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                         <property name="activatable">False</property>
                                         <child>
                                           <object class="GtkBox">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_left">20</property>
-                                            <property name="margin_right">20</property>
-                                            <property name="margin_top">12</property>
-                                            <property name="margin_bottom">12</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="margin-left">20</property>
+                                            <property name="margin-right">20</property>
+                                            <property name="margin-top">12</property>
+                                            <property name="margin-bottom">12</property>
                                             <property name="spacing">24</property>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                                 <property name="label" translatable="yes">Show water temperature</property>
-                                                <property name="use_underline">True</property>
+                                                <property name="use-underline">True</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                               <packing>
@@ -629,7 +726,7 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                                               <object class="GtkSwitch" id="settings_app_indicator_show_water_temp_switch">
                                                 <property name="name">settings_app_indicator_show_water_temp_switch</property>
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
+                                                <property name="can-focus">True</property>
                                                 <signal name="state-set" handler="on_setting_changed" swapped="no"/>
                                               </object>
                                               <packing>
@@ -671,13 +768,13 @@ along with GKraken.  If not, see <http://www.gnu.org/licenses/>.
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="hexpand">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="pack_type">end</property>
+                        <property name="pack-type">end</property>
                         <property name="position">3</property>
                       </packing>
                     </child>

@@ -45,6 +45,14 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
+        <release date="2021-07-11" version="1.1.6">
+            <description>
+                <ul>
+                    <li>Updated liquidctl to 1.7.0</li>
+                    <li>small UI improvements and updates</li>
+                </ul>
+            </description>
+        </release>
         <release date="2021-05-23" version="1.1.5">
             <description>
                 <ul>
