@@ -1,9 +1,9 @@
 injector==0.18.4
 hidapi==0.10.1
-liquidctl==1.7.0
-matplotlib==3.4.1
+liquidctl==1.7.1
+matplotlib==3.4.3
 peewee==3.14.4
-PyGObject==3.38.0
+PyGObject==3.40.1
 pyxdg==0.27
-requests==2.25.1
-Rx==3.1.1
+requests==2.26.0
+Rx==3.2.0
