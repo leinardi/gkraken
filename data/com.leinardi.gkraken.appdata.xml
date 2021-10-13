@@ -45,6 +45,20 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
+        <release date="2021-10-11" version="1.1.7">
+            <description>
+                <ul>
+                    <li>Updated liquidctl to 1.7.2</li>
+                    <li>Updated matplotlib to 3.4.3</li>
+                    <li>Updated PyGOject to 3.40.1</li>
+                    <li>Updated Requests to 2.26.0</li>
+                    <li>Updated Rx to 3.2.0</li>
+                    <li>Updated Flatpak Gnome runtime to 40(3.40)</li>
+                    <li>Updated Flatpak shared-modules</li>
+                    <li>Updated Flatpak-builder-tools</li>
+                </ul>
+            </description>
+        </release>
         <release date="2021-07-11" version="1.1.6">
             <description>
                 <ul>

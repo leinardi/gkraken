@@ -1,3 +1,16 @@
+Version 1.1.7
+=============
+Released: 2021-10-11
+
+ * Updated liquidctl to 1.7.2
+ * Updated matplotlib to 3.4.3
+ * Updated PyGOject to 3.40.1
+ * Updated Requests to 2.26.0
+ * Updated Rx to 3.2.0
+ * Updated Flatpak Gnome runtime to 40(3.40)
+ * Updated Flatpak shared-modules
+ * Updated Flatpak-builder-tools
+
 Version 1.1.6
 =============
 Released: 2021-07-11
