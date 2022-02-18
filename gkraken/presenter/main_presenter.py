@@ -222,7 +222,6 @@ class MainPresenter:
                     status = status.with_pump_duty(self._calculate_duty(last_applied_pump_profile.profile,
                                                                         status.liquid_temperature))
             self.main_view.refresh_status(status)
-            # todo: not dependant on device type as well.... ugh
             if status.driver_type == SettingsKraken2.supported_driver \
                     and not self._legacy_firmware_dialog_shown \
                     and status.firmware_version.startswith('2.'):

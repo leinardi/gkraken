@@ -83,8 +83,8 @@ class DeviceSettings:
         """use the init firmware version or the version from status, depending on circumstances"""
         if init_firmware is not None:
             return init_firmware
-        firmware_index = cls._status_index[StatusIndexType.FIRMWARE_VERSION]
-        if len(status_list) > firmware_index:
+        firmware_index = cls._status_index.get(StatusIndexType.FIRMWARE_VERSION)
+        if firmware_index is not None and len(status_list) > firmware_index:
             return str(status_list[firmware_index])
         return ''
 
