@@ -49,11 +49,13 @@ class SettingsKrakenLegacy(DeviceSettings):
     _modes_ring: List[LightingMode] = []
 
     @classmethod
-    def determine_status(cls, status_list: list, device_description: str) -> Optional[Status]:
+    def determine_status(
+            cls, status_list: list, device_description: str, init_firmware: Optional[str]
+    ) -> Optional[Status]:
         return Status(
             driver_type=cls.supported_driver,
             liquid_temperature=status_list[cls._status_index[StatusIndexType.LIQUID_TEMPERATURE]],
-            firmware_version=status_list[cls._status_index[StatusIndexType.FIRMWARE_VERSION]],
+            firmware_version=cls._safely_determine_firmware(status_list, init_firmware),
             fan_rpm=status_list[cls._status_index[StatusIndexType.FAN_RPM]],
             pump_rpm=status_list[cls._status_index[StatusIndexType.PUMP_RPM]],
             device_description=device_description,
