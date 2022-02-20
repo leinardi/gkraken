@@ -27,6 +27,7 @@ from rx.disposable import CompositeDisposable
 from rx.scheduler.mainloop import GtkScheduler
 
 from gkraken.conf import APP_PACKAGE_NAME, APP_NAME, APP_SOURCE_URL, APP_VERSION, APP_ID, APP_SUPPORTED_MODELS
+from gkraken.device.settings_kraken_2 import SettingsKraken2
 from gkraken.device.settings_kraken_legacy import SettingsKrakenLegacy
 from gkraken.di import SpeedProfileChangedSubject, SpeedStepChangedSubject
 from gkraken.error.legacy_kraken_warning import LegacyKrakenWarning
@@ -221,7 +222,9 @@ class MainPresenter:
                     status = status.with_pump_duty(self._calculate_duty(last_applied_pump_profile.profile,
                                                                         status.liquid_temperature))
             self.main_view.refresh_status(status)
-            if not self._legacy_firmware_dialog_shown and status.firmware_version.startswith('2.'):
+            if status.driver_type == SettingsKraken2.supported_driver \
+                    and not self._legacy_firmware_dialog_shown \
+                    and status.firmware_version.startswith('2.'):
                 self._legacy_firmware_dialog_shown = True
                 self.main_view.show_legacy_firmware_dialog()
         return status

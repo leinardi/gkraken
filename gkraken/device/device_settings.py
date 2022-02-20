@@ -16,7 +16,7 @@
 #  along with gkraken.  If not, see <http://www.gnu.org/licenses/>.
 
 from enum import auto, unique, Enum
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Tuple, Union
 
 from liquidctl.driver.base import BaseDriver
 
@@ -63,7 +63,9 @@ class DeviceSettings:
     _modes_ring: List[LightingMode] = []
 
     @classmethod
-    def determine_status(cls, status_list: list, device_description: str) -> Optional[Status]:
+    def determine_status(
+            cls, status_list: list, device_description: str, init_firmware: Optional[str]
+    ) -> Optional[Status]:
         """creates a Status object from the given liquidctl status_list"""
         raise NotImplementedError('This should be implemented in one of the child classes')
 
@@ -75,3 +77,26 @@ class DeviceSettings:
             modes_logo={mode.mode_id: mode for mode in cls._modes_logo},
             modes_ring={mode.mode_id: mode for mode in cls._modes_ring},
         )
+
+    @classmethod
+    def _safely_determine_firmware(cls, status_list: list, init_firmware: Optional[str]) -> str:
+        """use the init firmware version or the version from status, depending on circumstances"""
+        if init_firmware is not None:
+            return init_firmware
+        firmware_index = cls._status_index.get(StatusIndexType.FIRMWARE_VERSION)
+        if firmware_index is not None and len(status_list) > firmware_index:
+            return str(status_list[firmware_index])
+        return ''
+
+    @staticmethod
+    def find_firmware(init_status: List[Tuple]) -> Optional[str]:
+        status_dict = DeviceSettings._convert_status_to_dict(init_status)
+        firmware_version = status_dict.get('firmware version')
+        return str(firmware_version) if firmware_version is not None else None
+
+    @staticmethod
+    def _convert_status_to_dict(lc_status: List[Tuple]) -> Dict[str, Union[str, int, float]]:
+        return {
+            str(lc_property).strip().lower(): value
+            for lc_property, value, _ in lc_status
+        }
