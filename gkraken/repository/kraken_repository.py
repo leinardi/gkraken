@@ -41,6 +41,7 @@ class KrakenRepository:
     def __init__(self) -> None:
         self.lock = threading.RLock()
         self._driver: Optional[BaseDriver] = None
+        self._init_firmware_version: Optional[str] = None
         self._legacy_kraken_warning_issued: bool = False
 
     def has_supported_kraken(self) -> bool:
@@ -73,7 +74,9 @@ class KrakenRepository:
                 for device_setting in DeviceSettings.__subclasses__():
                     if device_setting.supported_driver is self._driver.__class__:
                         status_list = [v for k, v, u in driver_status]
-                        return device_setting.determine_status(status_list, self._driver.description)
+                        return device_setting.determine_status(
+                            status_list, self._driver.description, self._init_firmware_version
+                        )
                 if self._driver:
                     _LOG.error("Driver Instance is not recognized: %s", self._driver.description)
                 else:
@@ -133,5 +136,8 @@ class KrakenRepository:
                     "Aestek potential driver conflict detected. Requires user confirmation to continue.")
             if self._driver:
                 self._driver.connect()
+                init_status: List[Tuple] = self._driver.initialize()
+                _LOG.debug("Driver Initialize response: %s", init_status)
+                self._init_firmware_version = DeviceSettings.find_firmware(init_status)
             else:
                 raise ValueError("Kraken USB interface error (check USB cable connection)")

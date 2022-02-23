@@ -201,13 +201,13 @@ class TestDeviceStatus:
         (0, None, None, ''),
     ])
     def test_get_status_kraken_legacy(self,
-                                         repo: KrakenRepository,
-                                         mocker: MockerFixture,
-                                         temp: float,
-                                         fan_rpm: Optional[int],
-                                         pump_rpm: Optional[int],
-                                         firmware: str
-                                         ) -> None:
+                                      repo: KrakenRepository,
+                                      mocker: MockerFixture,
+                                      temp: float,
+                                      fan_rpm: Optional[int],
+                                      pump_rpm: Optional[int],
+                                      firmware: str
+                                      ) -> None:
         # arrange
         driver_type = Legacy690Lc
         mocker.patch.object(
@@ -234,6 +234,78 @@ class TestDeviceStatus:
         assert status.fan_rpm == fan_rpm
         assert status.fan_duty is None
         assert status.pump_rpm == pump_rpm
+        assert status.pump_duty is None
+        assert status.firmware_version == firmware
+        assert status.device_description == TEST_DESCRIPTION
+
+    def test_get_status_kraken_2_no_firmware_in_status(
+            self, repo: KrakenRepository, mocker: MockerFixture
+    ) -> None:
+        # arrange
+        temp = 30
+        rpm = 800
+        driver_type = Kraken2
+        mocker.patch.object(
+            repo, '_driver', spec=driver_type
+        )
+        mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
+        )
+        mocker.patch.object(
+            repo._driver, 'get_status',
+            return_value=[
+                ('Liquid temperature', temp, '°C'),
+                ('Fan speed', rpm, 'rpm'),
+                ('Pump speed', rpm, 'rpm')
+            ]
+        )
+        # act
+        status = repo.get_status()
+        # assert
+        assert isinstance(status, Status)
+        assert status.driver_type == driver_type
+        assert status.liquid_temperature == temp
+        assert status.fan_rpm == rpm
+        assert status.fan_duty is None
+        assert status.pump_rpm == rpm
+        assert status.pump_duty is None
+        assert status.firmware_version == ''
+        assert status.device_description == TEST_DESCRIPTION
+
+    def test_get_status_kraken_2_firmware_in_init_response(
+            self, repo: KrakenRepository, mocker: MockerFixture
+    ) -> None:
+        # arrange
+        temp = 30
+        rpm = 800
+        firmware = '1.2.3'
+        driver_type = Kraken2
+        mocker.patch.object(
+            repo, '_driver', spec=driver_type
+        )
+        mocker.patch.object(
+            repo, '_init_firmware_version', firmware
+        )
+        mocker.patch.object(
+            repo._driver, 'description', TEST_DESCRIPTION
+        )
+        mocker.patch.object(
+            repo._driver, 'get_status',
+            return_value=[
+                ('Liquid temperature', temp, '°C'),
+                ('Fan speed', rpm, 'rpm'),
+                ('Pump speed', rpm, 'rpm')
+            ]
+        )
+        # act
+        status = repo.get_status()
+        # assert
+        assert isinstance(status, Status)
+        assert status.driver_type == driver_type
+        assert status.liquid_temperature == temp
+        assert status.fan_rpm == rpm
+        assert status.fan_duty is None
+        assert status.pump_rpm == rpm
         assert status.pump_duty is None
         assert status.firmware_version == firmware
         assert status.device_description == TEST_DESCRIPTION

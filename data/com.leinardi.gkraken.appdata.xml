@@ -45,6 +45,18 @@
     <url type="bugtracker">https://gitlab.com/leinardi/gkraken/issues</url>
     <update_contact>roberto@leinardi.com</update_contact>
     <releases>
+        <release date="2022-02-23" version="1.2.0">
+            <description>
+                <ul>
+                    <li>**This is most probably the final release of Gkraken and the project is now deprecated in favor
+                        of Coolero. If you are still using GKraken, you are strongly advised to migrate to Coolero:**
+                        https://gitlab.com/codifryed/coolero
+                    </li>
+                    <li>Minor refactoring to handle last version of liquidctl</li>
+                    <li>Updated several dependencies</li>
+                </ul>
+            </description>
+        </release>
         <release date="2021-10-11" version="1.1.7">
             <description>
                 <ul>

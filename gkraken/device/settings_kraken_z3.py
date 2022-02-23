@@ -41,9 +41,12 @@ class SettingsKrakenZ3(DeviceSettings):
     _modes_ring: List[LightingMode] = []
 
     @classmethod
-    def determine_status(cls, status_list: list, device_description: str) -> Optional[Status]:
+    def determine_status(
+            cls, status_list: list, device_description: str, init_firmware: Optional[str]
+    ) -> Optional[Status]:
         return Status(
             driver_type=cls.supported_driver,
+            firmware_version=init_firmware if init_firmware is not None else '',
             liquid_temperature=status_list[cls._status_index[StatusIndexType.LIQUID_TEMPERATURE]],
             fan_rpm=status_list[cls._status_index[StatusIndexType.FAN_RPM]],
             fan_duty=status_list[cls._status_index[StatusIndexType.FAN_DUTY]],
