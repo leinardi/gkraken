@@ -1,3 +1,14 @@
+Version 1.2.0
+=============
+Released: 2022-02-23
+
+ * **This is most probably the final release of Gkraken and the project is now
+   deprecated in favor of Coolero. If you are still using GKraken, you are
+   strongly advised to migrate to Coolero:**
+   https://gitlab.com/codifryed/coolero
+ * Minor refactoring to handle last version of liquidctl
+ * Updated several dependencies
+
 Version 1.1.7
 =============
 Released: 2021-10-11
