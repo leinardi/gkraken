@@ -49,8 +49,7 @@
             <description>
                 <ul>
                     <li>**This is most probably the final release of Gkraken and the project is now deprecated in favor
-                        of Coolero. If you are still using GKraken, you are strongly advised to migrate to Coolero:**
-                        https://gitlab.com/codifryed/coolero
+                        of Coolero. If you are still using GKraken, you are strongly advised to migrate to Coolero**
                     </li>
                     <li>Minor refactoring to handle last version of liquidctl</li>
                     <li>Updated several dependencies</li>

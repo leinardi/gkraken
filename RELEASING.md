@@ -1,6 +1,6 @@
 # Releasing
 
-1. `flatpak run org.freedesktop.appstream-glib validate data/com.leinardi.gkraken.appdata.xml`
+1. `flatpak run --env=G_DEBUG=fatal-criticals org.freedesktop.appstream-glib validate data/com.leinardi.gkraken.appdata.xml`
 2. Bump the `APP_VERSION` property in `gkraken/conf.py` based on Major.Minor.Patch naming scheme
 3. Update `data/com.leinardi.gkraken.appdata.xml` for the impending release.
 4. Run `./build.sh` to update the CHANGELOG.md
