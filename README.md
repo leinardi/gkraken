@@ -1,4 +1,12 @@
+# ⚠ Project deprecated
+This project is now deprecated in favor of [Coolero](https://gitlab.com/codifryed/coolero). If you are still using
+GKraken, you are strongly advised to migrate to [Coolero](https://gitlab.com/codifryed/coolero).  
+No new development is planned for GKraken and I do not own a Kraken device anymore, so I won't be able to provide 
+even bug fixes.
+
 # GKraken
+
+<img src="/art/gkraken.png" width="128" align="right" hspace="0" />
 
 GKraken is a GTK application that allows you to control the following AIO liquid coolers:
 
@@ -10,14 +18,6 @@ GKraken is a GTK application that allows you to control the following AIO liquid
 | NZXT Kraken Z53, Z63, Z73 | :white_check_mark: | :white_check_mark: | :x: |
 
 <sup>_L_</sup> _Limited functionality offered by legacy Kraken models_
-
-## Project in Maintenance mode
-
-<img src="/art/gkraken.png" width="128" align="right" hspace="0" />
-
-This project is now in maintenance mode. New features will be added only via Contributor's MR. I also don't own a NZXT
-Kraken anymore so I am unable to test GKraken myself. If you want to help with a code contribution or testing with your
-device, please join the discord server of the project: https://discord.gg/Q33n3UC.
 
 ## Table of contents
 
