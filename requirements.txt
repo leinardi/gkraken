@@ -5,5 +5,5 @@ matplotlib==3.4.3
 peewee==3.14.9
 PyGObject==3.40.1
 pyxdg==0.27
-requests==2.26.0
+requests==2.31.0
 Rx==3.2.0
